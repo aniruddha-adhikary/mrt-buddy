@@ -22,6 +22,7 @@ import java.io.IOException
 class MainActivity : ComponentActivity() {
     private var nfcAdapter: NfcAdapter? = null
     private val serviceCode = 0x220F
+    private val balanceState = mutableStateOf("Tap your card to read balance")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,11 +32,14 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MRTBuddyTheme {
-                var balance by remember { mutableStateOf("Tap your card to read balance") }
+                // Use the shared state
+                val balance by remember { balanceState }
 
                 // Handle NFC intent if activity was launched with one
                 LaunchedEffect(Unit) {
-                    intent?.let { handleNfcIntent(it) { balance = it } }
+                    intent?.let { handleNfcIntent(it) { newBalance ->
+                        balanceState.value = newBalance
+                    }}
                 }
 
                 MainScreen(balance)
@@ -58,23 +62,15 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
-        // Disable NFC foreground dispatch
         nfcAdapter?.disableForegroundDispatch(this)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        // Handle NFC intent
-        setContent {
-            MRTBuddyTheme {
-                var balance by remember { mutableStateOf("Reading card...") }
-
-                LaunchedEffect(Unit) {
-                    handleNfcIntent(intent) { balance = it }
-                }
-
-                MainScreen(balance)
-            }
+        // Update the shared state directly
+        balanceState.value = "Reading card..."
+        handleNfcIntent(intent) { newBalance ->
+            balanceState.value = newBalance
         }
     }
 
@@ -100,7 +96,7 @@ class MainActivity : ComponentActivity() {
             latestBalance?.let {
                 onBalanceRead("Latest Balance: $it BDT")
             } ?: run {
-                onBalanceRead("Balance not found")
+                onBalanceRead("Balance not found. You moved the card too fast.")
             }
         } catch (e: Exception) {
             e.printStackTrace()
