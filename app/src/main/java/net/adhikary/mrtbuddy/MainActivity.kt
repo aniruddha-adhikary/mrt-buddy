@@ -304,17 +304,23 @@ class MainActivity : ComponentActivity() {
 
     private fun getStationName(code: Int): String {
         // Map station codes to names
-//        val stationMap = mapOf(
-//            0x41 to "Station A",
-//            0x4B to "Station B",
-//            0x1E to "Station C",
-//            0x32 to "Station D",
-//            0x5A to "Station E",
-//            0x0A to "Station F",
-//            0x46 to "Station G"
-//            // Add other mappings as needed
-//        )
-        return "Unknown Station ($code)"
+        val stationMap = mapOf(
+            40 to "Motijheel",
+            35 to "Karwan Bazar",
+            30 to "Shahbagh",
+            10 to "Farmgate",
+            45 to "Bijoy Sarani",
+            50 to "Agargaon",
+            55 to "Shewrapara",
+            60 to "Kazipara",
+            65 to "Mirpur 10",
+            70 to "Mirpur 11",
+            75 to "Pallabi",
+            80 to "Uttara South",
+            85 to "Uttara Center",
+            95 to "Uttara North"
+        )
+        return stationMap.getOrDefault(code, "Unknown Station ($code)")
     }
 }
 
