@@ -325,12 +325,13 @@ fun MainScreen(balanceText: String) {
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 16.dp),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "Built with ❤️ by Ani",
                     modifier = Modifier
-                        .fillMaxWidth()
+//                        .fillMaxWidth()
                         .clickable { uriHandler.openUri("https://linktr.ee/tuxboy") }
                         .padding(8.dp),
                     textAlign = TextAlign.Center,
