@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
         tag?.let {
             readFelicaCard(it, onBalanceRead)
         } ?: run {
-            onBalanceRead("No NFC tag detected")
+            onBalanceRead("No MRT Pass / Rapid Pass detected")
         }
     }
 
