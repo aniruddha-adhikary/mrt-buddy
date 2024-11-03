@@ -1,9 +1,11 @@
 package net.adhikary.mrtbuddy
 
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ActivityInfo
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.NfcF
@@ -65,8 +67,10 @@ class MainActivity : ComponentActivity() {
     private val cardState = mutableStateOf<CardState>(CardState.WaitingForTap)
     private val transactionsState = mutableStateOf<List<Transaction>>(emptyList())
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         enableEdgeToEdge()
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
