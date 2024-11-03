@@ -62,7 +62,7 @@ import java.io.IOException
 
 class MainActivity : ComponentActivity() {
     private var nfcAdapter: NfcAdapter? = null
-    private val balanceState = mutableStateOf("Tap your card to read balance")
+    private val cardState = mutableStateOf<CardState>(CardState.WaitingForTap)
     private val transactionsState = mutableStateOf<List<Transaction>>(emptyList())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MRTBuddyTheme {
-                val balance by remember { balanceState }
+                val currentCardState by remember { cardState }
                 val transactions by remember { transactionsState }
 
                 LaunchedEffect(Unit) {
@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                MainScreen(balance, transactions)
+                MainScreen(currentCardState, transactions)
             }
         }
     }
@@ -107,7 +107,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        balanceState.value = "Reading card..."
+        cardState.value = CardState.Reading
         handleNfcIntent(intent)
     }
 
@@ -116,7 +116,7 @@ class MainActivity : ComponentActivity() {
         tag?.let {
             readFelicaCard(it)
         } ?: run {
-            balanceState.value = "No MRT Pass / Rapid Pass detected"
+            cardState.value = CardState.Error("No MRT Pass / Rapid Pass detected")
             transactionsState.value = emptyList()
         }
     }
@@ -131,13 +131,13 @@ class MainActivity : ComponentActivity() {
             transactionsState.value = transactions
             val latestBalance = transactions.firstOrNull()?.balance
             latestBalance?.let {
-                balanceState.value = "Latest Balance: $it BDT"
+                cardState.value = CardState.Balance(it)
             } ?: run {
-                balanceState.value = "Balance not found. You moved the card too fast."
+                cardState.value = CardState.Error("Balance not found. You moved the card too fast.")
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            balanceState.value = "Error reading card: ${e.message}"
+            cardState.value = CardState.Error(e.message ?: "Unknown error occurred")
             transactionsState.value = emptyList()
         }
     }
@@ -324,10 +324,17 @@ data class Transaction(
     val trailing: String
 )
 
+sealed class CardState {
+    data class Balance(val amount: Int) : CardState()
+    data object WaitingForTap : CardState()
+    data object Reading : CardState()
+    data class Error(val message: String) : CardState()
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(balanceText: String, transactions: List<Transaction> = emptyList()) {
+fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList()) {
     val uriHandler = LocalUriHandler.current
     var showHistory by remember { mutableStateOf(false) }
     val hasTransactions = transactions.isNotEmpty()
@@ -390,12 +397,49 @@ fun MainScreen(balanceText: String, transactions: List<Transaction> = emptyList(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text(
-                            text = balanceText,
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
+                        when (cardState) {
+                            is CardState.Balance -> {
+                                Text(
+                                    text = "Latest Balance",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "৳ ${cardState.amount}",
+                                    style = MaterialTheme.typography.displayMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+
+                            CardState.Reading -> {
+                                Text(
+                                    text = "Reading card...",
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+
+                            CardState.WaitingForTap -> {
+                                Text(
+                                    text = "Tap your card to read balance",
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+
+                            is CardState.Error -> {
+                                Text(
+                                    text = cardState.message,
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
                     }
                 }
 
