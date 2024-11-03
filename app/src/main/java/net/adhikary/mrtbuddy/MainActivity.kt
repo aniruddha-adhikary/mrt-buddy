@@ -342,6 +342,12 @@ sealed class CardState {
 }
 
 
+sealed class TransactionType {
+    data object Commute : TransactionType()
+    data object BalanceUpdate : TransactionType()
+}
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList()) {
@@ -529,7 +535,11 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(transactions) { transactionWithAmount ->
+                    val isCommute = transactionWithAmount.transaction.fixedHeader.startsWith(
+                        "08 52 10 00"
+                    )
                     TransactionItem(
+                        type = if (isCommute) TransactionType.Commute else TransactionType.BalanceUpdate,
                         date = transactionWithAmount.transaction.timestamp,
                         fromStation = transactionWithAmount.transaction.fromStation,
                         toStation = transactionWithAmount.transaction.toStation,
@@ -552,6 +562,7 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
 
 @Composable
 fun TransactionItem(
+    type: TransactionType,
     date: String,
     fromStation: String,
     toStation: String,
@@ -572,7 +583,7 @@ fun TransactionItem(
 //                color = MaterialTheme.colorScheme.onSurfaceVariant
 //            )
             Text(
-                text = "$fromStation → $toStation",
+                text = if (type == TransactionType.Commute) "$fromStation → $toStation" else "Balance Update",
                 style = MaterialTheme.typography.bodyMedium
             )
         }
