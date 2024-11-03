@@ -1,5 +1,6 @@
 package net.adhikary.mrtbuddy
 
+
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
@@ -11,22 +12,58 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import net.adhikary.mrtbuddy.ui.theme.MRTBuddyTheme
 import java.io.IOException
 
 class MainActivity : ComponentActivity() {
     private var nfcAdapter: NfcAdapter? = null
-    private val serviceCode = 0x220F
     private val balanceState = mutableStateOf("Tap your card to read balance")
+    private val transactionsState = mutableStateOf<List<Transaction>>(emptyList())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,17 +73,16 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MRTBuddyTheme {
-                // Use the shared state
                 val balance by remember { balanceState }
+                val transactions by remember { transactionsState }
 
-                // Handle NFC intent if activity was launched with one
                 LaunchedEffect(Unit) {
-                    intent?.let { handleNfcIntent(it) { newBalance ->
-                        balanceState.value = newBalance
-                    }}
+                    intent?.let {
+                        handleNfcIntent(it)
+                    }
                 }
 
-                MainScreen(balance)
+                MainScreen(balance, transactions)
             }
         }
     }
@@ -71,40 +107,38 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        // Update the shared state directly
         balanceState.value = "Reading card..."
-        handleNfcIntent(intent) { newBalance ->
-            balanceState.value = newBalance
-        }
+        handleNfcIntent(intent)
     }
 
-    private fun handleNfcIntent(intent: Intent, onBalanceRead: (String) -> Unit) {
+    private fun handleNfcIntent(intent: Intent) {
         val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
         tag?.let {
-            readFelicaCard(it, onBalanceRead)
+            readFelicaCard(it)
         } ?: run {
-            onBalanceRead("No MRT Pass / Rapid Pass detected")
+            balanceState.value = "No MRT Pass / Rapid Pass detected"
+            transactionsState.value = emptyList()
         }
     }
 
-    private fun readFelicaCard(tag: Tag, onBalanceRead: (String) -> Unit) {
+    private fun readFelicaCard(tag: Tag) {
         val nfcF = NfcF.get(tag)
         try {
             nfcF.connect()
-            // Read the transaction history
             val transactions = readTransactionHistory(nfcF)
             nfcF.close()
 
-            // Get the latest balance if available
+            transactionsState.value = transactions
             val latestBalance = transactions.firstOrNull()?.balance
             latestBalance?.let {
-                onBalanceRead("Latest Balance: $it BDT")
+                balanceState.value = "Latest Balance: $it BDT"
             } ?: run {
-                onBalanceRead("Balance not found. You moved the card too fast.")
+                balanceState.value = "Balance not found. You moved the card too fast."
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            onBalanceRead("Error reading card: $e")
+            balanceState.value = "Error reading card: ${e.message}"
+            transactionsState.value = emptyList()
         }
     }
 
@@ -117,7 +151,8 @@ class MainActivity : ComponentActivity() {
             ((serviceCode shr 8) and 0xFF).toByte()
         )
 
-        val numberOfBlocksToRead = 10 // Adjust based on how many transaction blocks you want to read
+        val numberOfBlocksToRead =
+            10 // Adjust based on how many transaction blocks you want to read
 
         // Build block list elements
         val blockListElements = ByteArray(numberOfBlocksToRead * 2)
@@ -289,15 +324,41 @@ data class Transaction(
     val trailing: String
 )
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(balanceText: String) {
+fun MainScreen(balanceText: String, transactions: List<Transaction> = emptyList()) {
     val uriHandler = LocalUriHandler.current
+    var showHistory by remember { mutableStateOf(false) }
+    val hasTransactions = transactions.isNotEmpty()
+
+    // Calculate amounts by comparing consecutive balances
+    val transactionsWithAmounts = remember(transactions) {
+        transactions.mapIndexed { index, transaction ->
+            val amount = if (index + 1 < transactions.size) {
+                // Amount spent is the difference between this balance and the next transaction's balance
+                transaction.balance - transactions[index + 1].balance
+            } else {
+                // For the last transaction, we can't calculate the amount
+                null
+            }
+            TransactionWithAmount(
+                transaction = transaction,
+                amount = amount
+            )
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(title = { Text("MRT Buddy") })
+            CenterAlignedTopAppBar(
+                title = { Text("MRT Buddy") },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
         }
     ) { innerPadding ->
         Box(
@@ -305,19 +366,61 @@ fun MainScreen(balanceText: String) {
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Main content
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 12.dp) // adding horizontal padding
-                    .padding(bottom = 56.dp), // Add padding to avoid overlap with footer
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(
-                    text = balanceText,
-                    style = MaterialTheme.typography.headlineMedium
-                )
+                // NFC Card UI
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = balanceText,
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+
+                // Transaction History Button
+                OutlinedButton(
+                    onClick = { showHistory = !showHistory },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = hasTransactions
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.List,
+                        contentDescription = "History"
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(if (hasTransactions) "View Transaction History" else "No transactions available")
+                }
+
+                // Transaction History (if showHistory is true and has transactions)
+                AnimatedVisibility(
+                    visible = showHistory && hasTransactions,
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()
+                ) {
+                    TransactionHistoryList(transactionsWithAmounts)
+                }
             }
 
             // Footer
@@ -331,14 +434,109 @@ fun MainScreen(balanceText: String) {
                 Text(
                     text = "Built with ❤️ by Ani",
                     modifier = Modifier
-//                        .fillMaxWidth()
                         .clickable { uriHandler.openUri("https://linktr.ee/tuxboy") }
                         .padding(8.dp),
-                    textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
+        }
+    }
+}
+
+data class TransactionWithAmount(
+    val transaction: Transaction,
+    val amount: Int?
+)
+
+@Composable
+fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+        ) {
+            Text(
+                text = "Recent Transactions",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+            // Using LazyColumn for efficient scrolling
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 300.dp), // Set maximum height
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(transactions) { transactionWithAmount ->
+                    TransactionItem(
+                        date = transactionWithAmount.transaction.timestamp,
+                        fromStation = transactionWithAmount.transaction.fromStation,
+                        toStation = transactionWithAmount.transaction.toStation,
+                        balance = "৳ ${transactionWithAmount.transaction.balance}",
+                        amount = transactionWithAmount.amount?.let { "৳ $it" } ?: "N/A"
+                    )
+
+                    // Add divider between items except for the last one
+                    if (transactionWithAmount != transactions.last()) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TransactionItem(
+    date: String,
+    fromStation: String,
+    toStation: String,
+    balance: String,
+    amount: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+//            Text(
+//                text = date,
+//                style = MaterialTheme.typography.bodySmall,
+//                color = MaterialTheme.colorScheme.onSurfaceVariant
+//            )
+            Text(
+                text = "$fromStation → $toStation",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+        Column(
+            horizontalAlignment = Alignment.End,
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Text(
+                text = amount,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = "Balance: $balance",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
