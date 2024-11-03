@@ -309,6 +309,7 @@ fun MainScreen(balanceText: String) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(horizontal = 12.dp) // adding horizontal padding
                     .padding(bottom = 56.dp), // Add padding to avoid overlap with footer
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
