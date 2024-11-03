@@ -305,11 +305,10 @@ class MainActivity : ComponentActivity() {
     private fun getStationName(code: Int): String {
         // Map station codes to names
         val stationMap = mapOf(
-            40 to "Motijheel",
-            35 to "Karwan Bazar",
+            10 to "Motijheel",
             30 to "Shahbagh",
-            10 to "Farmgate",
-            45 to "Bijoy Sarani",
+            35 to "Karwan Bazar",
+            40 to "Farmgate",
             50 to "Agargaon",
             55 to "Shewrapara",
             60 to "Kazipara",
