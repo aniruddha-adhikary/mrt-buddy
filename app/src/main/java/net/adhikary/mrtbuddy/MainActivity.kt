@@ -3,6 +3,8 @@ package net.adhikary.mrtbuddy
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
@@ -67,13 +69,38 @@ class MainActivity : ComponentActivity() {
     private val cardState = mutableStateOf<CardState>(CardState.WaitingForTap)
     private val transactionsState = mutableStateOf<List<Transaction>>(emptyList())
 
+    // Broadcast receiver for NFC state changes
+    private val nfcStateReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                NfcAdapter.ACTION_ADAPTER_STATE_CHANGED -> {
+                    val state = intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE, NfcAdapter.STATE_OFF)
+                    when (state) {
+                        NfcAdapter.STATE_ON -> {
+                            updateNfcState()
+                            setupNfcForegroundDispatch()
+                        }
+                        NfcAdapter.STATE_OFF -> {
+                            cardState.value = CardState.NfcDisabled
+                            nfcAdapter?.disableForegroundDispatch(this@MainActivity)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         enableEdgeToEdge()
 
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
+        // Initialize NFC adapter and check initial state
+        initializeNfcState()
+
+        // Register NFC state change receiver
+        registerNfcStateReceiver()
 
         setContent {
             MRTBuddyTheme {
@@ -89,33 +116,91 @@ class MainActivity : ComponentActivity() {
                 MainScreen(currentCardState, transactions)
             }
         }
+    } private fun registerNfcStateReceiver() {
+        registerReceiver(
+            nfcStateReceiver,
+            IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED)
+        )
+    }
+
+    private fun setupNfcForegroundDispatch() {
+        if (nfcAdapter?.isEnabled == true) {
+            val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            val pendingIntent = PendingIntent.getActivity(
+                this, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            )
+            val filters = arrayOf(IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED))
+            val techList = arrayOf(arrayOf(NfcF::class.java.name))
+            nfcAdapter?.enableForegroundDispatch(this, pendingIntent, filters, techList)
+        }
+    }
+
+    private fun initializeNfcState() {
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
+        updateNfcState()
     }
 
     override fun onResume() {
         super.onResume()
-        // Enable NFC foreground dispatch
-        val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-        )
-        val filters = arrayOf(IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED))
-        val techList = arrayOf(arrayOf(NfcF::class.java.name))
-        nfcAdapter?.enableForegroundDispatch(this, pendingIntent, filters, techList)
+        // Update NFC state
+        updateNfcState()
+        // Setup NFC dispatch
+        setupNfcForegroundDispatch()
     }
 
     override fun onPause() {
         super.onPause()
-        nfcAdapter?.disableForegroundDispatch(this)
+        if (nfcAdapter != null) {
+            nfcAdapter?.disableForegroundDispatch(this)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Unregister the broadcast receiver
+        try {
+            unregisterReceiver(nfcStateReceiver)
+        } catch (e: IllegalArgumentException) {
+            // Receiver not registered
+        }
+    }
+
+    private fun updateNfcState() {
+        cardState.value = when {
+            nfcAdapter == null -> {
+                CardState.NoNfcSupport
+            }
+            !nfcAdapter!!.isEnabled -> {
+                CardState.NfcDisabled
+            }
+            else -> {
+                // Only change to WaitingForTap if we're not already in a valid state
+                when (cardState.value) {
+                    is CardState.Balance,
+                    is CardState.Reading -> cardState.value
+                    else -> CardState.WaitingForTap
+                }
+            }
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        cardState.value = CardState.Reading
-        handleNfcIntent(intent)
+        // Only process NFC intent if NFC is enabled
+        if (nfcAdapter?.isEnabled == true) {
+            cardState.value = CardState.Reading
+            handleNfcIntent(intent)
+        }
     }
 
     private fun handleNfcIntent(intent: Intent) {
+        // Only process if NFC is enabled
+        if (nfcAdapter?.isEnabled != true) {
+            cardState.value = CardState.NfcDisabled
+            return
+        }
+
         val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
         tag?.let {
             readFelicaCard(it)
@@ -341,6 +426,8 @@ sealed class CardState {
     data object WaitingForTap : CardState()
     data object Reading : CardState()
     data class Error(val message: String) : CardState()
+    data object NoNfcSupport : CardState()
+    data object NfcDisabled : CardState()
 }
 
 
@@ -455,6 +542,36 @@ fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList
                                     style = MaterialTheme.typography.headlineMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.error
+                                )
+                            }
+
+                            CardState.NoNfcSupport -> {
+                                Text(
+                                    text = "This device doesn't support NFC",
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "NFC is required to read your MRT Pass",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
+                                )
+                            }
+
+                            CardState.NfcDisabled -> {
+                                Text(
+                                    text = "NFC is turned off",
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "Please enable NFC in your device settings",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
                                 )
                             }
                         }
