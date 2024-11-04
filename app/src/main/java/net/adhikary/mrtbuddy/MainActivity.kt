@@ -167,7 +167,7 @@ class MainActivity : ComponentActivity() {
         tag?.let {
             readFelicaCard(it)
         } ?: run {
-            cardState.value = CardState.Error("No MRT Pass / Rapid Pass detected")
+            cardState.value = CardState.WaitingForTap
             transactionsState.value = emptyList()
         }
     }

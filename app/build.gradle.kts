@@ -14,8 +14,8 @@ android {
         applicationId = "net.adhikary.mrtbuddy"
         minSdk = 24
         targetSdk = 34
-        versionCode = 4
-        versionName = "0.0.5"
+        versionCode = 6
+        versionName = "0.0.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -73,4 +73,3 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
-// grep '^version: ' pubspec.yaml | cut -d ' ' -f 2 | tr -d '\r'

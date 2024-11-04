@@ -17,7 +17,7 @@ class StationService {
         75 to "Pallabi",
         80 to "Uttara South",
         85 to "Uttara Center",
-        95 to "Uttara North"
+        90 to "Uttara North"
     )
 
     fun getStationName(code: Int): String =
