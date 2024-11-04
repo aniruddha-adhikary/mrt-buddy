@@ -23,6 +23,7 @@ import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.nfc.NfcReader
 import net.adhikary.mrtbuddy.ui.components.MainScreen
+import net.adhikary.mrtbuddy.ui.screens.FareCalculatorScreen
 import net.adhikary.mrtbuddy.ui.theme.MRTBuddyTheme
 
 class MainActivity : ComponentActivity() {
@@ -30,6 +31,7 @@ class MainActivity : ComponentActivity() {
     private val cardState = mutableStateOf<CardState>(CardState.WaitingForTap)
     private val transactionsState = mutableStateOf<List<Transaction>>(emptyList())
     private val nfcReader = NfcReader()
+    private val currentScreen = mutableStateOf("card-reader")
 
     // Broadcast receiver for NFC state changes
     private val nfcStateReceiver = object : BroadcastReceiver() {
@@ -68,6 +70,7 @@ class MainActivity : ComponentActivity() {
             MRTBuddyTheme {
                 val currentCardState by remember { cardState }
                 val transactions by remember { transactionsState }
+                val screen by remember { currentScreen }
 
                 LaunchedEffect(Unit) {
                     intent?.let {
@@ -75,7 +78,16 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                MainScreen(currentCardState, transactions)
+                when (screen) {
+                    "card-reader" -> MainScreen(
+                        currentCardState,
+                        transactions,
+                        onNavigateToCalculator = { currentScreen.value = "calculator" }
+                    )
+                    "calculator" -> FareCalculatorScreen(
+                        onNavigateToCardReader = { currentScreen.value = "card-reader" }
+                    )
+                }
             }
         }
     } private fun registerNfcStateReceiver() {
