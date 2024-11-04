@@ -208,19 +208,6 @@ fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    // Magic UI Dock Navigation
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        OutlinedButton(onClick = { /* Current screen */ }) {
-                            Text("Card Reader")
-                        }
-                        OutlinedButton(onClick = onNavigateToCalculator) {
-                            Text("Fare Calculator")
-                        }
-                    }
-
                     Text(
                         text = "Built with ❤️ by Ani",
                         modifier = Modifier

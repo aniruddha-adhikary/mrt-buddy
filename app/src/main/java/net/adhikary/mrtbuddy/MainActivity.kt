@@ -15,6 +15,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.CreditCard
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -33,12 +38,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import net.adhikary.mrtbuddy.model.CardAlias
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.nfc.NfcReader
 import net.adhikary.mrtbuddy.ui.components.MainScreen
+import net.adhikary.mrtbuddy.ui.screens.CardAliasScreen
 import net.adhikary.mrtbuddy.ui.screens.FareCalculatorScreenNative
+import net.adhikary.mrtbuddy.ui.screens.MetroScheduleScreen
+import net.adhikary.mrtbuddy.ui.screens.MonthlyReportsScreen
+import net.adhikary.mrtbuddy.ui.screens.StationsMapScreen
 import net.adhikary.mrtbuddy.ui.theme.MRTBuddyTheme
+import net.adhikary.mrtbuddy.viewmodel.CardAliasViewModel
 
 class MainActivity : ComponentActivity() {
     private var nfcAdapter: NfcAdapter? = null
@@ -46,6 +59,7 @@ class MainActivity : ComponentActivity() {
     private val transactionsState = mutableStateOf<List<Transaction>>(emptyList())
     private val nfcReader = NfcReader()
     private val currentScreen = mutableStateOf("card-reader")
+    private val cardAliasViewModel: CardAliasViewModel by viewModels()
 
     // Broadcast receiver for NFC state changes
     private val nfcStateReceiver = object : BroadcastReceiver() {
@@ -109,6 +123,30 @@ class MainActivity : ComponentActivity() {
                                 selected = screen == "calculator",
                                 onClick = { currentScreen.value = "calculator" }
                             )
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.History, contentDescription = "Monthly Reports") },
+                                label = { Text("Reports") },
+                                selected = screen == "reports",
+                                onClick = { currentScreen.value = "reports" }
+                            )
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.Map, contentDescription = "Stations Map") },
+                                label = { Text("Map") },
+                                selected = screen == "map",
+                                onClick = { currentScreen.value = "map" }
+                            )
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.Person, contentDescription = "Card Aliases") },
+                                label = { Text("Aliases") },
+                                selected = screen == "aliases",
+                                onClick = { currentScreen.value = "aliases" }
+                            )
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.Schedule, contentDescription = "Schedule") },
+                                label = { Text("Schedule") },
+                                selected = screen == "schedule",
+                                onClick = { currentScreen.value = "schedule" }
+                            )
                         }
                     }
                 ) { paddingValues ->
@@ -124,12 +162,21 @@ class MainActivity : ComponentActivity() {
                             "calculator" -> FareCalculatorScreenNative(
                                 onNavigateToCardReader = { currentScreen.value = "card-reader" }
                             )
+                            "reports" -> MonthlyReportsScreen(transactions = transactions)
+                            "map" -> StationsMapScreen()
+                            "aliases" -> CardAliasScreen(
+                                viewModel = cardAliasViewModel,
+                                onNavigateBack = { currentScreen.value = "card-reader" }
+                            )
+                            "schedule" -> MetroScheduleScreen()
                         }
                     }
                 }
             }
         }
-    } private fun registerNfcStateReceiver() {
+    }
+
+    private fun registerNfcStateReceiver() {
         registerReceiver(
             nfcStateReceiver,
             IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED)
@@ -227,13 +274,25 @@ class MainActivity : ComponentActivity() {
         val nfcF = NfcF.get(tag)
         try {
             nfcF.connect()
+
             val transactions = nfcReader.readTransactionHistory(nfcF)
             nfcF.close()
 
             transactionsState.value = transactions
             val latestBalance = transactions.firstOrNull()?.balance
-            latestBalance?.let {
-                cardState.value = CardState.Balance(it)
+
+            // Get card ID from tag
+            val cardId = bytesToHex(tag.id)
+
+            // Update card balance in alias system
+            latestBalance?.let { balance ->
+                lifecycleScope.launch {
+                    cardAliasViewModel.updateCardBalance(cardId, balance)
+
+                    // Get card alias if it exists
+                    val cardAlias = cardAliasViewModel.getCardBySerialNumber(cardId)
+                    cardState.value = CardState.Balance(balance, cardAlias?.alias)
+                }
             } ?: run {
                 cardState.value = CardState.Error("Balance not found. You moved the card too fast.")
             }
@@ -242,5 +301,16 @@ class MainActivity : ComponentActivity() {
             cardState.value = CardState.Error(e.message ?: "Unknown error occurred")
             transactionsState.value = emptyList()
         }
+    }
+
+    private fun bytesToHex(bytes: ByteArray): String {
+        val hexChars = "0123456789ABCDEF"
+        val result = StringBuilder(bytes.size * 2)
+        bytes.forEach { byte ->
+            val i = byte.toInt()
+            result.append(hexChars[i shr 4 and 0x0F])
+            result.append(hexChars[i and 0x0F])
+        }
+        return result.toString()
     }
 }
