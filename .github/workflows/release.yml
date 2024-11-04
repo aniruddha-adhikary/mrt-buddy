@@ -5,6 +5,8 @@ on:
   push:
     branches: [ master ]
 
+  workflow_dispatch: # Manually trigger the workflow
+
 jobs:
   release_build:
     runs-on: ubuntu-latest
