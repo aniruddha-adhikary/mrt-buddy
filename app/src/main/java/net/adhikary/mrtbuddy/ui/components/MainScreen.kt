@@ -128,9 +128,9 @@ fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList
                             }
                             CardState.WaitingForTap -> {
                                 Text(
-                                    text = "Tap your card to read balance",
+                                    text = "Tap your card behind your phone to read balance",
                                     style = MaterialTheme.typography.headlineMedium,
-                                    fontWeight = FontWeight.Bold,
+                                    fontWeight = FontWeight.Normal,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
                             }
