@@ -11,6 +11,7 @@ import android.content.pm.ActivityInfo
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.NfcF
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,23 +32,10 @@ class MainActivity : ComponentActivity() {
     private val transactionsState = mutableStateOf<List<Transaction>>(emptyList())
     private val nfcReader = NfcReader()
 
-    // Broadcast receiver for NFC state changes
     private val nfcStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-                NfcAdapter.ACTION_ADAPTER_STATE_CHANGED -> {
-                    val state = intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE, NfcAdapter.STATE_OFF)
-                    when (state) {
-                        NfcAdapter.STATE_ON -> {
-                            updateNfcState()
-                            setupNfcForegroundDispatch()
-                        }
-                        NfcAdapter.STATE_OFF -> {
-                            cardState.value = CardState.NfcDisabled
-                            nfcAdapter?.disableForegroundDispatch(this@MainActivity)
-                        }
-                    }
-                }
+            if (intent?.action == NfcAdapter.ACTION_ADAPTER_STATE_CHANGED) {
+                handleNfcAdapterStateChange(intent)
             }
         }
     }
@@ -58,10 +46,7 @@ class MainActivity : ComponentActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         enableEdgeToEdge()
 
-        // Initialize NFC adapter and check initial state
         initializeNfcState()
-
-        // Register NFC state change receiver
         registerNfcStateReceiver()
 
         setContent {
@@ -70,31 +55,41 @@ class MainActivity : ComponentActivity() {
                 val transactions by remember { transactionsState }
 
                 LaunchedEffect(Unit) {
-                    intent?.let {
-                        handleNfcIntent(it)
-                    }
+                    intent?.let { handleNfcIntent(it) }
                 }
 
                 MainScreen(currentCardState, transactions)
             }
         }
-    } private fun registerNfcStateReceiver() {
-        registerReceiver(
-            nfcStateReceiver,
-            IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED)
-        )
+    }
+
+    private fun registerNfcStateReceiver() {
+        registerReceiver(nfcStateReceiver, IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED))
+    }
+
+    private fun handleNfcAdapterStateChange(intent: Intent) {
+        val state = intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE, NfcAdapter.STATE_OFF)
+        when (state) {
+            NfcAdapter.STATE_ON -> {
+                updateNfcState()
+                setupNfcForegroundDispatch()
+            }
+            NfcAdapter.STATE_OFF -> {
+                cardState.value = CardState.NfcDisabled
+                nfcAdapter?.disableForegroundDispatch(this)
+            }
+        }
     }
 
     private fun setupNfcForegroundDispatch() {
-        if (nfcAdapter?.isEnabled == true) {
-            val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        nfcAdapter?.takeIf { it.isEnabled }?.let {
             val pendingIntent = PendingIntent.getActivity(
-                this, 0, intent,
+                this, 0, Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
             )
             val filters = arrayOf(IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED))
             val techList = arrayOf(arrayOf(NfcF::class.java.name))
-            nfcAdapter?.enableForegroundDispatch(this, pendingIntent, filters, techList)
+            it.enableForegroundDispatch(this, pendingIntent, filters, techList)
         }
     }
 
@@ -105,51 +100,37 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Update NFC state
         updateNfcState()
-        // Setup NFC dispatch
         setupNfcForegroundDispatch()
     }
 
     override fun onPause() {
         super.onPause()
-        if (nfcAdapter != null) {
-            nfcAdapter?.disableForegroundDispatch(this)
-        }
+        nfcAdapter?.disableForegroundDispatch(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        // Unregister the broadcast receiver
         try {
             unregisterReceiver(nfcStateReceiver)
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             // Receiver not registered
         }
     }
 
     private fun updateNfcState() {
         cardState.value = when {
-            nfcAdapter == null -> {
-                CardState.NoNfcSupport
-            }
-            !nfcAdapter!!.isEnabled -> {
-                CardState.NfcDisabled
-            }
-            else -> {
-                // Only change to WaitingForTap if we're not already in a valid state
-                when (cardState.value) {
-                    is CardState.Balance,
-                    is CardState.Reading -> cardState.value
-                    else -> CardState.WaitingForTap
-                }
+            nfcAdapter == null -> CardState.NoNfcSupport
+            !nfcAdapter!!.isEnabled -> CardState.NfcDisabled
+            else -> when (cardState.value) {
+                is CardState.Balance, is CardState.Reading -> cardState.value
+                else -> CardState.WaitingForTap
             }
         }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        // Only process NFC intent if NFC is enabled
         if (nfcAdapter?.isEnabled == true) {
             cardState.value = CardState.Reading
             handleNfcIntent(intent)
@@ -157,19 +138,19 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleNfcIntent(intent: Intent) {
-        // Only process if NFC is enabled
         if (nfcAdapter?.isEnabled != true) {
             cardState.value = CardState.NfcDisabled
             return
         }
 
-        val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
-        tag?.let {
-            readFelicaCard(it)
-        } ?: run {
-            cardState.value = CardState.Error("No MRT Pass / Rapid Pass detected")
-            transactionsState.value = emptyList()
-        }
+        val tag: Tag? = intent.extras?.getParcelable(NfcAdapter.EXTRA_TAG, Tag::class.java)
+            ?: intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
+
+        tag?.let { readFelicaCard(it) }
+            ?: run {
+                cardState.value = CardState.Error("No MRT Pass / Rapid Pass detected")
+                transactionsState.value = emptyList()
+            }
     }
 
     private fun readFelicaCard(tag: Tag) {
@@ -177,11 +158,9 @@ class MainActivity : ComponentActivity() {
         try {
             nfcF.connect()
             val transactions = nfcReader.readTransactionHistory(nfcF)
-            nfcF.close()
-
             transactionsState.value = transactions
-            val latestBalance = transactions.firstOrNull()?.balance
-            latestBalance?.let {
+
+            transactions.firstOrNull()?.balance?.let {
                 cardState.value = CardState.Balance(it)
             } ?: run {
                 cardState.value = CardState.Error("Balance not found. You moved the card too fast.")
@@ -190,6 +169,8 @@ class MainActivity : ComponentActivity() {
             e.printStackTrace()
             cardState.value = CardState.Error(e.message ?: "Unknown error occurred")
             transactionsState.value = emptyList()
+        } finally {
+            nfcF.close()
         }
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,10 +22,11 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -67,7 +69,7 @@ fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("MRT Buddy") },
+                title = { Text("MRT Buddy", style = MaterialTheme.typography.titleLarge) },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
@@ -87,19 +89,21 @@ fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                // Balance Card
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp),
-                    shape = RoundedCornerShape(16.dp),
+                        .height(250.dp),
+                    shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(16.dp),
+                            .padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -108,47 +112,27 @@ fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList
                                 Text(
                                     text = "Latest Balance",
                                     style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
                                     text = "৳ ${cardState.amount}",
-                                    style = MaterialTheme.typography.displayMedium,
+                                    style = MaterialTheme.typography.displayLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
                             }
                             CardState.Reading -> {
-                                Text(
-                                    text = "Reading card...",
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
+                                LoadingIndicator("Reading card...")
                             }
                             CardState.WaitingForTap -> {
-                                Text(
-                                    text = "Tap your card to read balance",
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
+                                LoadingIndicator("Tap your card to read balance")
                             }
                             is CardState.Error -> {
-                                Text(
-                                    text = cardState.message,
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.error
-                                )
+                                ErrorMessage(cardState.message)
                             }
                             CardState.NoNfcSupport -> {
-                                Text(
-                                    text = "This device doesn't support NFC",
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.error
-                                )
+                                ErrorMessage("This device doesn't support NFC")
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
                                     text = "NFC is required to read your MRT Pass",
@@ -157,12 +141,7 @@ fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList
                                 )
                             }
                             CardState.NfcDisabled -> {
-                                Text(
-                                    text = "NFC is turned off",
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.error
-                                )
+                                ErrorMessage("NFC is turned off")
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
                                     text = "Please enable NFC in your device settings",
@@ -174,19 +153,21 @@ fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList
                     }
                 }
 
-                OutlinedButton(
+                // Transaction History Button
+                ElevatedButton(
                     onClick = { showHistory = !showHistory },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = hasTransactions
                 ) {
                     Icon(
-                        imageVector = Icons.Default.List,
+                        imageVector = Icons.Filled.List,
                         contentDescription = "History"
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(if (hasTransactions) "View Transaction History" else "No transactions available")
                 }
 
+                // Transaction History List
                 AnimatedVisibility(
                     visible = showHistory && hasTransactions,
                     enter = fadeIn() + expandVertically(),
@@ -196,6 +177,7 @@ fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList
                 }
             }
 
+            // Footer
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -214,4 +196,27 @@ fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList
             }
         }
     }
+}
+
+@Composable
+fun LoadingIndicator(message: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
+
+@Composable
+fun ErrorMessage(message: String) {
+    Text(
+        text = message,
+        style = MaterialTheme.typography.headlineMedium,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.error
+    )
 }
