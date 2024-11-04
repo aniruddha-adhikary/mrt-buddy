@@ -3,7 +3,7 @@ package net.adhikary.mrtbuddy.nfc.service
 class StationService {
     private val stationMap = mapOf(
         10 to "Motijheel",
-        20 to "Bangladesh Secretariat",
+        20 to "Bangladesh Bangladesh Secretariat",
         25 to "Dhaka University",
         30 to "Shahbagh",
         35 to "Karwan Bazar",

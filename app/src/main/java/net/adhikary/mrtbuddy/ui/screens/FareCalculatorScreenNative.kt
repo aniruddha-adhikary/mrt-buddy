@@ -32,7 +32,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
         Station("Karwan Bazar"),
         Station("Shahbagh"),
         Station("Dhaka University"),
-        Station("Secretariat"),
+        Station("Bangladesh Secretariat"),
         Station("Motijheel"),
         Station("Kamalapur")
     )
@@ -43,7 +43,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 30, "Mirpur-11" to 30, "Mirpur-10" to 40,
             "Kazipara" to 40, "Shewrapara" to 40, "Agargaon" to 60,
             "Bijoy Sarani" to 60, "Farmgate" to 70, "Karwan Bazar" to 70,
-            "Shahbagh" to 80, "Dhaka University" to 80, "Secretariat" to 100,
+            "Shahbagh" to 80, "Dhaka University" to 80, "Bangladesh Secretariat" to 100,
             "Motijheel" to 100, "Kamalapur" to 100
         ),
         "Uttara Center" to mapOf(
@@ -51,7 +51,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 30, "Mirpur-11" to 30, "Mirpur-10" to 40,
             "Kazipara" to 40, "Shewrapara" to 40, "Agargaon" to 60,
             "Bijoy Sarani" to 60, "Farmgate" to 70, "Karwan Bazar" to 70,
-            "Shahbagh" to 80, "Dhaka University" to 80, "Secretariat" to 100,
+            "Shahbagh" to 80, "Dhaka University" to 80, "Bangladesh Secretariat" to 100,
             "Motijheel" to 100, "Kamalapur" to 100
         ),
         "Uttara South" to mapOf(
@@ -59,7 +59,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 30, "Mirpur-11" to 30, "Mirpur-10" to 40,
             "Kazipara" to 40, "Shewrapara" to 40, "Agargaon" to 60,
             "Bijoy Sarani" to 60, "Farmgate" to 70, "Karwan Bazar" to 70,
-            "Shahbagh" to 80, "Dhaka University" to 80, "Secretariat" to 100,
+            "Shahbagh" to 80, "Dhaka University" to 80, "Bangladesh Secretariat" to 100,
             "Motijheel" to 100, "Kamalapur" to 100
         ),
         "Pallabi" to mapOf(
@@ -67,7 +67,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 20, "Mirpur-11" to 20, "Mirpur-10" to 20,
             "Kazipara" to 20, "Shewrapara" to 20, "Agargaon" to 40,
             "Bijoy Sarani" to 40, "Farmgate" to 50, "Karwan Bazar" to 50,
-            "Shahbagh" to 60, "Dhaka University" to 60, "Secretariat" to 80,
+            "Shahbagh" to 60, "Dhaka University" to 60, "Bangladesh Secretariat" to 80,
             "Motijheel" to 80, "Kamalapur" to 80
         ),
         "Mirpur-11" to mapOf(
@@ -75,7 +75,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 20, "Mirpur-11" to 20, "Mirpur-10" to 20,
             "Kazipara" to 20, "Shewrapara" to 20, "Agargaon" to 40,
             "Bijoy Sarani" to 40, "Farmgate" to 50, "Karwan Bazar" to 50,
-            "Shahbagh" to 60, "Dhaka University" to 60, "Secretariat" to 80,
+            "Shahbagh" to 60, "Dhaka University" to 60, "Bangladesh Secretariat" to 80,
             "Motijheel" to 80, "Kamalapur" to 80
         ),
         "Mirpur-10" to mapOf(
@@ -83,7 +83,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 20, "Mirpur-11" to 20, "Mirpur-10" to 20,
             "Kazipara" to 20, "Shewrapara" to 20, "Agargaon" to 40,
             "Bijoy Sarani" to 40, "Farmgate" to 50, "Karwan Bazar" to 50,
-            "Shahbagh" to 60, "Dhaka University" to 60, "Secretariat" to 80,
+            "Shahbagh" to 60, "Dhaka University" to 60, "Bangladesh Secretariat" to 80,
             "Motijheel" to 80, "Kamalapur" to 80
         ),
         "Kazipara" to mapOf(
@@ -91,7 +91,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 20, "Mirpur-11" to 20, "Mirpur-10" to 20,
             "Kazipara" to 20, "Shewrapara" to 20, "Agargaon" to 40,
             "Bijoy Sarani" to 40, "Farmgate" to 50, "Karwan Bazar" to 50,
-            "Shahbagh" to 60, "Dhaka University" to 60, "Secretariat" to 80,
+            "Shahbagh" to 60, "Dhaka University" to 60, "Bangladesh Secretariat" to 80,
             "Motijheel" to 80, "Kamalapur" to 80
         ),
         "Shewrapara" to mapOf(
@@ -99,7 +99,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 20, "Mirpur-11" to 20, "Mirpur-10" to 20,
             "Kazipara" to 20, "Shewrapara" to 20, "Agargaon" to 40,
             "Bijoy Sarani" to 40, "Farmgate" to 50, "Karwan Bazar" to 50,
-            "Shahbagh" to 60, "Dhaka University" to 60, "Secretariat" to 80,
+            "Shahbagh" to 60, "Dhaka University" to 60, "Bangladesh Secretariat" to 80,
             "Motijheel" to 80, "Kamalapur" to 80
         ),
         "Agargaon" to mapOf(
@@ -107,7 +107,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 40, "Mirpur-11" to 40, "Mirpur-10" to 40,
             "Kazipara" to 40, "Shewrapara" to 40, "Agargaon" to 20,
             "Bijoy Sarani" to 20, "Farmgate" to 30, "Karwan Bazar" to 30,
-            "Shahbagh" to 40, "Dhaka University" to 40, "Secretariat" to 60,
+            "Shahbagh" to 40, "Dhaka University" to 40, "Bangladesh Secretariat" to 60,
             "Motijheel" to 60, "Kamalapur" to 60
         ),
         "Bijoy Sarani" to mapOf(
@@ -115,7 +115,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 40, "Mirpur-11" to 40, "Mirpur-10" to 40,
             "Kazipara" to 40, "Shewrapara" to 40, "Agargaon" to 20,
             "Bijoy Sarani" to 20, "Farmgate" to 30, "Karwan Bazar" to 30,
-            "Shahbagh" to 40, "Dhaka University" to 40, "Secretariat" to 60,
+            "Shahbagh" to 40, "Dhaka University" to 40, "Bangladesh Secretariat" to 60,
             "Motijheel" to 60, "Kamalapur" to 60
         ),
         "Farmgate" to mapOf(
@@ -123,7 +123,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 50, "Mirpur-11" to 50, "Mirpur-10" to 50,
             "Kazipara" to 50, "Shewrapara" to 50, "Agargaon" to 30,
             "Bijoy Sarani" to 30, "Farmgate" to 20, "Karwan Bazar" to 20,
-            "Shahbagh" to 30, "Dhaka University" to 30, "Secretariat" to 50,
+            "Shahbagh" to 30, "Dhaka University" to 30, "Bangladesh Secretariat" to 50,
             "Motijheel" to 50, "Kamalapur" to 50
         ),
         "Karwan Bazar" to mapOf(
@@ -131,7 +131,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 50, "Mirpur-11" to 50, "Mirpur-10" to 50,
             "Kazipara" to 50, "Shewrapara" to 50, "Agargaon" to 30,
             "Bijoy Sarani" to 30, "Farmgate" to 20, "Karwan Bazar" to 20,
-            "Shahbagh" to 30, "Dhaka University" to 30, "Secretariat" to 50,
+            "Shahbagh" to 30, "Dhaka University" to 30, "Bangladesh Secretariat" to 50,
             "Motijheel" to 50, "Kamalapur" to 50
         ),
         "Shahbagh" to mapOf(
@@ -139,7 +139,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 60, "Mirpur-11" to 60, "Mirpur-10" to 60,
             "Kazipara" to 60, "Shewrapara" to 60, "Agargaon" to 40,
             "Bijoy Sarani" to 40, "Farmgate" to 30, "Karwan Bazar" to 30,
-            "Shahbagh" to 20, "Dhaka University" to 20, "Secretariat" to 30,
+            "Shahbagh" to 20, "Dhaka University" to 20, "Bangladesh Secretariat" to 30,
             "Motijheel" to 30, "Kamalapur" to 30
         ),
         "Dhaka University" to mapOf(
@@ -147,15 +147,15 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 60, "Mirpur-11" to 60, "Mirpur-10" to 60,
             "Kazipara" to 60, "Shewrapara" to 60, "Agargaon" to 40,
             "Bijoy Sarani" to 40, "Farmgate" to 30, "Karwan Bazar" to 30,
-            "Shahbagh" to 20, "Dhaka University" to 20, "Secretariat" to 30,
+            "Shahbagh" to 20, "Dhaka University" to 20, "Bangladesh Secretariat" to 30,
             "Motijheel" to 30, "Kamalapur" to 30
         ),
-        "Secretariat" to mapOf(
+        "Bangladesh Secretariat" to mapOf(
             "Uttara North" to 100, "Uttara Center" to 100, "Uttara South" to 100,
             "Pallabi" to 80, "Mirpur-11" to 80, "Mirpur-10" to 80,
             "Kazipara" to 80, "Shewrapara" to 80, "Agargaon" to 60,
             "Bijoy Sarani" to 60, "Farmgate" to 50, "Karwan Bazar" to 50,
-            "Shahbagh" to 30, "Dhaka University" to 30, "Secretariat" to 20,
+            "Shahbagh" to 30, "Dhaka University" to 30, "Bangladesh Secretariat" to 20,
             "Motijheel" to 20, "Kamalapur" to 20
         ),
         "Motijheel" to mapOf(
@@ -163,7 +163,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 80, "Mirpur-11" to 80, "Mirpur-10" to 80,
             "Kazipara" to 80, "Shewrapara" to 80, "Agargaon" to 60,
             "Bijoy Sarani" to 60, "Farmgate" to 50, "Karwan Bazar" to 50,
-            "Shahbagh" to 30, "Dhaka University" to 30, "Secretariat" to 20,
+            "Shahbagh" to 30, "Dhaka University" to 30, "Bangladesh Secretariat" to 20,
             "Motijheel" to 20, "Kamalapur" to 20
         ),
         "Kamalapur" to mapOf(
@@ -171,7 +171,7 @@ fun FareCalculatorScreenNative(onNavigateToCardReader: () -> Unit) {
             "Pallabi" to 80, "Mirpur-11" to 80, "Mirpur-10" to 80,
             "Kazipara" to 80, "Shewrapara" to 80, "Agargaon" to 60,
             "Bijoy Sarani" to 60, "Farmgate" to 50, "Karwan Bazar" to 50,
-            "Shahbagh" to 30, "Dhaka University" to 30, "Secretariat" to 20,
+            "Shahbagh" to 30, "Dhaka University" to 30, "Bangladesh Secretariat" to 20,
             "Motijheel" to 20, "Kamalapur" to 20
         )
     )
