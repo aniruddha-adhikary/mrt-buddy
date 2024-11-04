@@ -3,7 +3,7 @@ name: Release Build
 
 on:
   push:
-    branches: [ release ]
+    branches: [ master ]
 
 jobs:
   release_build:
@@ -32,7 +32,7 @@ jobs:
 
       - name: Decode Keystore
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > app/keystore.jks
 
       - name: Build Release apk
         env:
