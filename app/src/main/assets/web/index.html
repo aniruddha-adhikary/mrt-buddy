@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MRT Buddy</title>
+    <script src="https://unpkg.com/tailwindcss-jit-cdn"></script>
+    <script src="https://unpkg.com/@magicui/dock"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .container {
+            padding: 1rem;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        .station-select {
+            width: 100%;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ccc;
+            border-radius: 0.25rem;
+        }
+        .result-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .fare-amount {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+        .savings {
+            color: #16a34a;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container">
+        <div id="calculator-page" class="page">
+            <h1 class="text-2xl font-bold mb-4">Fare Calculator</h1>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">From Station</label>
+                <select id="from-station" class="station-select">
+                    <option value="">Select station</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">To Station</label>
+                <select id="to-station" class="station-select">
+                    <option value="">Select station</option>
+                </select>
+            </div>
+
+            <div id="fare-result" class="result-card hidden">
+                <div class="mb-3">
+                    <div class="text-sm text-gray-600">Regular Fare</div>
+                    <div class="fare-amount">৳ <span id="regular-fare">0</span></div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="text-sm text-gray-600">MRT/Rapid Pass Fare (10% off)</div>
+                    <div class="fare-amount">৳ <span id="discounted-fare">0</span></div>
+                </div>
+
+                <div class="savings">
+                    You save ৳ <span id="savings-amount">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <magic-dock class="fixed bottom-4 left-1/2 -translate-x-1/2">
+        <magic-dock-item active onclick="showPage('card-reader')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                <line x1="2" y1="10" x2="22" y2="10"/>
+            </svg>
+            Card Reader
+        </magic-dock-item>
+        <magic-dock-item onclick="showPage('calculator')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="2" width="16" height="20" rx="2"/>
+                <line x1="12" y1="10" x2="12" y2="14"/>
+                <line x1="10" y1="12" x2="14" y2="12"/>
+            </svg>
+            Calculator
+        </magic-dock-item>
+    </magic-dock>
+
+    <script>
+        // Station data
+        const stations = [
+            "Uttara North",
+            "Uttara Center",
+            "Uttara South",
+            "Pallabi",
+            "Mirpur-11",
+            "Mirpur-10",
+            "Kazipara",
+            "Shewrapara",
+            "Agargaon",
+            "Bijoy Sarani",
+            "Farmgate",
+            "Karwan Bazar",
+            "Shahbagh",
+            "Dhaka University",
+            "Secretariat",
+            "Motijheel",
+            "Kamalapur"
+        ];
+
+
+        // Fare matrix (sample - will be completed with all combinations)
+        const fareMatrix = {};
+
+        // Initialize the matrix with all stations
+        stations.forEach(fromStation => {
+            fareMatrix[fromStation] = {};
+            stations.forEach(toStation => {
+                if (fromStation !== toStation) {
+                    fareMatrix[fromStation][toStation] = 0; // Will be filled with actual fares
+                }
+            });
+        });
+
+        // Fill in the fare matrix with actual values
+        function initializeFares() {
+            // Group 1: Uttara stations (20 BDT between them)
+            const uttaraStations = ["Uttara North", "Uttara Center", "Uttara South"];
+            uttaraStations.forEach(from => {
+                uttaraStations.forEach(to => {
+                    if (from !== to) fareMatrix[from][to] = 20;
+                });
+            });
+
+            // Group 2: Mirpur stations (20 BDT between them)
+            const mirpurStations = ["Pallabi", "Mirpur-11", "Mirpur-10", "Kazipara", "Shewrapara"];
+            mirpurStations.forEach(from => {
+                mirpurStations.forEach(to => {
+                    if (from !== to) fareMatrix[from][to] = 20;
+                });
+            });
+
+            // Add other fares based on zones
+            // Zone transitions: 30-40 BDT for adjacent zones, 60-80 BDT for distant zones, 100 BDT for furthest
+            // Implementation continues in next edit...
+
+            // Group 3: Central stations (20-30 BDT between them)
+            const centralStations = ["Agargaon", "Bijoy Sarani", "Farmgate", "Karwan Bazar"];
+            centralStations.forEach(from => {
+                centralStations.forEach(to => {
+                    if (from !== to) fareMatrix[from][to] = from === "Agargaon" ? 30 : 20;
+                });
+            });
+
+            // Group 4: Southern stations (20-30 BDT between them)
+            const southernStations = ["Shahbagh", "Dhaka University", "Secretariat", "Motijheel", "Kamalapur"];
+            southernStations.forEach(from => {
+                southernStations.forEach(to => {
+                    if (from !== to) fareMatrix[from][to] = 30;
+                });
+            });
+
+            // Inter-zone fares
+            // Uttara to Mirpur (30-40 BDT)
+            uttaraStations.forEach(from => {
+                mirpurStations.forEach(to => {
+                    fareMatrix[from][to] = 30;
+                    fareMatrix[to][from] = 30;
+                });
+            });
+
+            // Mirpur to Central (40-50 BDT)
+            mirpurStations.forEach(from => {
+                centralStations.forEach(to => {
+                    fareMatrix[from][to] = 40;
+                    fareMatrix[to][from] = 40;
+                });
+            });
+
+            // Central to Southern (50-60 BDT)
+            centralStations.forEach(from => {
+                southernStations.forEach(to => {
+                    fareMatrix[from][to] = 50;
+                    fareMatrix[to][from] = 50;
+                });
+            });
+
+            // Uttara to Central (60-70 BDT)
+            uttaraStations.forEach(from => {
+                centralStations.forEach(to => {
+                    fareMatrix[from][to] = 60;
+                    fareMatrix[to][from] = 60;
+                });
+            });
+
+            // Mirpur to Southern (80 BDT)
+            mirpurStations.forEach(from => {
+                southernStations.forEach(to => {
+                    fareMatrix[from][to] = 80;
+                    fareMatrix[to][from] = 80;
+                });
+            });
+
+            // Uttara to Southern (100 BDT)
+            uttaraStations.forEach(from => {
+                southernStations.forEach(to => {
+                    fareMatrix[from][to] = 100;
+                    fareMatrix[to][from] = 100;
+                });
+            });
+        }
+
+        initializeFares();
+
+        // Populate station dropdowns
+        const fromSelect = document.getElementById('from-station');
+        const toSelect = document.getElementById('to-station');
+
+        stations.forEach(station => {
+            fromSelect.add(new Option(station, station));
+            toSelect.add(new Option(station, station));
+        });
+
+        // Calculate fare
+        function calculateFare() {
+            const fromStation = fromSelect.value;
+            const toStation = toSelect.value;
+
+            if (fromStation && toStation) {
+                const regularFare = fareMatrix[fromStation]?.[toStation] ||
+                                  fareMatrix[toStation]?.[fromStation] || 0;
+                const discountedFare = Math.floor(regularFare * 0.9);
+                const savings = regularFare - discountedFare;
+
+                document.getElementById('regular-fare').textContent = regularFare;
+                document.getElementById('discounted-fare').textContent = discountedFare;
+                document.getElementById('savings-amount').textContent = savings;
+                document.getElementById('fare-result').classList.remove('hidden');
+            }
+        }
+
+        // Event listeners
+        fromSelect.addEventListener('change', calculateFare);
+        toSelect.addEventListener('change', calculateFare);
+
+        // Page navigation
+        function showPage(page) {
+            try {
+                // Notify Android of page change
+                Android.onNavigate(page);
+
+                // Update active state in Magic UI Dock
+                document.querySelectorAll('magic-dock-item').forEach(item => {
+                    if (item.textContent.trim().toLowerCase().includes(page)) {
+                        item.setAttribute('active', '');
+                    } else {
+                        item.removeAttribute('active');
+                    }
+                });
+
+                // Toggle visibility of pages
+                const calculatorPage = document.getElementById('calculator-page');
+                if (page === 'calculator') {
+                    calculatorPage.style.display = 'block';
+                    // Reset form when showing calculator
+                    fromSelect.value = '';
+                    toSelect.value = '';
+                    document.getElementById('fare-result').classList.add('hidden');
+                } else {
+                    calculatorPage.style.display = 'none';
+                }
+            } catch (e) {
+                console.error('Error in page navigation:', e);
+            }
+        }
+
+        // Initialize page state
+        showPage('calculator');
+    </script>
+</body>
+</html>
