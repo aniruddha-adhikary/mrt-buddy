@@ -15,14 +15,29 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Calculate
+import androidx.compose.material.icons.filled.CreditCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.nfc.NfcReader
 import net.adhikary.mrtbuddy.ui.components.MainScreen
+import net.adhikary.mrtbuddy.ui.screens.FareCalculatorScreenNative
 import net.adhikary.mrtbuddy.ui.theme.MRTBuddyTheme
 
 class MainActivity : ComponentActivity() {
@@ -30,6 +45,7 @@ class MainActivity : ComponentActivity() {
     private val cardState = mutableStateOf<CardState>(CardState.WaitingForTap)
     private val transactionsState = mutableStateOf<List<Transaction>>(emptyList())
     private val nfcReader = NfcReader()
+    private val currentScreen = mutableStateOf("card-reader")
 
     // Broadcast receiver for NFC state changes
     private val nfcStateReceiver = object : BroadcastReceiver() {
@@ -68,6 +84,7 @@ class MainActivity : ComponentActivity() {
             MRTBuddyTheme {
                 val currentCardState by remember { cardState }
                 val transactions by remember { transactionsState }
+                val screen by remember { currentScreen }
 
                 LaunchedEffect(Unit) {
                     intent?.let {
@@ -75,7 +92,41 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                MainScreen(currentCardState, transactions)
+                Scaffold(
+                    bottomBar = {
+                        NavigationBar(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.CreditCard, contentDescription = "Card Reader") },
+                                label = { Text("Card Reader") },
+                                selected = screen == "card-reader",
+                                onClick = { currentScreen.value = "card-reader" }
+                            )
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.Calculate, contentDescription = "Calculator") },
+                                label = { Text("Calculator") },
+                                selected = screen == "calculator",
+                                onClick = { currentScreen.value = "calculator" }
+                            )
+                        }
+                    }
+                ) { paddingValues ->
+                    Box(
+                        modifier = Modifier.padding(paddingValues)
+                    ) {
+                        when (screen) {
+                            "card-reader" -> MainScreen(
+                                currentCardState,
+                                transactions,
+                                onNavigateToCalculator = { currentScreen.value = "calculator" }
+                            )
+                            "calculator" -> FareCalculatorScreenNative(
+                                onNavigateToCardReader = { currentScreen.value = "card-reader" }
+                            )
+                        }
+                    }
+                }
             }
         }
     } private fun registerNfcStateReceiver() {
