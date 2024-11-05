@@ -15,6 +15,8 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +59,11 @@ fun StationsMapScreen() {
                                 controller.setZoom(13.0)
                                 controller.setCenter(GeoPoint(23.8103, 90.4125)) // Dhaka coordinates
 
+                                // Add location overlay
+                                val locationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(context), this)
+                                locationOverlay.enableMyLocation()
+                                overlays.add(locationOverlay)
+
                                 // Add markers for MRT stations
                                 val stations = listOf(
                                     "Uttara North" to GeoPoint(23.8759, 90.3995),
@@ -73,7 +80,7 @@ fun StationsMapScreen() {
                                     "Karwan Bazar" to GeoPoint(23.7506, 90.3931),
                                     "Shahbagh" to GeoPoint(23.7389, 90.3956),
                                     "Dhaka University" to GeoPoint(23.7328, 90.3975),
-                                    "Secretariat" to GeoPoint(23.7267, 90.4008),
+                                    "Bangladesh Secretariat" to GeoPoint(23.7267, 90.4008),
                                     "Motijheel" to GeoPoint(23.7233, 90.4181),
                                     "Kamalapur" to GeoPoint(23.7331, 90.4264)
                                 )

@@ -44,7 +44,7 @@ import net.adhikary.mrtbuddy.model.TransactionWithAmount
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList(), modifier: Modifier = Modifier) {
+fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList()) {
     val uriHandler = LocalUriHandler.current
     var showHistory by remember { mutableStateOf(false) }
     val hasTransactions = transactions.isNotEmpty()
@@ -105,6 +105,14 @@ fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList
                     ) {
                         when (cardState) {
                             is CardState.Balance -> {
+                                cardState.cardAlias?.let { alias ->
+                                    Text(
+                                        text = alias,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                }
                                 Text(
                                     text = "Latest Balance",
                                     style = MaterialTheme.typography.titleMedium,

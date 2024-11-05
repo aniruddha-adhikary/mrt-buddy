@@ -15,30 +15,39 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Calculate
-import androidx.compose.material.icons.filled.CreditCard
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.nfc.NfcReader
 import net.adhikary.mrtbuddy.ui.components.MainScreen
-import net.adhikary.mrtbuddy.ui.screens.FareCalculatorScreen
+import net.adhikary.mrtbuddy.ui.navigation.Screen
 import net.adhikary.mrtbuddy.ui.screens.CardAliasScreen
+import net.adhikary.mrtbuddy.ui.screens.FareCalculatorScreen
 import net.adhikary.mrtbuddy.ui.screens.MetroScheduleScreen
+import net.adhikary.mrtbuddy.ui.screens.MonthlyReportsScreen
+import net.adhikary.mrtbuddy.ui.screens.StationsMapScreen
 import net.adhikary.mrtbuddy.ui.theme.MRTBuddyTheme
 
 class MainActivity : ComponentActivity() {
@@ -82,9 +91,9 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MRTBuddyTheme {
+                val navController = rememberNavController()
                 val currentCardState by remember { cardState }
                 val transactions by remember { transactionsState }
-                var selectedScreen by remember { mutableStateOf(0) }
 
                 LaunchedEffect(Unit) {
                     intent?.let {
@@ -92,48 +101,61 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = navBackStackEntry?.destination?.route
+
                 Scaffold(
+                    modifier = Modifier.fillMaxSize(),
                     bottomBar = {
                         NavigationBar {
-                            NavigationBarItem(
-                                icon = { Icon(Icons.Default.Home, "Home") },
-                                label = { Text("Home") },
-                                selected = selectedScreen == 0,
-                                onClick = { selectedScreen = 0 }
-                            )
-                            NavigationBarItem(
-                                icon = { Icon(Icons.Default.Calculate, "Fare Calculator") },
-                                label = { Text("Fares") },
-                                selected = selectedScreen == 1,
-                                onClick = { selectedScreen = 1 }
-                            )
-                            NavigationBarItem(
-                                icon = { Icon(Icons.Default.Schedule, "Schedule") },
-                                label = { Text("Schedule") },
-                                selected = selectedScreen == 2,
-                                onClick = { selectedScreen = 2 }
-                            )
-                            NavigationBarItem(
-                                icon = { Icon(Icons.Default.CreditCard, "Card Alias") },
-                                label = { Text("Cards") },
-                                selected = selectedScreen == 3,
-                                onClick = { selectedScreen = 3 }
-                            )
+                            Screen.bottomNavItems().forEach { screen ->
+                                NavigationBarItem(
+                                    icon = { Icon(screen.icon, contentDescription = screen.title) },
+                                    label = { Text(screen.title) },
+                                    selected = currentRoute == screen.route,
+                                    onClick = {
+                                        navController.navigate(screen.route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    }
+                                )
+                            }
                         }
                     }
-                ) { padding ->
-                    when (selectedScreen) {
-                        0 -> MainScreen(currentCardState, transactions, Modifier.padding(padding))
-                        1 -> FareCalculatorScreen()
-                        2 -> MetroScheduleScreen()
-                        3 -> CardAliasScreen()
+                ) { innerPadding ->
+                    Box(modifier = Modifier.padding(innerPadding)) {
+                        NavHost(
+                            navController = navController,
+                            startDestination = Screen.Home.route
+                        ) {
+                            composable(Screen.Home.route) {
+                                MainScreen(currentCardState, transactions)
+                            }
+                            composable(Screen.FareCalculator.route) {
+                                FareCalculatorScreen()
+                            }
+                            composable(Screen.CardAlias.route) {
+                                CardAliasScreen()
+                            }
+                            composable(Screen.MetroSchedule.route) {
+                                MetroScheduleScreen()
+                            }
+                            composable(Screen.StationsMap.route) {
+                                StationsMapScreen()
+                            }
+                            composable(Screen.MonthlyReports.route) {
+                                MonthlyReportsScreen(transactions)
+                            }
+                        }
                     }
                 }
             }
         }
-    }
-
-    private fun registerNfcStateReceiver() {
+    } private fun registerNfcStateReceiver() {
         registerReceiver(
             nfcStateReceiver,
             IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED)
@@ -228,23 +250,64 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun readFelicaCard(tag: Tag) {
+        println("Starting to read Felica card...")
         val nfcF = NfcF.get(tag)
         try {
+            println("Connecting to NFC card...")
             nfcF.connect()
+            println("Reading transaction history...")
             val transactions = nfcReader.readTransactionHistory(nfcF)
+            println("Successfully read ${transactions.size} transactions")
             nfcF.close()
 
-            transactionsState.value = transactions
-            val latestBalance = transactions.firstOrNull()?.balance
-            latestBalance?.let {
-                cardState.value = CardState.Balance(it)
-            } ?: run {
-                cardState.value = CardState.Error("Balance not found. You moved the card too fast.")
+            // Get card ID from tag
+            val cardId = bytesToHexString(tag.id)
+            println("Card ID: $cardId")
+
+            // Look up card alias using coroutines
+            val cardAliasDao = MrtBuddyApplication.instance.database.cardAliasDao()
+            lifecycleScope.launch {
+                try {
+                    println("Looking up card alias for ID: $cardId")
+                    val cardAlias = withContext(Dispatchers.IO) {
+                        cardAliasDao.getAlias(cardId)
+                    }
+                    println("Card alias lookup result: ${cardAlias?.alias ?: "No alias found"}")
+
+                    println("Updating transaction state with ${transactions.size} transactions")
+                    transactionsState.value = transactions
+                    val latestBalance = transactions.firstOrNull()?.balance
+                    println("Latest balance: $latestBalance")
+
+                    latestBalance?.let {
+                        println("Updating card state with balance: $it and alias: ${cardAlias?.alias}")
+                        cardState.value = CardState.Balance(it, cardAlias?.alias)
+                    } ?: run {
+                        println("No balance found in transactions")
+                        cardState.value = CardState.Error("Balance not found. You moved the card too fast.")
+                    }
+                } catch (e: Exception) {
+                    println("Database error: ${e.message}")
+                    e.printStackTrace()
+                    cardState.value = CardState.Error("Database error: ${e.message}")
+                    transactionsState.value = emptyList()
+                }
             }
         } catch (e: Exception) {
+            println("Error reading card: ${e.message}")
             e.printStackTrace()
             cardState.value = CardState.Error(e.message ?: "Unknown error occurred")
             transactionsState.value = emptyList()
         }
+    }
+
+    private fun bytesToHexString(bytes: ByteArray): String {
+        val hexChars = CharArray(bytes.size * 2)
+        for (i in bytes.indices) {
+            val v = bytes[i].toInt() and 0xFF
+            hexChars[i * 2] = "0123456789ABCDEF"[(v ushr 4).toInt()]
+            hexChars[i * 2 + 1] = "0123456789ABCDEF"[(v and 0x0F).toInt()]
+        }
+        return String(hexChars)
     }
 }

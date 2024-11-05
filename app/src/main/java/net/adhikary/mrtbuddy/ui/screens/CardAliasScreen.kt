@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import net.adhikary.mrtbuddy.MrtBuddyApplication
@@ -15,11 +16,13 @@ import net.adhikary.mrtbuddy.viewmodel.CardAliasViewModelFactory
 import net.adhikary.mrtbuddy.model.CardAlias
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.platform.LocalLifecycleOwner
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardAliasScreen() {
-    val cardAliasDao = MrtBuddyApplication.instance.database.cardAliasDao()
+    val context = LocalContext.current
+    val cardAliasDao = (context.applicationContext as MrtBuddyApplication).database.cardAliasDao()
     val viewModel: CardAliasViewModel = viewModel(
         factory = CardAliasViewModelFactory(cardAliasDao)
     )

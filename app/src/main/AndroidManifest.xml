@@ -45,10 +45,15 @@
         </activity>
 
         <activity
-            android:name=".ui.screens.MonthlyReportsTestActivity"
-            android:exported="false"
-            android:label="Monthly Reports Test"
-            android:theme="@style/Theme.MRTBuddy" />
+            android:name=".ui.screens.TestDataActivity"
+            android:exported="true"
+            android:label="MRT Buddy Test"
+            android:theme="@style/Theme.MRTBuddy">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -12,6 +12,9 @@ interface CardAliasDao {
     @Query("SELECT * FROM card_aliases WHERE cardId = :cardId")
     suspend fun getAlias(cardId: String): CardAlias?
 
+    @Query("SELECT * FROM card_aliases WHERE cardId = :cardId")
+    fun getAliasFlow(cardId: String): Flow<CardAlias?>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAlias(cardAlias: CardAlias)
 
