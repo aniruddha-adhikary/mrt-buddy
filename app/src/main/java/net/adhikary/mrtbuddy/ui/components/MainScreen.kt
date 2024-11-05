@@ -204,9 +204,9 @@ fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Built with ❤️ by Ani",
+                    text = "Built with ❤️ by Ani and friends",
                     modifier = Modifier
-                        .clickable { uriHandler.openUri("https://linktr.ee/tuxboy") }
+                        .clickable { uriHandler.openUri("https://mrtbuddy.com/contributors.html") }
                         .padding(8.dp),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
