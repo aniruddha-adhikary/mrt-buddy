@@ -25,5 +25,5 @@ MRT Buddy is an unofficial community-driven Android app designed to check the ba
 ### Stay Updated
 Want to receive notifications when updates are available? Until approval on the Play Store, all updates will be announced on this WhatsApp channel!
 
-[![Join WhatsApp Channel](https://shields.io/badge/Join-WhatsApp%20Channel-green?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/KY8xK0qRm4t4l0q4qf4s)
+[![Join WhatsApp Channel](https://shields.io/badge/Join-WhatsApp%20Channel-green?style=for-the-badge&logo=whatsapp&logoColor=white)](https://whatsapp.com/channel/0029VaurMehLI8Yeb3STq42g)
 
