@@ -55,7 +55,7 @@ class TransactionParser(
         val fixedHeader = block.copyOfRange(0, 4)
         val fixedHeaderStr = byteParser.toHexString(fixedHeader)
 
-        val timestampValue = byteParser.extractInt16(block, 4)
+        val timestampValue = byteParser.extractInt24BigEndian(block, 4)
         val transactionTypeBytes = block.copyOfRange(6, 8)
         val transactionType = byteParser.toHexString(transactionTypeBytes)
 

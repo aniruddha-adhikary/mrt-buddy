@@ -92,6 +92,11 @@ fun TransactionItem(
                 text = if (type == TransactionType.Commute) "$fromStation → $toStation" else "Balance Update",
                 style = MaterialTheme.typography.bodyMedium
             )
+            Text(
+                text = date,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
         Column(
             horizontalAlignment = Alignment.End,
