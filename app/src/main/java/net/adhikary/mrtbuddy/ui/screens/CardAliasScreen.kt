@@ -1,233 +1,135 @@
 package net.adhikary.mrtbuddy.ui.screens
 
-import android.content.Intent
-import android.net.Uri
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import net.adhikary.mrtbuddy.model.CardAlias
+import net.adhikary.mrtbuddy.MrtBuddyApplication
 import net.adhikary.mrtbuddy.viewmodel.CardAliasViewModel
+import net.adhikary.mrtbuddy.viewmodel.CardAliasViewModelFactory
+import net.adhikary.mrtbuddy.model.CardAlias
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.foundation.clickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardAliasScreen(
-    viewModel: CardAliasViewModel = viewModel(),
-    onNavigateBack: () -> Unit = {}
-) {
-    var showAddDialog by remember { mutableStateOf(false) }
-    var selectedCard by remember { mutableStateOf<CardAlias?>(null) }
+fun CardAliasScreen() {
+    val cardAliasDao = MrtBuddyApplication.instance.database.cardAliasDao()
+    val viewModel: CardAliasViewModel = viewModel(
+        factory = CardAliasViewModelFactory(cardAliasDao)
+    )
 
-    val cards by viewModel.allCards.collectAsState(initial = emptyList())
+    var newCardId by remember { mutableStateOf("") }
+    var newAlias by remember { mutableStateOf("") }
+    val aliases by viewModel.allAliases.collectAsState(initial = emptyList())
 
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = { Text("Card Aliases") },
-                actions = {
-                    IconButton(onClick = { showAddDialog = true }) {
-                        Icon(Icons.Default.Add, "Add Card Alias")
-                    }
-                }
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
             )
         }
-    ) { padding ->
-        LazyColumn(
+    ) { paddingValues ->
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
+                .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            items(cards) { card ->
-                CardAliasItem(
-                    card = card,
-                    onEdit = { selectedCard = it },
-                    onDelete = { viewModel.deleteCard(it) }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
-
-        if (showAddDialog) {
-            AddEditCardDialog(
-                card = null,
-                onDismiss = { showAddDialog = false },
-                onSave = { serialNumber, alias, threshold ->
-                    viewModel.addCard(CardAlias(
-                        cardSerialNumber = serialNumber,
-                        alias = alias,
-                        lowBalanceThreshold = threshold,
-                        notificationsEnabled = threshold != null
-                    ))
-                    showAddDialog = false
-                }
+            // Add new alias section
+            OutlinedTextField(
+                value = newCardId,
+                onValueChange = { newCardId = it },
+                label = { Text("Card ID") },
+                modifier = Modifier.fillMaxWidth()
             )
-        }
 
-        selectedCard?.let { card ->
-            AddEditCardDialog(
-                card = card,
-                onDismiss = { selectedCard = null },
-                onSave = { _, alias, threshold ->
-                    viewModel.updateCard(card.copy(
-                        alias = alias,
-                        lowBalanceThreshold = threshold,
-                        notificationsEnabled = threshold != null
-                    ))
-                    selectedCard = null
-                }
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = newAlias,
+                onValueChange = { newAlias = it },
+                label = { Text("Alias") },
+                modifier = Modifier.fillMaxWidth()
             )
-        }
 
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = "Implemented by Irfan",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .clickable {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://irfanhasan.vercel.app/"))
-                    context.startActivity(intent)
-                },
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.primary
-        )
-    }
-}
+            Spacer(modifier = Modifier.height(16.dp))
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun CardAliasItem(
-    card: CardAlias,
-    onEdit: (CardAlias) -> Unit,
-    onDelete: (CardAlias) -> Unit
-) {
-    ElevatedCard(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = card.alias,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    text = card.cardSerialNumber,
-                    style = MaterialTheme.typography.bodySmall
-                )
-                card.lastBalance?.let { balance ->
-                    Text(
-                        text = "Balance: ৳%.2f".format(balance),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-            Row {
-                if (card.notificationsEnabled) {
-                    Icon(
-                        Icons.Default.Notifications,
-                        contentDescription = "Notifications enabled",
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                }
-                IconButton(onClick = { onEdit(card) }) {
-                    Icon(Icons.Default.Edit, "Edit")
-                }
-                IconButton(onClick = { onDelete(card) }) {
-                    Icon(Icons.Default.Delete, "Delete")
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun AddEditCardDialog(
-    card: CardAlias?,
-    onDismiss: () -> Unit,
-    onSave: (String, String, Double?) -> Unit
-) {
-    var serialNumber by remember { mutableStateOf(card?.cardSerialNumber ?: "") }
-    var alias by remember { mutableStateOf(card?.alias ?: "") }
-    var threshold by remember { mutableStateOf(card?.lowBalanceThreshold?.toString() ?: "") }
-    var showError by remember { mutableStateOf(false) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(if (card == null) "Add Card Alias" else "Edit Card Alias") },
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                if (card == null) {
-                    OutlinedTextField(
-                        value = serialNumber,
-                        onValueChange = { serialNumber = it },
-                        label = { Text("Card Serial Number") },
-                        isError = showError && serialNumber.isBlank(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-                OutlinedTextField(
-                    value = alias,
-                    onValueChange = { alias = it },
-                    label = { Text("Alias") },
-                    isError = showError && alias.isBlank(),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = threshold,
-                    onValueChange = { threshold = it },
-                    label = { Text("Low Balance Threshold (Optional)") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(
+            Button(
                 onClick = {
-                    if (alias.isBlank() || (card == null && serialNumber.isBlank())) {
-                        showError = true
-                        return@TextButton
+                    if (newCardId.isNotBlank() && newAlias.isNotBlank()) {
+                        viewModel.addAlias(newCardId, newAlias)
+                        newCardId = ""
+                        newAlias = ""
                     }
-                    onSave(
-                        serialNumber.takeIf { card == null } ?: card.cardSerialNumber,
-                        alias,
-                        threshold.toDoubleOrNull()
-                    )
-                }
+                },
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Save")
+                Text("Add Alias")
             }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // List of existing aliases
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
+                items(aliases) { alias ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Text(
+                                    text = alias.alias,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                                Text(
+                                    text = "Card ID: ${alias.cardId}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
+                                )
+                            }
+                            IconButton(onClick = { viewModel.deleteAlias(alias) }) {
+                                Text("×", style = MaterialTheme.typography.titleLarge)
+                            }
+                        }
+                    }
+                }
             }
+
+            // Attribution text
+            val uriHandler = LocalUriHandler.current
+            Text(
+                text = "Implemented by Irfan",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .clickable { uriHandler.openUri("https://irfanhasan.vercel.app/") }
+                    .padding(8.dp)
+            )
         }
-    )
+    }
 }

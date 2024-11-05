@@ -1,101 +1,162 @@
 package net.adhikary.mrtbuddy.ui.screens
 
-import android.annotation.SuppressLint
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import android.webkit.WebChromeClient
-import android.webkit.WebResourceRequest
-import androidx.compose.ui.viewinterop.AndroidView
-import android.webkit.JavascriptInterface
-import android.content.Context
+import androidx.compose.ui.unit.dp
+import net.adhikary.mrtbuddy.nfc.service.StationService
+import net.adhikary.mrtbuddy.model.FareMatrix
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.foundation.clickable
 
-class WebAppInterface(
-    private val context: Context,
-    private val onNavigateToCardReader: () -> Unit
-) {
-    @JavascriptInterface
-    fun onNavigate(page: String) {
-        if (page == "card-reader") {
-            onNavigateToCardReader()
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FareCalculatorScreen() {
+    var fromStation by remember { mutableStateOf("") }
+    var toStation by remember { mutableStateOf("") }
+    var regularFare by remember { mutableStateOf(0) }
+    var passFare by remember { mutableStateOf(0) }
+    var fromExpanded by remember { mutableStateOf(false) }
+    var toExpanded by remember { mutableStateOf(false) }
+
+    val stationService = StationService()
+    val stations = stationService.getAllStations()
+
+    fun updateFares(from: String, to: String) {
+        val fare = if (from.isEmpty() || to.isEmpty()) 0 else FareMatrix.getFare(from, to)
+        regularFare = fare
+        passFare = (fare * 0.9).toInt() // 10% discount
+    }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("Fare Calculator") },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp)
+                .padding(top = 56.dp)
+        ) {
+            // From Station Dropdown
+            ExposedDropdownMenuBox(
+                expanded = fromExpanded,
+                onExpandedChange = { fromExpanded = !fromExpanded }
+            ) {
+                OutlinedTextField(
+                    value = fromStation,
+                    onValueChange = { },
+                    readOnly = true,
+                    label = { Text("From Station") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = fromExpanded) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor()
+                )
+                ExposedDropdownMenu(
+                    expanded = fromExpanded,
+                    onDismissRequest = { fromExpanded = false }
+                ) {
+                    stations.forEach { station ->
+                        DropdownMenuItem(
+                            text = { Text(station) },
+                            onClick = {
+                                fromStation = station
+                                fromExpanded = false
+                                updateFares(fromStation, toStation)
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // To Station Dropdown
+            ExposedDropdownMenuBox(
+                expanded = toExpanded,
+                onExpandedChange = { toExpanded = !toExpanded }
+            ) {
+                OutlinedTextField(
+                    value = toStation,
+                    onValueChange = { },
+                    readOnly = true,
+                    label = { Text("To Station") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = toExpanded) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor()
+                )
+                ExposedDropdownMenu(
+                    expanded = toExpanded,
+                    onDismissRequest = { toExpanded = false }
+                ) {
+                    stations.forEach { station ->
+                        DropdownMenuItem(
+                            text = { Text(station) },
+                            onClick = {
+                                toStation = station
+                                toExpanded = false
+                                updateFares(fromStation, toStation)
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Fare Display
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "Regular Fare: ৳$regularFare",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "MRT/Rapid Pass Fare: ৳$passFare",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Attribution
+            val uriHandler = LocalUriHandler.current
+            Text(
+                text = "Implemented by Irfan",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .clickable { uriHandler.openUri("https://irfanhasan.vercel.app/") }
+                    .padding(8.dp)
+            )
         }
     }
 }
 
-@SuppressLint("SetJavaScriptEnabled")
-@Composable
-fun FareCalculatorScreen(onNavigateToCardReader: () -> Unit) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        AndroidView(
-            factory = { context ->
-                WebView(context).apply {
-                    settings.javaScriptEnabled = true
-                    settings.domStorageEnabled = true
-                    settings.allowFileAccess = true
-                    settings.allowContentAccess = true
-                    settings.databaseEnabled = true
-                    settings.javaScriptCanOpenWindowsAutomatically = true
 
-                    addJavascriptInterface(WebAppInterface(context, onNavigateToCardReader), "Android")
-
-                    webViewClient = object : WebViewClient() {
-                        override fun shouldOverrideUrlLoading(
-                            view: WebView?,
-                            request: WebResourceRequest?
-                        ): Boolean {
-                            android.util.Log.d("WebView", "Loading URL: ${request?.url}")
-                            return false
-                        }
-
-                        override fun onPageFinished(view: WebView?, url: String?) {
-                            super.onPageFinished(view, url)
-                            android.util.Log.d("WebView", "Page finished loading: $url")
-                            view?.evaluateJavascript(
-                                """
-                                console.log('WebView loaded successfully');
-                                console.log('Initializing calculator page...');
-                                showPage('calculator');
-                                """.trimIndent(),
-                                { result ->
-                                    android.util.Log.d("WebView", "JavaScript evaluation result: $result")
-                                }
-                            )
-                        }
-
-                        override fun onReceivedError(
-                            view: WebView?,
-                            request: WebResourceRequest?,
-                            error: android.webkit.WebResourceError?
-                        ) {
-                            super.onReceivedError(view, request, error)
-                            android.util.Log.e("WebView", """
-                                Error loading page:
-                                URL: ${request?.url}
-                                Error: ${error?.description}
-                                Error Code: ${error?.errorCode}
-                            """.trimIndent())
-                        }
-                    }
-
-                    webChromeClient = object : WebChromeClient() {
-                        override fun onConsoleMessage(message: android.webkit.ConsoleMessage): Boolean {
-                            android.util.Log.d("WebView Console", "Message: ${message.message()}\nSource: ${message.sourceId()}\nLine: ${message.lineNumber()}\nSeverity: ${message.messageLevel()}")
-                            return true
-                        }
-
-                        override fun onJsAlert(view: WebView?, url: String?, message: String?, result: android.webkit.JsResult?): Boolean {
-                            android.util.Log.d("WebView JS Alert", "Alert: $message\nURL: $url")
-                            return super.onJsAlert(view, url, message, result)
-                        }
-                    }
-
-                    loadUrl("file:///android_asset/web/index.html")
-                }
-            },
-            modifier = Modifier.fillMaxSize()
-        )
-    }
-}

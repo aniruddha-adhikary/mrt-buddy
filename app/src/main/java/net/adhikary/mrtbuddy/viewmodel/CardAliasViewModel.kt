@@ -1,45 +1,45 @@
 package net.adhikary.mrtbuddy.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import net.adhikary.mrtbuddy.data.AppDatabase
+import net.adhikary.mrtbuddy.data.CardAliasDao
 import net.adhikary.mrtbuddy.model.CardAlias
 
-class CardAliasViewModel(application: Application) : AndroidViewModel(application) {
-    private val database = AppDatabase.getDatabase(application)
-    private val cardAliasDao = database.cardAliasDao()
+class CardAliasViewModel(private val cardAliasDao: CardAliasDao) : ViewModel() {
+    val allAliases: Flow<List<CardAlias>> = cardAliasDao.getAllAliases()
 
-    val allCards: Flow<List<CardAlias>> = cardAliasDao.getAllAliases()
-    val lowBalanceCards: Flow<List<CardAlias>> = cardAliasDao.getLowBalanceCards()
-
-    fun addCard(card: CardAlias) {
+    fun addAlias(cardId: String, alias: String) {
         viewModelScope.launch {
-            cardAliasDao.insertOrUpdateAlias(card)
+            cardAliasDao.insertAlias(CardAlias(cardId, alias))
         }
     }
 
-    fun updateCard(card: CardAlias) {
+    suspend fun getAlias(cardId: String): CardAlias? {
+        return cardAliasDao.getAlias(cardId)
+    }
+
+    fun deleteAlias(cardAlias: CardAlias) {
         viewModelScope.launch {
-            cardAliasDao.insertOrUpdateAlias(card)
+            cardAliasDao.deleteAlias(cardAlias)
         }
     }
 
-    fun deleteCard(card: CardAlias) {
+    fun clearAllAliases() {
         viewModelScope.launch {
-            cardAliasDao.deleteAlias(card)
+            cardAliasDao.deleteAllAliases()
         }
     }
+}
 
-    suspend fun getCardBySerialNumber(serialNumber: String): CardAlias? {
-        return cardAliasDao.getAliasBySerialNumber(serialNumber)
-    }
-
-    fun updateCardBalance(serialNumber: String, balance: Double) {
-        viewModelScope.launch {
-            cardAliasDao.updateBalance(serialNumber, balance)
+class CardAliasViewModelFactory(private val cardAliasDao: CardAliasDao) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(CardAliasViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return CardAliasViewModel(cardAliasDao) as T
         }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

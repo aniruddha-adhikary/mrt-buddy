@@ -9,7 +9,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,7 +44,7 @@ import net.adhikary.mrtbuddy.model.TransactionWithAmount
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList(), onNavigateToCalculator: () -> Unit) {
+fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList(), modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current
     var showHistory by remember { mutableStateOf(false) }
     val hasTransactions = transactions.isNotEmpty()
@@ -204,19 +203,14 @@ fun MainScreen(cardState: CardState, transactions: List<Transaction> = emptyList
                     .padding(bottom = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = "Built with ❤️ by Ani",
-                        modifier = Modifier
-                            .clickable { uriHandler.openUri("https://linktr.ee/tuxboy") }
-                            .padding(8.dp),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
+                Text(
+                    text = "Built with ❤️ by Ani",
+                    modifier = Modifier
+                        .clickable { uriHandler.openUri("https://linktr.ee/tuxboy") }
+                        .padding(8.dp),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
         }
     }

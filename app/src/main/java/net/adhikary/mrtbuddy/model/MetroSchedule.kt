@@ -1,78 +1,36 @@
 package net.adhikary.mrtbuddy.model
 
-import java.time.DayOfWeek
-import java.time.LocalTime
-
-data class TimeSlot(
-    val startTime: LocalTime,
-    val endTime: LocalTime,
-    val frequency: Int // in minutes
+data class MetroSchedule(
+    val stationName: String,
+    val weekdaySchedule: List<String>,
+    val weekendSchedule: List<String>
 )
 
-data class DailySchedule(
-    val firstTrain: LocalTime,
-    val lastTrain: LocalTime,
-    val timeSlots: List<TimeSlot>,
-    val isRapidPassOnly: (LocalTime) -> Boolean
+data class MetroStation(
+    val name: String,
+    val latitude: Double,
+    val longitude: Double
 )
 
-object MetroSchedule {
-    private val weekdaySchedule = DailySchedule(
-        firstTrain = LocalTime.of(7, 10),
-        lastTrain = LocalTime.of(21, 0),
-        timeSlots = listOf(
-            TimeSlot(LocalTime.of(7, 10), LocalTime.of(7, 30), 10),
-            TimeSlot(LocalTime.of(7, 31), LocalTime.of(11, 36), 8),
-            TimeSlot(LocalTime.of(11, 37), LocalTime.of(14, 36), 10),
-            TimeSlot(LocalTime.of(14, 37), LocalTime.of(20, 36), 8),
-            TimeSlot(LocalTime.of(20, 37), LocalTime.of(21, 0), 10)
-        ),
-        isRapidPassOnly = { time ->
-            time <= LocalTime.of(7, 20) || time >= LocalTime.of(21, 13) ||
-            (time == LocalTime.of(7, 10) || time == LocalTime.of(7, 20))
-        }
+// List of all metro stations with their coordinates
+object MetroStations {
+    val stations = listOf(
+        MetroStation("Uttara North", 23.8759, 90.3995),
+        MetroStation("Uttara Center", 23.8687, 90.3989),
+        MetroStation("Uttara South", 23.8615, 90.3983),
+        MetroStation("Pallabi", 23.8543, 90.3977),
+        MetroStation("Mirpur-11", 23.8471, 90.3971),
+        MetroStation("Mirpur-10", 23.8399, 90.3965),
+        MetroStation("Kazipara", 23.8327, 90.3959),
+        MetroStation("Shewrapara", 23.8255, 90.3953),
+        MetroStation("Agargaon", 23.8183, 90.3947),
+        MetroStation("Bijoy Sarani", 23.8111, 90.3941),
+        MetroStation("Farmgate", 23.8039, 90.3935),
+        MetroStation("Karwan Bazar", 23.7967, 90.3929),
+        MetroStation("Shahbagh", 23.7895, 90.3923),
+        MetroStation("Dhaka University", 23.7823, 90.3917),
+        MetroStation("Secretariat", 23.7751, 90.3911),
+        MetroStation("Motijheel", 23.7679, 90.3905),
+        MetroStation("Kamalapur", 23.7331, 90.4264)
     )
-
-    private val saturdaySchedule = DailySchedule(
-        firstTrain = LocalTime.of(7, 10),
-        lastTrain = LocalTime.of(21, 0),
-        timeSlots = listOf(
-            TimeSlot(LocalTime.of(7, 10), LocalTime.of(10, 32), 12),
-            TimeSlot(LocalTime.of(10, 33), LocalTime.of(21, 0), 10)
-        ),
-        isRapidPassOnly = { time ->
-            time <= LocalTime.of(7, 20) || time >= LocalTime.of(21, 13) ||
-            (time == LocalTime.of(7, 10) || time == LocalTime.of(7, 20))
-        }
-    )
-
-    private val fridaySchedule = DailySchedule(
-        firstTrain = LocalTime.of(15, 30),
-        lastTrain = LocalTime.of(21, 0),
-        timeSlots = listOf(
-            TimeSlot(LocalTime.of(15, 30), LocalTime.of(21, 0), 10)
-        ),
-        isRapidPassOnly = { time ->
-            time >= LocalTime.of(21, 13)
-        }
-    )
-
-    fun getScheduleForDay(dayOfWeek: DayOfWeek): DailySchedule {
-        return when (dayOfWeek) {
-            DayOfWeek.FRIDAY -> fridaySchedule
-            DayOfWeek.SATURDAY -> saturdaySchedule
-            else -> weekdaySchedule
-        }
-    }
-
-    fun isTicketSalesAvailable(dayOfWeek: DayOfWeek, time: LocalTime): Boolean {
-        val startTime = if (dayOfWeek == DayOfWeek.FRIDAY) {
-            LocalTime.of(15, 30)
-        } else {
-            LocalTime.of(7, 20)
-        }
-        val endTime = LocalTime.of(20, 50)
-
-        return time in startTime..endTime
-    }
 }
