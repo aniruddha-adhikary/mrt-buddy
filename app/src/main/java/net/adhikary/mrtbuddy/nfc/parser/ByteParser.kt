@@ -15,4 +15,9 @@ class ByteParser {
 
     fun extractByte(bytes: ByteArray, offset: Int): Int =
         bytes[offset].toInt() and 0xFF
+
+    fun extractInt24BigEndian(bytes: ByteArray, offset: Int = 0): Int =
+        ((bytes[offset].toInt() and 0xFF) shl 16) or
+                ((bytes[offset + 1].toInt() and 0xFF) shl 8) or
+                (bytes[offset + 2].toInt() and 0xFF)
 }
