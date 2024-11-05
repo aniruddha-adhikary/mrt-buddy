@@ -14,7 +14,7 @@ class TimestampService {
         val month = (value shr 13) and 0x0F
         val year = (value shr 17) and 0x1F
 
-        val date = GregorianCalendar(year + 2000, month, day, hour, 0)
+        val date = GregorianCalendar(year + 2000, month-1, day, hour, 0)
         return FORMAT.format(date.time)
     }
 }
