@@ -43,10 +43,13 @@ import net.adhikary.mrtbuddy.model.TransactionWithAmount
 fun MainScreen(
     cardState: CardState,
     transactions: List<Transaction> = emptyList(),
-    onUrlClicked: (String) -> Unit
+    onUrlClicked: (String) -> Unit ,
+    onTapClick : ()-> Unit
 ) {
     var showHistory by remember { mutableStateOf(false) }
     val hasTransactions = transactions.isNotEmpty()
+
+
 
     val transactionsWithAmounts = remember(transactions) {
         transactions.mapIndexed { index, transaction ->
@@ -114,7 +117,10 @@ fun MainScreen(
                                 text = "Tap your card behind your phone to read balance",
                                 style = MaterialTheme.typography.h6,
                                 fontWeight = FontWeight.Normal,
-                                color = MaterialTheme.colors.onSurface
+                                color = MaterialTheme.colors.onSurface,
+                                modifier = Modifier.clickable {
+                                    onTapClick()
+                                }
                             )
                         }
                         is CardState.Error -> {
