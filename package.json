@@ -1,0 +1,32 @@
+{
+  "name": "mrt-buddy-landing",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "export": "next export"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@heroicons/react": "^2.1.5",
+    "@material-tailwind/react": "^2.1.10",
+    "@nextui-org/react": "^2.4.8",
+    "@react-aria/interactions": "^3.22.4",
+    "autoprefixer": "^10.4.20",
+    "cobe": "^0.6.3",
+    "framer-motion": "^11.11.11",
+    "lucide-react": "^0.454.0",
+    "next": "^15.0.2",
+    "phenomenon": "^1.6.0",
+    "postcss": "^8.4.47",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.14"
+  }
+}
