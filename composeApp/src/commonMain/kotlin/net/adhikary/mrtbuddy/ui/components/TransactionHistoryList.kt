@@ -31,7 +31,7 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
                 fontWeight = FontWeight.SemiBold
             )
             Divider(
-                modifier = Modifier.padding(vertical = 12.dp),
+                modifier = Modifier.padding(top = 12.dp, bottom = 16.dp),
                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
             )
 
@@ -57,7 +57,7 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
 
                     if (transactionWithAmount != transactions.last()) {
                         Divider(
-                            modifier = Modifier.padding(vertical = 8.dp),
+                            modifier = Modifier.padding(top = 12.dp),
                             color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
                         )
                     }
@@ -81,7 +81,7 @@ fun TransactionItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(top = 4.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Bottom
     ) {
