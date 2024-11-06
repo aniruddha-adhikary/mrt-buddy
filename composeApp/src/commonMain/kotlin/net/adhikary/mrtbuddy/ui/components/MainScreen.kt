@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import net.adhikary.mrtbuddy.getPlatform
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.model.TransactionWithAmount
@@ -43,12 +44,11 @@ import net.adhikary.mrtbuddy.model.TransactionWithAmount
 fun MainScreen(
     cardState: CardState,
     transactions: List<Transaction> = emptyList(),
-    onUrlClicked: (String) -> Unit ,
-    onTapClick : ()-> Unit
+    onUrlClicked: (String) -> Unit,
+    onTapClick: () -> Unit
 ) {
     var showHistory by remember { mutableStateOf(false) }
     val hasTransactions = transactions.isNotEmpty()
-
 
 
     val transactionsWithAmounts = remember(transactions) {
@@ -65,9 +65,11 @@ fun MainScreen(
         }
     }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .windowInsetsPadding(WindowInsets.safeDrawing)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -82,85 +84,102 @@ fun MainScreen(
                     .height(200.dp),
                 shape = RoundedCornerShape(16.dp),
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    when (cardState) {
-                        is CardState.Balance -> {
-                            Text(
-                                text = "Latest Balance",
-                                style = MaterialTheme.typography.h6,
-                                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "৳ ${cardState.amount}",
-                                style = MaterialTheme.typography.h4,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colors.onSurface
-                            )
+                Box(Modifier.fillMaxSize().padding(16.dp)) {
+
+                    if (getPlatform().name != "android") {
+                        Text("Rescan", modifier = Modifier.align(
+                            Alignment.TopEnd
+                        ).clickable {
+
+                            onTapClick()
+                        })
+
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        when (cardState) {
+                            is CardState.Balance -> {
+                                Text(
+                                    text = "Latest Balance",
+                                    style = MaterialTheme.typography.h6,
+                                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "৳ ${cardState.amount}",
+                                    style = MaterialTheme.typography.h4,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colors.onSurface
+                                )
+                            }
+
+                            CardState.Reading -> {
+                                Text(
+                                    text = "Reading card...",
+                                    style = MaterialTheme.typography.h6,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colors.onSurface
+                                )
+                            }
+
+                            CardState.WaitingForTap -> {
+                                Text(
+                                    text = "Tap your card behind your phone to read balance",
+                                    style = MaterialTheme.typography.h6,
+                                    fontWeight = FontWeight.Normal,
+                                    color = MaterialTheme.colors.onSurface,
+                                )
+                            }
+
+                            is CardState.Error -> {
+                                Text(
+                                    text = cardState.message,
+                                    style = MaterialTheme.typography.h6,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colors.error
+                                )
+                            }
+
+                            CardState.NoNfcSupport -> {
+                                Text(
+                                    text = "This device doesn't support NFC",
+                                    style = MaterialTheme.typography.h6,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colors.error
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "NFC is required to read your MRT Pass",
+                                    style = MaterialTheme.typography.h4,
+                                    color = MaterialTheme.colors.error.copy(alpha = 0.7f)
+                                )
+                            }
+
+                            CardState.NfcDisabled -> {
+                                Text(
+                                    text = "NFC is turned off",
+                                    style = MaterialTheme.typography.h6,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colors.error
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "Please enable NFC in your device settings",
+                                    style = MaterialTheme.typography.body2,
+                                    color = MaterialTheme.colors.error.copy(alpha = 0.7f)
+                                )
+                            }
                         }
-                        CardState.Reading -> {
-                            Text(
-                                text = "Reading card...",
-                                style = MaterialTheme.typography.h6,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colors.onSurface
-                            )
-                        }
-                        CardState.WaitingForTap -> {
-                            Text(
-                                text = "Tap your card behind your phone to read balance",
-                                style = MaterialTheme.typography.h6,
-                                fontWeight = FontWeight.Normal,
-                                color = MaterialTheme.colors.onSurface,
-                                modifier = Modifier.clickable {
-                                    onTapClick()
-                                }
-                            )
-                        }
-                        is CardState.Error -> {
-                            Text(
-                                text = cardState.message,
-                                style = MaterialTheme.typography.h6,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colors.error
-                            )
-                        }
-                        CardState.NoNfcSupport -> {
-                            Text(
-                                text = "This device doesn't support NFC",
-                                style = MaterialTheme.typography.h6,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colors.error
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "NFC is required to read your MRT Pass",
-                                style = MaterialTheme.typography.h4,
-                                color = MaterialTheme.colors.error.copy(alpha = 0.7f)
-                            )
-                        }
-                        CardState.NfcDisabled -> {
-                            Text(
-                                text = "NFC is turned off",
-                                style = MaterialTheme.typography.h6,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colors.error
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "Please enable NFC in your device settings",
-                                style = MaterialTheme.typography.body2,
-                                color = MaterialTheme.colors.error.copy(alpha = 0.7f)
-                            )
-                        }
+
+
                     }
                 }
+
             }
 
             OutlinedButton(
