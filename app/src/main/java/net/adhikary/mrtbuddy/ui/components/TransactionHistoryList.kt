@@ -31,7 +31,7 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
         )
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(horizontal = 16.dp),
         ) {
             Text(
                 text = "Recent Transactions",
