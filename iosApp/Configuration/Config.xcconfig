@@ -1,0 +1,4 @@
+TEAM_ID=E7X9726HT4
+BUNDLE_ID=net.adhikary.mrtbuddy.MRTBuddy
+APP_NAME=MRT Buddy
+CODE_SIGN_ENTITLEMENTS=iosApp/isoApp/isoApp.entitlements
