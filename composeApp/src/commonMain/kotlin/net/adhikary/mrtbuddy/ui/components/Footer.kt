@@ -6,17 +6,20 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun Footer(
-    onUrlClicked: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Text(
+    val uriHandler = LocalUriHandler.current
+    return Text(
         text = "Built with ❤️ by Ani and friends",
         modifier = modifier
-            .clickable { onUrlClicked("https://mrtbuddy.com/contributors.html") }
+            .clickable {
+                uriHandler.openUri("https://mrtbuddy.com/contributors.html")
+            }
             .padding(8.dp),
         style = MaterialTheme.typography.body2,
         color = MaterialTheme.colors.primary
