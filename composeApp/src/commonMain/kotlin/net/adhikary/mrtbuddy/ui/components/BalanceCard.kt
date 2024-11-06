@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import net.adhikary.mrtbuddy.getPlatform
 import net.adhikary.mrtbuddy.model.CardState
@@ -88,6 +89,7 @@ private fun WaitingContent() {
         style = MaterialTheme.typography.h6,
         fontWeight = FontWeight.Normal,
         color = MaterialTheme.colors.onSurface,
+        textAlign = TextAlign.Center
     )
 }
 
@@ -97,7 +99,8 @@ private fun ErrorContent(message: String) {
         text = message,
         style = MaterialTheme.typography.h6,
         fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colors.error
+        color = MaterialTheme.colors.error,
+        textAlign = TextAlign.Center
     )
 }
 
@@ -107,13 +110,15 @@ private fun NoNfcSupportContent() {
         text = "This device doesn't support NFC",
         style = MaterialTheme.typography.h6,
         fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colors.error
+        color = MaterialTheme.colors.error,
+        textAlign = TextAlign.Center
     )
     Spacer(modifier = Modifier.height(8.dp))
     Text(
         text = "NFC is required to read your MRT Pass",
         style = MaterialTheme.typography.h4,
-        color = MaterialTheme.colors.error.copy(alpha = 0.7f)
+        color = MaterialTheme.colors.error.copy(alpha = 0.7f),
+        textAlign = TextAlign.Center
     )
 }
 
@@ -123,12 +128,14 @@ private fun NfcDisabledContent() {
         text = "NFC is turned off",
         style = MaterialTheme.typography.h6,
         fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colors.error
+        color = MaterialTheme.colors.error,
+        textAlign = TextAlign.Center
     )
     Spacer(modifier = Modifier.height(8.dp))
     Text(
         text = "Please enable NFC in your device settings",
         style = MaterialTheme.typography.body2,
-        color = MaterialTheme.colors.error.copy(alpha = 0.7f)
+        color = MaterialTheme.colors.error.copy(alpha = 0.7f),
+        textAlign = TextAlign.Center
     )
 }
