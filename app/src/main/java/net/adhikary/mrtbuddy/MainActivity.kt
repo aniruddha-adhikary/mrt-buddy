@@ -15,10 +15,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.core.view.WindowCompat
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.nfc.NfcReader
@@ -64,10 +66,15 @@ class MainActivity : ComponentActivity() {
         // Register NFC state change receiver
         registerNfcStateReceiver()
 
+        //set statusbar icons for dark app bar color
+
+
         setContent {
             MRTBuddyTheme {
                 val currentCardState by remember { cardState }
                 val transactions by remember { transactionsState }
+
+                updateStatusBarIcons(isSystemInDarkTheme())
 
                 LaunchedEffect(Unit) {
                     intent?.let {
@@ -78,7 +85,15 @@ class MainActivity : ComponentActivity() {
                 MainScreen(currentCardState, transactions)
             }
         }
-    } private fun registerNfcStateReceiver() {
+    }
+
+    private fun updateStatusBarIcons(systemInDarkTheme: Boolean) {
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightStatusBars = systemInDarkTheme
+        }
+    }
+
+    private fun registerNfcStateReceiver() {
         registerReceiver(
             nfcStateReceiver,
             IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED)
