@@ -34,7 +34,7 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
             Text(
                 text = "Recent Transactions",
                 style = MaterialTheme.typography.h6,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Normal
             )
             Divider(modifier = Modifier.padding(vertical = 8.dp))
 
@@ -85,7 +85,11 @@ fun TransactionItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Bottom
     ) {
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center,
+        ) {
             Text(
                 text = if (type == TransactionType.Commute) "$fromStation → $toStation" else "Balance Update",
                 style = MaterialTheme.typography.body2,
@@ -100,7 +104,7 @@ fun TransactionItem(
         }
         Column(
             horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.Bottom,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier.padding(start = 8.dp)
         ) {
             Text(
@@ -109,11 +113,11 @@ fun TransactionItem(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colors.primary
             )
-            Text(
-                text = "Balance: $balance",
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
-            )
+//            Text(
+//                text = "Balance: $balance",
+//                style = MaterialTheme.typography.body2,
+//                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+//            )
         }
     }
 }
