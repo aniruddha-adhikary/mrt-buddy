@@ -16,7 +16,6 @@ import net.adhikary.mrtbuddy.model.TransactionWithAmount
 fun MainScreen(
     cardState: CardState,
     transactions: List<Transaction> = emptyList(),
-    onUrlClicked: (String) -> Unit,
     onTapClick: () -> Unit
 ) {
     val hasTransactions = transactions.isNotEmpty()
@@ -64,7 +63,7 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
             
-            Footer(onUrlClicked = onUrlClicked)
+            Footer()
         }
     }
 }
