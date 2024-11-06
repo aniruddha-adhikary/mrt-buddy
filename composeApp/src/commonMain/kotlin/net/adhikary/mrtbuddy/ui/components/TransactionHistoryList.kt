@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
@@ -80,21 +82,24 @@ fun TransactionItem(
             .fillMaxWidth()
             .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Bottom
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = if (type == TransactionType.Commute) "$fromStation → $toStation" else "Balance Update",
-                style = MaterialTheme.typography.body2
+                style = MaterialTheme.typography.body2,
+                color = MaterialTheme.colors.onSurface
             )
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = date,
                 style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onSurface
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
             )
         }
         Column(
             horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.Bottom,
             modifier = Modifier.padding(start = 8.dp)
         ) {
             Text(
@@ -106,7 +111,7 @@ fun TransactionItem(
             Text(
                 text = "Balance: $balance",
                 style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onSurface
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
             )
         }
     }
