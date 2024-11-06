@@ -64,8 +64,8 @@ class MainActivity : ComponentActivity() {
         // Register NFC state change receiver
         registerNfcStateReceiver()
 
-        //Handle NFC intent that launched the app when
-        //detected the MRT card
+        /*Handle NFC intent that launched the app when
+            detected the MRT card*/
         if(intent?.action == NfcAdapter.ACTION_TECH_DISCOVERED){
             handleNfcIntent(intent)
         }
@@ -156,7 +156,10 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
-        //save the new intent
+        /*save the new intent so that all the program code
+         runs using data intent data from this intent*/
+        //used when activity starts from out of the app
+        //when detected nfc
         setIntent(intent)
 
         // Only process NFC intent if NFC is enabled
