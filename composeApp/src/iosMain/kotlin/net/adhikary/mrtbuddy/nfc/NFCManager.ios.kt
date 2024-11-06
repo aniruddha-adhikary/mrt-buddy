@@ -112,6 +112,11 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
                 completionHandler = { statusFlag1, statusFlag2, dataList, error ->
                     if (error != nil) {
                         session.invalidateSessionWithErrorMessage("Card reading failed")
+
+                        scope.launch {
+                            _cardState.emit(CardState.Error("Card reading failed"))
+                        }
+
                         return@readWithoutEncryptionWithServiceCodeList
                     }
 
