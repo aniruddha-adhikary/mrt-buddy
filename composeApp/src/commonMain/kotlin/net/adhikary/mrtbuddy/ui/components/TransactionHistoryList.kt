@@ -1,20 +1,10 @@
 package net.adhikary.mrtbuddy.ui.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,22 +17,26 @@ import net.adhikary.mrtbuddy.model.TransactionWithAmount
 fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
     Card(
         modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+        shape = RoundedCornerShape(24.dp) // Increased corner radius
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(24.dp), // Increased padding
         ) {
             Text(
                 text = "Recent Transactions",
                 style = MaterialTheme.typography.h6,
-                fontWeight = FontWeight.Normal
+                fontWeight = FontWeight.SemiBold // Less bold for iOS
             )
-            Divider(modifier = Modifier.padding(vertical = 8.dp))
+            Divider(
+                modifier = Modifier.padding(vertical = 12.dp),
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f) // More subtle divider
+            )
 
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp) // Increased spacing
             ) {
                 items(transactions) { transactionWithAmount ->
                     val isCommute = transactionWithAmount.transaction.fixedHeader.startsWith(
@@ -59,8 +53,8 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
 
                     if (transactionWithAmount != transactions.last()) {
                         Divider(
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            color = MaterialTheme.colors.surface
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f) // More subtle divider
                         )
                     }
                 }

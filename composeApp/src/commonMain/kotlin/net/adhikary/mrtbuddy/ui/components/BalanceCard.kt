@@ -25,16 +25,18 @@ fun BalanceCard(
         modifier = modifier
             .fillMaxWidth()
             .height(200.dp),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(24.dp), // Increased corner radius
         backgroundColor = MaterialTheme.colors.surface
     ) {
-        Box(Modifier.fillMaxSize().padding(16.dp)) {
+        Box(Modifier.fillMaxSize().padding(24.dp)) { // Increased padding
             if (getPlatform().name != "android") {
                 Text(
                     "Rescan",
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .clickable { onTapClick() }
+                        .clickable { onTapClick() },
+                    style = MaterialTheme.typography.body1,
+                    color = MaterialTheme.colors.primary
                 )
             }
 
@@ -61,13 +63,14 @@ private fun BalanceContent(amount: Int) {
     Text(
         text = "Latest Balance",
         style = MaterialTheme.typography.h6,
-        color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+        color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
     )
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(12.dp))
     Text(
         text = "৳ $amount",
-        style = MaterialTheme.typography.h4,
-        fontWeight = FontWeight.Bold,
+        style = MaterialTheme.typography.h4.copy(
+            fontWeight = FontWeight.SemiBold // Less bold for iOS
+        ),
         color = MaterialTheme.colors.onSurface
     )
 }
