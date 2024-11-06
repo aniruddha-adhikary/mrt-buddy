@@ -37,19 +37,16 @@ fun App() {
     // not a best practice but ok for now
     scope.launch {
         nfcManager.transactions.collectLatest {
-            println(it.toString())
             Mtransactions.value = it
         }
     }
     scope.launch {
 
         nfcManager.cardState.collectLatest {
-            println(it.toString())
             McardState.value = it
         }
     }
 
-  //  println(cardState.toString())
     nfcManager.startScan()
     MaterialTheme {
         MainScreen(

@@ -82,11 +82,9 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
     }
 
     override fun tagReaderSessionDidBecomeActive(session: NFCTagReaderSession) {
-        println("NFC session became active")
     }
 
     override fun tagReaderSession(session: NFCTagReaderSession, didInvalidateWithError: NSError) {
-        println("NFC session error: ${didInvalidateWithError.description}")
         this.session = null
     }
 
@@ -113,7 +111,6 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
                 blockList = blockList.map { it.toNSData() },
                 completionHandler = { statusFlag1, statusFlag2, dataList, error ->
                     if (error != nil) {
-                        print(error)
                         session.invalidateSessionWithErrorMessage("Card reading failed")
                         return@readWithoutEncryptionWithServiceCodeList
                     }
