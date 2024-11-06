@@ -18,6 +18,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun App() {
+    var isRescanRequested = mutableStateOf(false)
     val scope = rememberCoroutineScope()
     val nfcManager = getNFCManager()
     // Collect states from NFCManager
@@ -28,6 +29,10 @@ fun App() {
     val McardState = remember { mutableStateOf<CardState>(CardState.WaitingForTap) }
     val Mtransactions = remember { mutableStateOf<List<Transaction>>(emptyList()) }
 
+    if(isRescanRequested.value){
+        nfcManager.startScan()
+        isRescanRequested.value = false
+    }
 
     // not a best practice but ok for now
     scope.launch {
@@ -55,6 +60,10 @@ fun App() {
             },
             onTapClick = {
              //  nfcManager.startScan()
+                if(getPlatform().name != "android"){
+                    isRescanRequested.value = true
+                }
+
             }
         )
     }
