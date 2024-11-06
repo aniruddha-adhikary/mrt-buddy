@@ -52,6 +52,6 @@ class TimestampService {
 
         val amPm = if (dateTime.hour < 12) "AM" else "PM"
 
-        return "$day $month $year | $hour12:00 - $hour12:59 $amPm"
+        return "$day $month $year, $hour12:00 $amPm"
     }
 }
