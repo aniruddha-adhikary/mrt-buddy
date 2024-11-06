@@ -15,7 +15,9 @@ import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.Transaction
@@ -26,11 +28,11 @@ actual class NFCManager actual constructor() {
     private val nfcReader = NfcReader()
     private val scope = CoroutineScope(SupervisorJob())
 
-    private val _cardState = MutableSharedFlow<CardState>()
-    private val _transactions = MutableSharedFlow<List<Transaction>>()
+    private val _cardState = MutableStateFlow<CardState>(CardState.WaitingForTap)
+    private val _transactions = MutableStateFlow<List<Transaction>>(emptyList())
 
-    actual val cardState: SharedFlow<CardState> = _cardState
-    actual val transactions: SharedFlow<List<Transaction>> = _transactions
+    actual val cardState: StateFlow<CardState> = _cardState
+    actual val transactions: StateFlow<List<Transaction>> = _transactions
 
     private var pendingIntent: PendingIntent? = null
     

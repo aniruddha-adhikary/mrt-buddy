@@ -5,9 +5,15 @@ import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.Transaction
@@ -45,23 +51,23 @@ fun NSData.toByteArray(): ByteArray {
 
 actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
     private var session: NFCTagReaderSession? = null
-    private val scope = MainScope()
+    private val scope = CoroutineScope(SupervisorJob())
 
     private val byteParser = ByteParser()
     private val timestampService = TimestampService()
     private val stationService = StationService()
     private val transactionParser = TransactionParser(byteParser, timestampService, stationService)
 
-    private val _cardState = MutableSharedFlow<CardState>()
-    actual val cardState: SharedFlow<CardState> = _cardState
+    private val _cardState = MutableStateFlow<CardState>(CardState.WaitingForTap)
+    actual val cardState: StateFlow<CardState> = _cardState
 
-    private val _transactions = MutableSharedFlow<List<Transaction>>()
-    actual val transactions: SharedFlow<List<Transaction>> = _transactions
+    private val _transactions = MutableStateFlow<List<Transaction>>(emptyList())
+    actual val transactions: StateFlow<List<Transaction>> = _transactions
 
     actual fun isEnabled(): Boolean = NFCTagReaderSession.readingAvailable()
     actual fun isSupported(): Boolean = NFCTagReaderSession.readingAvailable()
 
-    @Composable
+@Composable
     actual fun startScan() {
         if (NFCTagReaderSession.readingAvailable()) {
             session = NFCTagReaderSession(NFCPollingISO18092, this, null)
@@ -120,11 +126,13 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
 
                     } else {
                         scope.launch {
+                            //_cardState.tryEmit(CardState.Balance(234))
                             _transactions.emit(entries)
                             val latestBalance = entries.firstOrNull()?.balance
+
                             latestBalance?.let {
-                                _cardState.emit(CardState.Balance(it))
-                                session.alertMessage = "Balance: $latestBalance BDT"
+                               _cardState.emit(CardState.Balance(it))
+                               // session.alertMessage = "Balance: $latestBalance BDT"
                             } ?: run {
                                 _cardState.emit(CardState.Error("Balance not found. " +
                                         "You may have moved the card too fast."))
