@@ -50,8 +50,8 @@
 	<key>NFCReaderUsageDescription</key>
 	<string>We need access to NFC to read your transit card</string>
 	<key>com.apple.developer.nfc.readersession.felica.systemcodes</key>
-    <array>
+	<array>
 		<string>90E3</string>
-    </array>
+	</array>
 </dict>
 </plist>

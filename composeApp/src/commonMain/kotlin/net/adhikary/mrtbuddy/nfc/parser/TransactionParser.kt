@@ -46,7 +46,7 @@ class TransactionParser(
         return transactions
     }
 
-    private fun parseTransactionBlock(block: ByteArray): Transaction {
+    fun parseTransactionBlock(block: ByteArray): Transaction {
         if (block.size != 16) {
             throw IllegalArgumentException("Invalid block size")
         }
