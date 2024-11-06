@@ -6,14 +6,9 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.Transaction
@@ -125,7 +120,9 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
                         ?.map { transactionParser.parseTransactionBlock(it) }
 
                     if (entries == null) {
-
+                        scope.launch {
+                            _cardState.emit(CardState.Error("No transactions found on card"))
+                        }
                     } else {
                         scope.launch {
                             //_cardState.tryEmit(CardState.Balance(234))
