@@ -5,6 +5,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,7 +51,6 @@ fun MainScreen(
     var showHistory by remember { mutableStateOf(false) }
     val hasTransactions = transactions.isNotEmpty()
 
-
     val transactionsWithAmounts = remember(transactions) {
         transactions.mapIndexed { index, transaction ->
             val amount = if (index + 1 < transactions.size) {
@@ -68,6 +68,7 @@ fun MainScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colors.background)
             .windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
         Column(
@@ -83,6 +84,7 @@ fun MainScreen(
                     .fillMaxWidth()
                     .height(200.dp),
                 shape = RoundedCornerShape(16.dp),
+                backgroundColor = MaterialTheme.colors.surface
             ) {
                 Box(Modifier.fillMaxSize().padding(16.dp)) {
 
@@ -90,10 +92,8 @@ fun MainScreen(
                         Text("Rescan", modifier = Modifier.align(
                             Alignment.TopEnd
                         ).clickable {
-
                             onTapClick()
                         })
-
                     }
 
                     Column(
@@ -175,11 +175,8 @@ fun MainScreen(
                                 )
                             }
                         }
-
-
                     }
                 }
-
             }
 
             OutlinedButton(
