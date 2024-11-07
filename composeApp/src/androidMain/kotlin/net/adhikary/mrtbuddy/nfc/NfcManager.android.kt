@@ -6,17 +6,19 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
+import android.nfc.NfcManager
 import android.nfc.Tag
 import android.nfc.tech.NfcF
+import android.util.Log
+import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.model.CardState
@@ -35,7 +37,36 @@ actual class NFCManager actual constructor() {
     actual val transactions: StateFlow<List<Transaction>> = _transactions
 
     private var pendingIntent: PendingIntent? = null
-    
+
+    private fun checkNfcSupport(context: Context): Boolean {
+        // Check if device has NFC hardware support
+        // To ensure the device has NFC support so that the bug of NFC turned off showing up even when the device doesn't support NFC
+        if (!context.packageManager.hasSystemFeature(PackageManager.FEATURE_NFC)) {
+            scope.launch {
+                _cardState.emit(CardState.NoNfcSupport)
+                _cardState.emit(CardState.Error("Device does not support NFC"))
+
+            }
+            Log.d("NFCManager", "Device does not have NFC hardware")
+            return false
+        }
+
+        // Try to get NFC adapter
+        val nfcManager = context.getSystemService(Context.NFC_SERVICE) as NfcManager
+        nfcAdapter = nfcManager.defaultAdapter
+
+        if (nfcAdapter == null) {
+            scope.launch {
+                _cardState.emit(CardState.NoNfcSupport)
+//                _cardState.emit(CardState.Error("Device does not support NFC"))
+            }
+            Log.d("NFCManager", "NFC adapter is null")
+            return false
+        }
+
+        return true
+    }
+
     private val nfcStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
@@ -54,6 +85,7 @@ actual class NFCManager actual constructor() {
                         NfcAdapter.STATE_OFF -> {
                             scope.launch {
                                 _cardState.emit(CardState.NfcDisabled)
+//                                _cardState.emit(CardState.Error("No nfc card detected"))
                             }
                             disableForegroundDispatch(context as Activity)
                         }
@@ -78,9 +110,12 @@ actual class NFCManager actual constructor() {
         val context = LocalContext.current as Activity
 
         DisposableEffect(Unit) {
-            nfcAdapter = NfcAdapter.getDefaultAdapter(context)
+            // Check NFC support first
+            if (!checkNfcSupport(context)) {
+                return@DisposableEffect onDispose { }
+            }
 
-            // Register NFC state receiver
+            // Register NFC state receiver only if supported
             context.registerReceiver(
                 nfcStateReceiver,
                 IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED)
@@ -97,7 +132,7 @@ actual class NFCManager actual constructor() {
                 )
             }
 
-            // Enable reader mode
+            // Enable reader mode only if supported and enabled
             if (nfcAdapter?.isEnabled == true) {
                 nfcAdapter?.enableReaderMode(
                     context,
@@ -121,7 +156,7 @@ actual class NFCManager actual constructor() {
     actual fun stopScan() {
         nfcAdapter?.disableReaderMode(null)
     }
-    
+
     private fun setupForegroundDispatch(activity: Activity) {
         if (nfcAdapter?.isEnabled == true) {
             val intent = Intent(activity, activity.javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -140,8 +175,16 @@ actual class NFCManager actual constructor() {
     }
 
     fun onNewIntent(intent: Intent) {
-        // Only process if NFC is enabled
-        if (nfcAdapter?.isEnabled != true) {
+        // First check if device supports NFC
+        if (nfcAdapter == null) {
+            scope.launch {
+                _cardState.emit(CardState.NoNfcSupport)
+            }
+            return
+        }
+
+        // Then check if NFC is enabled
+        if (!nfcAdapter!!.isEnabled) {
             scope.launch {
                 _cardState.emit(CardState.NfcDisabled)
             }
@@ -176,6 +219,7 @@ actual class NFCManager actual constructor() {
                     _cardState.emit(CardState.Balance(it))
                 } ?: run {
                     _cardState.emit(CardState.Error("Balance not found. You moved the card too fast."))
+
                 }
             }
         } catch (e: Exception) {
@@ -189,5 +233,14 @@ actual class NFCManager actual constructor() {
 
 @Composable
 actual fun getNFCManager(): NFCManager {
+    val context = LocalContext.current
+    DisposableEffect(Unit) {
+        val nfcManager = NFCManager()
+        // Setup NFC manager with context if needed
+
+        onDispose {
+            // Cleanup NFC resources if needed
+        }
+    }
     return NFCManager()
 }
