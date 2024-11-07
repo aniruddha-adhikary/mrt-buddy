@@ -51,7 +51,7 @@ export const StickyNavbar = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="text-xl font-medium flex items-center">
-              <img src="/icon-512.png" className="h-10 w-10 md:h-8 md:w-8 lg:h-6 lg:w-6 mr-2" />
+              <img src="/icon-512.png" className="h-10 w-10 mr-2" />
               <span>MRT Buddy</span>
             </Link>
 
@@ -96,9 +96,8 @@ export const StickyNavbar = () => {
 
           {/* Mobile Menu */}
           <div
-            className={`fixed inset-0 z-40 bg-white transform transition-all duration-300 ease-in-out lg:hidden ${
-              isNavOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
-            }`}
+            className={`fixed inset-0 z-40 bg-white transform transition-all duration-300 ease-in-out lg:hidden ${isNavOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
+              }`}
             style={{ top: '64px', height: 'calc(100vh - 64px)' }}
           >
             <nav className="px-2 pt-2 pb-3 space-y-1">
