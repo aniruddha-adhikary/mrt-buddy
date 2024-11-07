@@ -36,7 +36,7 @@ jobs:
 
       - name: Decode Keystore
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > app/keystore.jks
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > composeApp/keystore.jks
 
       - name: Build Release apk
         env:
@@ -58,15 +58,15 @@ jobs:
         with:
           name: release-artifacts
           path: |
-            app/build/outputs/apk/release/
-            app/build/outputs/bundle/release/
+            composeApp/build/outputs/apk/release/
+            composeApp/build/outputs/bundle/release/
             
 
-      - name: Extract version from app/build.gradle.kts
+      - name: Extract version from composeApp/build.gradle.kts
         id: extract_version
         run: |
-          version=$(grep 'versionName' app/build.gradle.kts | cut -d '"' -f 2)
-          echo "VERSION=$version" >> $GITHUB_ENV
+          version=$(grep 'versionName' composeApp/build.gradle.kts | cut -d '"' -f 2)
+          echo "VERSION=v$version" >> $GITHUB_ENV
 
       - name: Check if Tag Exists
         id: check_tag
@@ -101,7 +101,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: app/build/outputs/apk/release/app-release.apk
+          asset_path: composeApp/build/outputs/apk/release/app-release.apk
           asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
 
@@ -111,6 +111,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: app/build/outputs/bundle/release/app-release.aab
+          asset_path: composeApp/build/outputs/bundle/release/app-release.aab
           asset_name: app-release.aab
           asset_content_type: application/octet-stream
