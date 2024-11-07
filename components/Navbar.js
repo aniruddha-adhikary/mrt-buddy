@@ -1,101 +1,133 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Script from "next/script";
+import { useRouter } from 'next/router';
 
 export function StickyNavbar() {
+  const [isNavOpen, setIsNavOpen] = useState(false);
+  const router = useRouter();
+
+  const toggleNav = () => {
+    setIsNavOpen(prevState => !prevState);
+  };
+
+  // Close menu when route changes
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setIsNavOpen(false);
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router]);
+
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    if (isNavOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isNavOpen]);
+
   return (
-    <div className="max-h-[768px] w-full">
-      <header className="sticky top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4 bg-white border-b border-gray-100">
-        <nav className="flex items-center justify-between text-blue-gray-900">
-          <Link href="/" className="mr-4 cursor-pointer py-1.5 font-medium">
-            MRT Buddy
-          </Link>
-          <div className="flex items-center gap-4">
-            <div className="mr-4 hidden lg:block">
-              <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-                <li className="p-1 font-normal">
-                  <Link href="/" className="flex items-center text-gray-900 hover:text-gray-600">
-                    Home
-                  </Link>
-                </li>
-                <li className="p-1 font-normal">
-                  <Link href="/contributors" className="flex items-center text-gray-900 hover:text-gray-600">
-                    Contributors
-                  </Link>
-                </li>
-                <li className="p-1 font-normal">
-                  <Link href="/privacy-policy" className="flex items-center text-gray-900 hover:text-gray-600">
-                    Privacy Policy
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <Link
-              href="/#download"
-              className="hidden lg:inline-block text-gray-900 hover:text-gray-600"
-            >
-              Download
+    <div className="relative w-full">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <Link href="/" className="text-xl font-medium">
+              MRT Buddy
             </Link>
+
+            {/* Desktop Menu */}
+            <div className="hidden lg:flex items-center space-x-8">
+              <Link href="/" className="text-gray-900 hover:text-gray-600">
+                Home
+              </Link>
+              <Link href="/contributors" className="text-gray-900 hover:text-gray-600">
+                Contributors
+              </Link>
+              <Link href="/privacy-policy" className="text-gray-900 hover:text-gray-600">
+                Privacy Policy
+              </Link>
+              <Link href="/#download" className="text-gray-900 hover:text-gray-600">
+                Download
+              </Link>
+            </div>
+
+            {/* Mobile Menu Button */}
             <button
-              id="mobile-nav-button"
-              className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
+              onClick={toggleNav}
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500 lg:hidden"
+              aria-expanded={isNavOpen}
             >
+              <span className="sr-only">Open main menu</span>
               <svg
-                xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
                 fill="none"
+                viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth={2}
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M4 6h16M4 12h16M4 18h16"
+                  strokeWidth="2"
+                  d={isNavOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
                 />
               </svg>
             </button>
           </div>
-        </nav>
-        <div id="mobile-nav" className="hidden">
-          <nav className="block lg:hidden">
-            <ul className="mt-2 mb-4 flex flex-col gap-2">
-              <li className="p-1 font-normal">
-                <Link href="/" className="flex items-center text-gray-900 hover:text-gray-600">
-                  Home
-                </Link>
-              </li>
-              <li className="p-1 font-normal">
-                <Link href="/contributors" className="flex items-center text-gray-900 hover:text-gray-600">
-                  Contributors
-                </Link>
-              </li>
-              <li className="p-1 font-normal">
-                <Link href="/privacy-policy" className="flex items-center text-gray-900 hover:text-gray-600">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li className="p-1 font-normal">
-                <Link href="/#download" className="flex items-center text-gray-900 hover:text-gray-600">
-                  Download
-                </Link>
-              </li>
-            </ul>
-          </nav>
+
+          {/* Mobile Menu */}
+          <div
+            className={`fixed inset-0 z-40 bg-white transform transition-all duration-300 ease-in-out lg:hidden ${
+              isNavOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
+            }`}
+            style={{ top: '64px', height: 'calc(100vh - 64px)' }}
+          >
+            <nav className="px-2 pt-2 pb-3 space-y-1">
+              <Link
+                href="/"
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-100"
+                onClick={toggleNav}
+              >
+                Home
+              </Link>
+              <Link
+                href="/contributors"
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-100"
+                onClick={toggleNav}
+              >
+                Contributors
+              </Link>
+              <Link
+                href="/privacy-policy"
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-100"
+                onClick={toggleNav}
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="/#download"
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-100"
+                onClick={toggleNav}
+              >
+                Download
+              </Link>
+            </nav>
+          </div>
         </div>
       </header>
-      <Script id="nav-script">
-        {`
-          document.getElementById('mobile-nav-button').addEventListener('click', function() {
-            const mobileNav = document.getElementById('mobile-nav');
-            const isHidden = mobileNav.classList.contains('hidden');
-            if (isHidden) {
-              mobileNav.classList.remove('hidden');
-            } else {
-              mobileNav.classList.add('hidden');
-            }
-          });
-        `}
-      </Script>
+      <div className="h-16" /> {/* Spacer for fixed header */}
     </div>
   );
 }

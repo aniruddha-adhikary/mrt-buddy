@@ -5,4 +5,7 @@ module.exports = {
   images: {
     unoptimized: true,
   },
+  basePath: process.env.GITHUB_ACTIONS ? '/mrt-buddy-web' : '',
+  assetPrefix: process.env.GITHUB_ACTIONS ? '/mrt-buddy-web/' : '',
+  trailingSlash: true,
 }
