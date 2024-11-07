@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 import React, { useState } from 'react';
 import { StickyNavbar } from '../components/Navbar';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, Apple, ChevronDown } from 'lucide-react';
+=======
+import React from 'react';
+import { StickyNavbar } from '../components/Navbar';
+import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Download, Apple } from 'lucide-react';
+>>>>>>> upstream/gh-pages-new
 import dynamic from 'next/dynamic';
 
 // Import client-side components
@@ -150,7 +158,11 @@ const HomeComponent = () => {
   const [currentDevice, setCurrentDevice] = React.useState(0);
   const [showConfetti, setShowConfetti] = React.useState(false);
   const [isAnimating, setIsAnimating] = React.useState(false);
+<<<<<<< HEAD
   const [expandedFaqs, setExpandedFaqs] = React.useState(Array(5).fill(false));
+=======
+
+>>>>>>> upstream/gh-pages-new
   const handleDownloadClick = () => {
     if (!isAnimating) {
       setShowConfetti(true);
@@ -163,9 +175,14 @@ const HomeComponent = () => {
   };
 
   const devices = [
+<<<<<<< HEAD
     '/image1.png',
     '/image2.png',
     '/image3.png'
+=======
+    '/1.png',
+    '/2.jpg'
+>>>>>>> upstream/gh-pages-new
   ];
 
   const features = [
@@ -231,6 +248,7 @@ const HomeComponent = () => {
           </div>
         </div>
       </section>
+<<<<<<< HEAD
       <section className="py-4 sm:py-8 md:py-12 overflow-hidden">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
@@ -240,6 +258,18 @@ const HomeComponent = () => {
                   <Iphone15Pro
                     width="100%"
                     height="auto"
+=======
+
+      <section className="py-4 sm:py-8 md:py-12 overflow-hidden">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-6 md:gap-8">
+            {devices.map((device, index) => (
+              <div key={index} className="w-full px-4 sm:px-0">
+                <div className="relative max-w-[280px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[652px] mx-auto">
+                  <Iphone15Pro
+                    width="100%"
+                    height="652"
+>>>>>>> upstream/gh-pages-new
                     src={device}
                     className="w-full transform-gpu hover:scale-102 transition-transform duration-300 ease-in-out"
                     style={{
@@ -278,6 +308,7 @@ const HomeComponent = () => {
         </div>
       </section>
 
+<<<<<<< HEAD
       <section className="py-16 sm:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
@@ -344,6 +375,8 @@ const HomeComponent = () => {
           </div>
         </div>
       </section>
+=======
+>>>>>>> upstream/gh-pages-new
       <section id="download" className="py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
           <div className="flex flex-col sm:flex-row justify-center gap-4">

@@ -5,6 +5,7 @@ on:
     branches:
       - main
 
+<<<<<<< HEAD
 permissions:
   contents: write
   pages: write
@@ -18,6 +19,11 @@ jobs:
       contents: read
       pages: write
       id-token: write
+=======
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+>>>>>>> upstream/gh-pages-new
 
     steps:
       - uses: actions/checkout@v3
@@ -27,6 +33,7 @@ jobs:
         with:
           node-version: '18'
 
+<<<<<<< HEAD
       - name: Setup Pages
         uses: actions/configure-pages@v3
         with:
@@ -48,10 +55,16 @@ jobs:
             trailingSlash: true
           }" > next.config.js
 
+=======
+      - name: Install dependencies
+        run: npm install
+
+>>>>>>> upstream/gh-pages-new
       - name: Build
         run: npm run build
 
       - name: Add .nojekyll file
+<<<<<<< HEAD
         run: touch out/.nojekyll
 
       - name: Upload artifact
@@ -75,3 +88,12 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+=======
+        run: touch ./out/.nojekyll
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./out
+>>>>>>> upstream/gh-pages-new

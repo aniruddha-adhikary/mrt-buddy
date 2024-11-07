@@ -22,11 +22,13 @@
 
     <div class="max-w-4xl mx-auto px-4 py-8">
         <header class="text-center mb-12">
-            <img src="assets/play_store_512.png" alt="MRT Buddy Logo" class="w-24 h-24 mx-auto mb-4 rounded-lg">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">
-                <span data-lang="en">MRT Buddy</span>
-                <span data-lang="bn" class="hidden">এমআরটি বাডি</span>
-            </h1>
+            <a href="index.html">
+                <img src="assets/play_store_512.png" alt="MRT Buddy Logo" class="w-24 h-24 mx-auto mb-4 rounded-lg">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                    <span data-lang="en">MRT Buddy</span>
+                    <span data-lang="bn" class="hidden">এমআরটি বাডি</span>
+                </h1>
+            </a>
             <p class="text-xl text-gray-600">
                 <span data-lang="en">Check your Dhaka Metro Rail Pass balance and transaction history instantly</span>
                 <span data-lang="bn" class="hidden">আপনার ঢাকা মেট্রো রেল পাসের ব্যালেন্স এবং লেনদেনের তথ্য তাৎক্ষণিকভাবে দেখুন</span>
@@ -53,7 +55,11 @@
                 </a>
             </div>
             <br><br>
-            <img src="assets/screenshot.jpg" alt="MRT Buddy Logo" class="mx-auto mb-4 rounded-lg">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <img src="assets/image1.png" alt="MRT Buddy Screenshot 1" class="w-full rounded-lg shadow-md">
+                <img src="assets/image2.png" alt="MRT Buddy Screenshot 2" class="w-full rounded-lg shadow-md">
+                <img src="assets/image3.png" alt="MRT Buddy Screenshot 3" class="w-full rounded-lg shadow-md">
+            </div>
         </header>
 
         <main>
@@ -155,6 +161,154 @@
                         <span data-lang="bn" class="hidden">তাৎক্ষণিকভাবে ব্যালেন্স এবং লেনদেনের তথ্য দেখুন</span>
                     </li>
                 </ol>
+            </section>
+            <section class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                    <span data-lang="en">Frequently Asked Questions</span>
+                    <span data-lang="bn" class="hidden">সচরাচর জিজ্ঞাসা</span>
+                </h2>
+                
+                <div class="space-y-4">
+                    <!-- FAQ Item 1 -->
+                    <div class="border border-gray-200 rounded-lg">
+                        <button class="w-full px-6 py-4 text-left bg-gray-50 hover:bg-gray-100 transition-colors rounded-lg focus:outline-none">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-800">
+                                    <span data-lang="en">What exactly does MRT Buddy do?</span>
+                                    <span data-lang="bn" class="hidden">এমআরটি বাডি কী কাজ করে?</span>
+                                </h3>
+                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </button>
+                        <div class="px-6 py-4 bg-white rounded-b-lg">
+                            <p class="text-gray-700">
+                                <span data-lang="en">
+                                    MRT Buddy uses your phone's NFC capability to scan your Dhaka MRT Pass or RapidPass, instantly displaying your current balance and last 10 transactions. It's like having a mobile balance checker in your pocket!
+                                </span>
+                                <span data-lang="bn" class="hidden">
+                                    এমআরটি বাডি আপনার ফোনের এনএফসি ব্যবহার করে আপনার ঢাকা এমআরটি পাস বা র‍্যাপিড পাস স্ক্যান করে, তাৎক্ষণিকভাবে আপনার বর্তমান ব্যালেন্স এবং শেষ ১০টি লেনদেন দেখায়। এটি আপনার পকেটে একটি মোবাইল ব্যালেন্স চেকারের মতো!
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+            
+                    <!-- FAQ Item 2 -->
+                    <div class="border border-gray-200 rounded-lg">
+                        <button class="w-full px-6 py-4 text-left bg-gray-50 hover:bg-gray-100 transition-colors rounded-lg focus:outline-none">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-800">
+                                    <span data-lang="en">Is my card data secure?</span>
+                                    <span data-lang="bn" class="hidden">আমার কার্ডের তথ্য কি নিরাপদ?</span>
+                                </h3>
+                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </button>
+                        <div class="px-6 py-4 bg-white rounded-b-lg">
+                            <p class="text-gray-700">
+                                <span data-lang="en">
+                                    Absolutely! MRT Buddy only reads data directly from your card and has no internet permissions. Your data stays completely private and is never transmitted anywhere. The app simply displays what's stored on your card.
+                                </span>
+                                <span data-lang="bn" class="hidden">
+                                    নিশ্চয়ই! এমআরটি বাডি শুধুমাত্র আপনার কার্ড থেকে সরাসরি তথ্য পড়ে এবং এর কোনো ইন্টারনেট অনুমতি নেই। আপনার তথ্য সম্পূর্ণ গোপনীয় থাকে এবং কখনোই কোথাও প্রেরণ করা হয় না। অ্যাপটি কেবল আপনার কার্ডে সংরক্ষিত তথ্য প্রদর্শন করে।
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+            
+                    <!-- FAQ Item 3 -->
+                    <div class="border border-gray-200 rounded-lg">
+                        <button class="w-full px-6 py-4 text-left bg-gray-50 hover:bg-gray-100 transition-colors rounded-lg focus:outline-none">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-800">
+                                    <span data-lang="en">Can the app modify my card balance?</span>
+                                    <span data-lang="bn" class="hidden">অ্যাপটি কি আমার কার্ডের ব্যালেন্স পরিবর্তন করতে পারে?</span>
+                                </h3>
+                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </button>
+                        <div class="px-6 py-4 bg-white rounded-b-lg">
+                            <p class="text-gray-700">
+                                <span data-lang="en">
+                                    No, it's technically impossible. The MRT system uses sophisticated Sony FeliCa technology, the same secure system used in Japanese transit. The card itself is a secure computer chip that requires special encryption keys to modify data. Only DMTCL possesses these keys, ensuring the system's security.
+                                </span>
+                                <span data-lang="bn" class="hidden">
+                                    না, এটা কারিগরিভাবে অসম্ভব। এমআরটি সিস্টেম উন্নত সনি ফেলিকা প্রযুক্তি ব্যবহার করে, যা জাপানি পরিবহন ব্যবস্থায় ব্যবহৃত একই নিরাপদ সিস্টেম। কার্ডটি নিজেই একটি নিরাপদ কম্পিউটার চিপ যা তথ্য পরিবর্তন করতে বিশেষ এনক্রিপশন কী প্রয়োজন। শুধুমাত্র ডিএমটিসিএল-এর কাছে এই কী আছে, যা সিস্টেমের নিরাপত্তা নিশ্চিত করে।
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+            
+                    <!-- FAQ Item 4 -->
+                    <div class="border border-gray-200 rounded-lg">
+                        <button class="w-full px-6 py-4 text-left bg-gray-50 hover:bg-gray-100 transition-colors rounded-lg focus:outline-none">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-800">
+                                    <span data-lang="en">Why isn't the app on Play Store yet?</span>
+                                    <span data-lang="bn" class="hidden">অ্যাপটি এখনও প্লে স্টোরে কেন নেই?</span>
+                                </h3>
+                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </button>
+                        <div class="px-6 py-4 bg-white rounded-b-lg">
+                            <p class="text-gray-700">
+                                <span data-lang="en">
+                                    The app is currently under review by Google Play Store. We're working to make it available there soon. Meanwhile, you can safely download it from our official GitHub page and stay updated through our WhatsApp channel.
+                                </span>
+                                <span data-lang="bn" class="hidden">
+                                    অ্যাপটি বর্তমানে গুগল প্লে স্টোরের পর্যালোচনাধীন। আমরা শীঘ্রই এটি সেখানে আপলোড করার চেষ্টা করছি। ইতিমধ্যে, আপনি আমাদের অফিসিয়াল গিটহাব পেজ থেকে নিরাপদে এটি ডাউনলোড করতে পারেন এবং আমাদের হোয়াটসঅ্যাপ চ্যানেলের মাধ্যমে আপডেট পেতে পারেন।
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+            
+                    <!-- FAQ Item 5 -->
+                    <div class="border border-gray-200 rounded-lg">
+                        <button class="w-full px-6 py-4 text-left bg-gray-50 hover:bg-gray-100 transition-colors rounded-lg focus:outline-none">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-800">
+                                    <span data-lang="en">Is an iOS version available?</span>
+                                    <span data-lang="bn" class="hidden">আইওএস ভার্সন কি এসেছে?</span>
+                                </h3>
+                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </button>
+                        <div class="px-6 py-4 bg-white rounded-b-lg">
+                            <p class="text-gray-700">
+                                <span data-lang="en">
+                                    An iOS version is currently under review by Apple. We'll announce its availability through our WhatsApp channel once it's approved.
+                                </span>
+                                <span data-lang="bn" class="hidden">
+                                    একটি আইওএস ভার্সন বর্তমানে অ্যাপলের পর্যালোচনাধীন। এটি অনুমোদিত হলে আমরা আমাদের হোয়াটসঅ্যাপ চ্যানেলের মাধ্যমে এর আপডেট ঘোষণা করব।
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            
+                <script>
+                    document.querySelectorAll('button').forEach(button => {
+                        button.addEventListener('click', () => {
+                            const content = button.nextElementSibling;
+                            const arrow = button.querySelector('svg');
+                            
+                            // Toggle content visibility
+                            content.classList.toggle('hidden');
+                            
+                            // Rotate arrow
+                            arrow.style.transform = content.classList.contains('hidden') ? '' : 'rotate(180deg)';
+                        });
+                    });
+                </script>
             </section>
         </main>
 

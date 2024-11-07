@@ -2,14 +2,21 @@
   "name": "mrt-buddy-landing",
   "version": "1.0.0",
   "main": "index.js",
+<<<<<<< HEAD
   "homepage": "https://mihf05.github.io/mrt-buddy-web",
+=======
+>>>>>>> upstream/gh-pages-new
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "next dev",
     "build": "next build",
+<<<<<<< HEAD
     "start": "next start",
     "export": "next export",
     "deploy": "gh-pages -d out"
+=======
+    "start": "next start"
+>>>>>>> upstream/gh-pages-new
   },
   "keywords": [],
   "author": "",

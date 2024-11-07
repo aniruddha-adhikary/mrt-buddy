@@ -10,8 +10,14 @@ export default function PrivacyPolicy() {
       <main className="container mx-auto px-4 pt-24 pb-16">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-bold mb-8">Privacy Policy</h1>
+<<<<<<< HEAD
           <p className="text-sm text-gray-600 mb-4">Last updated: 4th November, 2024</p>
 
+=======
+          
+          <p className="text-sm text-gray-600 mb-4">Last updated: 4th November, 2024</p>
+          
+>>>>>>> upstream/gh-pages-new
           <section className="space-y-8">
             <div>
               <h2 className="text-2xl font-semibold mb-4">1. Introduction</h2>
