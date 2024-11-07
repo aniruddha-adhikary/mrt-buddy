@@ -164,7 +164,7 @@ const HomeComponent = () => {
 
   const devices = [
     '/1.png',
-    '/2.jpg'
+    '/1.png'
   ];
 
   const features = [
@@ -231,22 +231,17 @@ const HomeComponent = () => {
         </div>
       </section>
 
-      <section className="py-4 sm:py-8 md:py-12 overflow-hidden">
+      <section className="py-4 sm:py-8 overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
-          <div className="flex flex-col md:flex-row justify-center items-center gap-6 md:gap-8">
+          <div className="flex justify-center gap-12">
             {devices.map((device, index) => (
-              <div key={index} className="w-full px-4 sm:px-0">
-                <div className="relative max-w-[280px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[652px] mx-auto">
+              <div key={index} className="w-[652px]">
+                <div className="relative">
                   <Iphone15Pro
-                    width="100%"
-                    height="652"
+                    width={652}
+                    height={408}
                     src={device}
-                    className="w-full transform-gpu hover:scale-102 transition-transform duration-300 ease-in-out"
-                    style={{
-                      maxWidth: '100%',
-                      height: 'auto',
-                      aspectRatio: '408/652'
-                    }}
+                    className="w-full h-auto"
                   />
                 </div>
               </div>
