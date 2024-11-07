@@ -5,9 +5,19 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  deployments: write
+
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
 
     steps:
       - uses: actions/checkout@v3
@@ -17,17 +27,51 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+        with:
+          static_site_generator: next
+
       - name: Install dependencies
         run: npm install
+
+      - name: Update next.config.js
+        run: |
+          echo "module.exports = {
+            reactStrictMode: true,
+            output: 'export',
+            images: {
+              unoptimized: true,
+            },
+            basePath: '/mrt-buddy-web',
+            assetPrefix: '/mrt-buddy-web/',
+            trailingSlash: true
+          }" > next.config.js
 
       - name: Build
         run: npm run build
 
       - name: Add .nojekyll file
-        run: touch ./out/.nojekyll
+        run: touch out/.nojekyll
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./out
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+      deployments: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
