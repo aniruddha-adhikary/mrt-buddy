@@ -47,6 +47,7 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutine)
             implementation(libs.androidx.room.runtime)
+            implementation(libs.sqlite.bundled)
         }
     }
 }
