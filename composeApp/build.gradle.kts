@@ -46,6 +46,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutine)
+            implementation(libs.androidx.room.runtime)
         }
     }
 }
