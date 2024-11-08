@@ -2,16 +2,24 @@ package net.adhikary.mrtbuddy.database
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import kotlinx.cinterop.ExperimentalForeignApi
+import platform.Foundation.NSHomeDirectory
+import platform.Foundation.NSFileManager
+import platform.Foundation.NSDocumentDirectory
+import platform.Foundation.NSUserDomainMask
 
-
-fun getDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
+fun getDatabase(): AppDatabase {
     val dbFilePath = documentDirectory() + "/mrt_buddy.db"
-    return Room.databaseBuilder<AppDatabase>(
+    val builder =  Room.databaseBuilder<AppDatabase>(
         name = dbFilePath,
     )
+    return  builder.setDriver(BundledSQLiteDriver())
+        .build()
 }
 
 
+@OptIn(ExperimentalForeignApi::class)
 private fun documentDirectory(): String {
     val documentDirectory = NSFileManager.defaultManager.URLForDirectory(
         directory = NSDocumentDirectory,

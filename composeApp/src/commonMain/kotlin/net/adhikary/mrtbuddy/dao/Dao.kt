@@ -15,8 +15,8 @@ interface DemoDao {
     suspend fun count(): Int
 
     @Query("SELECT * FROM DemoLocal")
-    fun getAllAsFlow(): Flow<List<DemoLocal>> // we can do flow for larger read of data
+     fun getAllAsFlow(): Flow<List<DemoLocal>> // we can do flow for larger read of data
 
     @Query("SELECT * FROM DemoLocal")
-    fun getAll(): List<DemoLocal>
+    suspend  fun getAll(): List<DemoLocal>
 }

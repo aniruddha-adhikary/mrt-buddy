@@ -1,19 +1,15 @@
 package net.adhikary.mrtbuddy
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import net.adhikary.mrtbuddy.database.getDatabaseBuilder
-import net.adhikary.mrtbuddy.database.getRoomDatabase
+import net.adhikary.mrtbuddy.database.getDatabase
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
@@ -22,9 +18,13 @@ class MainActivity : ComponentActivity() {
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         enableEdgeToEdge()
-        demoDbCall(applicationContext) // for checking the impl
+
+        // TODO will be removed once code structure and dependancy injection is intruduced
+
+        val dao = getDatabase(applicationContext).getDao()
+
         setContent {
-            App()
+            App(dao)
         }
     }
 }
@@ -32,19 +32,7 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App()
-}
-
-fun demoDbCall(context: Context) {
-    val scope = CoroutineScope(Dispatchers.IO)
-
-    val dbBuilder = getDatabaseBuilder(context)
-    val roomDatabase = getRoomDatabase(dbBuilder)
-
-    scope.launch {
-        val list = roomDatabase.getDao().getAll()
-        println("db list isze ${list.size}")
-    }
-
-
+    val localContext = LocalContext.current
+    val dao = getDatabase(localContext).getDao()
+    App(dao)
 }

@@ -16,16 +16,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getDao(): DemoDao
 }
 
-fun getRoomDatabase(
-    builder: RoomDatabase.Builder<AppDatabase>
-): AppDatabase {
-    return builder
-        .fallbackToDestructiveMigrationOnDowngrade(true) // this delete everything on current db
-        .setDriver(BundledSQLiteDriver())
-        .setQueryCoroutineContext(Dispatchers.IO)
-        .build()
-}
-
 // The Room compiler generates the `actual` implementations.
 @Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {

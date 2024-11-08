@@ -6,8 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.room.RoomDatabase
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import net.adhikary.mrtbuddy.dao.DemoDao
+import net.adhikary.mrtbuddy.database.AppDatabase
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.nfc.getNFCManager
@@ -17,7 +20,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun App() {
+fun App(dao: DemoDao) {
     var isRescanRequested = mutableStateOf(false)
     val scope = rememberCoroutineScope()
     val nfcManager = getNFCManager()
