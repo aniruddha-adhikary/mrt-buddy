@@ -1,15 +1,16 @@
-import React from 'react';
-import Head from 'next/head';
-import { StickyNavbar } from '../components/Navbar';
-import dynamic from 'next/dynamic';
-import { Footer } from '../components/Footer';
-import { Hero } from '../components/Hero';
-import { DeviceShowcase } from '../components/DeviceShowcase';
-import { Features } from '../components/Features';
-import { DownloadSection } from '../components/DownloadSection';
+import dynamic from "next/dynamic";
+import Head from "next/head";
+import React, { useState } from "react";
+import { DeviceShowcase } from "../components/DeviceShowcase";
+import { DownloadSection } from "../components/DownloadSection";
+import { Features } from "../components/Features";
+import { Footer } from "../components/Footer";
+import { Hero } from "../components/Hero";
+import { StickyNavbar } from "../components/Navbar";
 
 const HomeComponent = () => {
   const [isAnimating, setIsAnimating] = React.useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const handleDownloadClick = () => {
     if (!isAnimating) {
@@ -20,16 +21,23 @@ const HomeComponent = () => {
     }
   };
 
+  const toggleDarkMode = () => {
+    setIsDarkMode((prevState) => !prevState);
+  };
+
   return (
-    <main className="min-h-screen bg-white">
+    <main className={`min-h-screen bg-white ${isDarkMode && "dark"}`}>
       <Head>
         <title>MRT Buddy - Your Dhaka Metro Rail Companion</title>
       </Head>
-      <StickyNavbar />
-      <Hero handleDownloadClick={handleDownloadClick} isAnimating={isAnimating} />
+      <StickyNavbar toggleDarkMode={toggleDarkMode} darkMode={isDarkMode} />
+      <Hero
+        handleDownloadClick={handleDownloadClick}
+        isAnimating={isAnimating}
+      />
       <DeviceShowcase />
       <Features />
-      <DownloadSection 
+      <DownloadSection
         handleDownloadClick={handleDownloadClick}
         isAnimating={isAnimating}
       />
