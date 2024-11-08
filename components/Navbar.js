@@ -52,7 +52,7 @@ export const StickyNavbar = ({ toggleDarkMode, darkMode }) => {
 
   return (
     <div className="relative w-full">
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 dark:bg-[#121212]">
           <div className="flex items-center justify-between h-16">
             <Link
@@ -77,9 +77,9 @@ export const StickyNavbar = ({ toggleDarkMode, darkMode }) => {
               ))}
               <button onClick={toggleDarkMode}>
                 {darkMode ? (
-                  <SunIcon className="w-6 h-6 dark:text-white" />
+                  <SunIcon className="w-6 h-6 dark:text-white dark:hover:text-white/[90%]" />
                 ) : (
-                  <MoonIcon className="h-6 w-6 text-slate-500" />
+                  <MoonIcon className="h-6 w-6 text-slate-500 hover:text-slate-600" />
                 )}
               </button>
             </div>
