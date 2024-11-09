@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExposedDropdownMenuBox
@@ -29,9 +28,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.getPlatform
 import net.adhikary.mrtbuddy.managers.RescanManager
+import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.ui.theme.DarkPositiveGreen
 import net.adhikary.mrtbuddy.ui.theme.LightPositiveGreen
 import net.adhikary.mrtbuddy.ui.viewmodel.FareCalculatorViewModel
@@ -160,7 +159,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                         text = "Rescan",
                         modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .clickable { RescanManager.getInstance().requestRescan() },
+                            .clickable { RescanManager.requestRescan() },
                         style = MaterialTheme.typography.body1,
                         color = MaterialTheme.colors.primary
                     )
