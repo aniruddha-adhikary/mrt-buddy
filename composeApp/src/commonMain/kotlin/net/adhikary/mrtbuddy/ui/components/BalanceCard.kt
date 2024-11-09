@@ -73,6 +73,15 @@ private fun BalanceContent(amount: Int) {
         ),
         color = MaterialTheme.colors.onSurface
     )
+    if (amount < 20) {
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Your Card Balance is lower than ৳20, Remember to recharge for a smooth journey",
+            style = MaterialTheme.typography.body2,
+            color = MaterialTheme.colors.error,
+            textAlign = TextAlign.Center
+        )
+    }
 }
 
 @Composable
