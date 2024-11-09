@@ -96,7 +96,7 @@ fun MainScreen(
                 }
             }
             Screen.Calculator -> {
-                FareCalculatorScreen()
+                FareCalculatorScreen(cardState = cardState)
             }
         }
     }

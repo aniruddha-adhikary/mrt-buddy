@@ -5,20 +5,28 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.ui.viewmodel.FareCalculatorViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun FareCalculatorScreen() {
+fun FareCalculatorScreen(cardState: CardState) {
     val viewModel = remember { FareCalculatorViewModel.getInstance() }
+
+    // Update card state when it changes
+    LaunchedEffect(cardState) {
+        viewModel.updateCardState(cardState)
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)  // Reduced from 16.dp to 8.dp
     ) {
         Text(
             text = "Fare Calculator",
@@ -79,6 +87,8 @@ fun FareCalculatorScreen() {
             }
         }
 
+        Spacer(modifier = Modifier.height(8.dp))
+
         // Fare Display
         if (viewModel.fromStation != null && viewModel.toStation != null) {
             Card(
@@ -118,6 +128,39 @@ fun FareCalculatorScreen() {
                             style = MaterialTheme.typography.caption,
                             color = MaterialTheme.colors.secondary
                         )
+                    }
+
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Divider()
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    when (cardState) {
+                        is CardState.Balance -> {
+                            val balance = cardState.amount
+                            if (balance >= viewModel.calculatedFare) {
+                                Text(
+                                    text = "Your balance (৳ $balance) is sufficient for this trip",
+                                    style = MaterialTheme.typography.body2,
+                                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                                    textAlign = TextAlign.Center
+                                )
+                            } else {
+                                Text(
+                                    text = "Your balance (৳ $balance) is not enough for this trip",
+                                    style = MaterialTheme.typography.body2,
+                                    color = MaterialTheme.colors.error.copy(alpha = 0.7f),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                        else -> {
+                            Text(
+                                text = "Tap your card to check if you have sufficient balance",
+                                style = MaterialTheme.typography.body2,
+                                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
             }
