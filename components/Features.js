@@ -18,6 +18,11 @@ export const Features = () => {
       description: "Works with both MRT Pass and Rapid Pass",
       icon: "💳",
     },
+    {
+      title: "Fare Calculator",
+      description: "Calculate your fare with ease",
+      icon: "🔢",
+    }
   ];
 
   return (
