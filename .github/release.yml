@@ -1,5 +1,5 @@
 # author: github.com/hmasum52
-name: Release Build
+name: release-build
 
 on:
   workflow_dispatch: # Manually trigger the workflow
