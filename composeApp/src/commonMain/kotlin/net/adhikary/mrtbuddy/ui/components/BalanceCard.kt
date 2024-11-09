@@ -22,9 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import mrtbuddy.composeapp.generated.resources.Res
+import mrtbuddy.composeapp.generated.resources.card
 import net.adhikary.mrtbuddy.getPlatform
 import net.adhikary.mrtbuddy.managers.RescanManager
 import net.adhikary.mrtbuddy.model.CardState
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun BalanceCard(
@@ -129,7 +132,7 @@ private fun WaitingContent() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            imageVector = Icons.Default.Info,
+            painter = painterResource(Res.drawable.card),
             contentDescription = "Tap Card",
             modifier = Modifier.height(48.dp),
             tint = MaterialTheme.colors.primary
