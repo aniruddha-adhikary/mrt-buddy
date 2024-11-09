@@ -39,7 +39,7 @@ class FareCalculator {
         Pair(0 to 4, 30), Pair(0 to 5, 40), Pair(0 to 6, 40), Pair(0 to 7, 40),
         Pair(0 to 8, 60), Pair(0 to 9, 60), Pair(0 to 10, 70), Pair(0 to 11, 70),
         Pair(0 to 12, 80), Pair(0 to 13, 80), Pair(0 to 14, 100), Pair(0 to 15, 100),
-        Pair(0 to 16, 1000),
+        Pair(0 to 16, 100),
 
         // Uttara Center (1)
         Pair(1 to 1, 0), Pair(1 to 2, 20), Pair(1 to 3, 30), Pair(1 to 4, 30),
