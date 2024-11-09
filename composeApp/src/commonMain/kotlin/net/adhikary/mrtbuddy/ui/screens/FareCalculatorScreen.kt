@@ -87,44 +87,38 @@ fun FareCalculatorScreen() {
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    // Regular Fare
-                    Text(
-                        text = "Regular Fare",
-                        style = MaterialTheme.typography.h6
-                    )
-                    Text(
-                        text = "${viewModel.calculatedFare} BDT",
-                        style = MaterialTheme.typography.h4
-                    )
-
-                    Divider(modifier = Modifier.padding(vertical = 8.dp))
-
-                    // MRT/Rapid Pass Fare
-                    Text(
-                        text = "MRT/Rapid Pass Fare",
-                        style = MaterialTheme.typography.h6
-                    )
-                    Text(
-                        text = "${viewModel.discountedFare} BDT",
-                        style = MaterialTheme.typography.h4,
-                        color = MaterialTheme.colors.primary
-                    )
-
-                    Divider(modifier = Modifier.padding(vertical = 8.dp))
-
-                    // Savings
-                    Text(
-                        text = "Your Savings",
-                        style = MaterialTheme.typography.subtitle1
-                    )
-                    Text(
-                        text = "${viewModel.getSavings()} BDT",
-                        style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.secondary
-                    )
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "MRT Pass / Rapid Pass",
+                            style = MaterialTheme.typography.h6
+                        )
+                        Text(
+                            text = "৳ ${viewModel.discountedFare}",
+                            style = MaterialTheme.typography.h4,
+                            color = MaterialTheme.colors.primary
+                        )
+                    }
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Regular ৳ ${viewModel.calculatedFare}",
+                            style = MaterialTheme.typography.caption
+                        )
+                        Text(
+                            text = "Discount ৳ ${viewModel.getSavings()}",
+                            style = MaterialTheme.typography.caption,
+                            color = MaterialTheme.colors.secondary
+                        )
+                    }
                 }
             }
         }
