@@ -172,11 +172,18 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Spacer(modifier = Modifier.height(24.dp))
+                        if (getPlatform().name != "android") {
+                            Spacer(modifier = Modifier.height(24.dp))
+                        } else {
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
                         Text(
                             text = "with MRT Pass / Rapid Pass",
                             style = MaterialTheme.typography.caption
                         )
+                        if (getPlatform().name == "android") {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
                         Text(
                             text = "৳ ${viewModel.discountedFare}",
                             style = MaterialTheme.typography.h4,
