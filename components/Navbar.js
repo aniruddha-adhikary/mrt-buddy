@@ -41,16 +41,12 @@ export const StickyNavbar = () => {
   }, [isNavOpen]);
 
   const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/#download", label: "Download" },
-    { href: "/contributors", label: "Contributors" },
-    { href: "/faq", label: "FAQ" },
-    { href: "/privacy-policy", label: "Privacy Policy" },
-    {
-      href: "http://github.com/aniruddha-adhikary/mrt-buddy",
-      label: "GitHub",
-      external: true,
-    },
+    { href: '/', label: 'Home' },
+    { href: '/#download', label: 'Download' },
+    { href: '/contributors', label: 'Contributors' },
+    { href: '/faq', label: 'FAQ' },
+    { href: '/privacy-policy', label: 'Privacy Policy' },
+    { href: 'http://github.com/aniruddha-adhikary/mrt-buddy', label: 'GitHub', external: true },
   ];
 
   return (

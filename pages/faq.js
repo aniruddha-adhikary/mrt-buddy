@@ -73,17 +73,6 @@ export default function FAQ() {
                     process is complete.
                   </p>
                 </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 dark:text-gray-50">
-                    Is there an iOS version available?
-                  </h3>
-                  <p className="text-gray-700 dark:text-gray-50">
-                    Yes, we've developed an iOS version of MRT Buddy! It's
-                    currently in Apple's review process. Once approved, it will
-                    be available on the App Store.
-                  </p>
-                </div>
               </div>
             </div>
 
