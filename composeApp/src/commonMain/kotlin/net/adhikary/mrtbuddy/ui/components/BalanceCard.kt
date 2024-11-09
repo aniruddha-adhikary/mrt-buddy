@@ -69,14 +69,14 @@ private fun BalanceContent(amount: Int) {
     Text(
         text = "৳ $amount",
         style = MaterialTheme.typography.h4.copy(
-            fontWeight = FontWeight.SemiBold // Less bold for iOS
+            fontWeight = FontWeight.SemiBold
         ),
-        color = MaterialTheme.colors.onSurface
+        color = if (amount < 20) MaterialTheme.colors.error else MaterialTheme.colors.onSurface
     )
     if (amount < 20) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Your Card Balance is lower than ৳20, Remember to recharge for a smooth journey",
+            text = "Balance too low for the next trip. Top up needed",
             style = MaterialTheme.typography.body2,
             color = MaterialTheme.colors.error,
             textAlign = TextAlign.Center
