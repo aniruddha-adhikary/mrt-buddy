@@ -1,7 +1,8 @@
-import "../styles/globals.css";
-import { Noto_Sans } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { Noto_Sans } from "next/font/google";
 import Head from "next/head";
+import ThemeProvider from "../providers/ThemeProvider";
+import "../styles/globals.css";
 
 const notoSans = Noto_Sans({
   subsets: ["latin"],
@@ -39,7 +40,10 @@ export default function App({ Component, pageProps }) {
         />
         <meta property="twitter:image" content="/card.jpeg" />
       </Head>
-      <Component {...pageProps} />
+      <ThemeProvider>
+        <Component {...pageProps} />
+      </ThemeProvider>
+
       <GoogleAnalytics gaId="G-1YW6R1YDTY" />
     </main>
   );

@@ -2,9 +2,11 @@ import { MoonIcon, SunIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { useTheme } from "../contexts";
 
-export const StickyNavbar = ({ toggleDarkMode, darkMode }) => {
+export const StickyNavbar = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const { isDarkMode, toggleDarkMode } = useTheme();
   const router = useRouter();
 
   const toggleNav = () => {
@@ -76,7 +78,7 @@ export const StickyNavbar = ({ toggleDarkMode, darkMode }) => {
                 </Link>
               ))}
               <button onClick={toggleDarkMode}>
-                {darkMode ? (
+                {isDarkMode ? (
                   <SunIcon className="w-6 h-6 dark:text-white dark:hover:text-white/[90%]" />
                 ) : (
                   <MoonIcon className="h-6 w-6 text-slate-500 hover:text-slate-600" />
@@ -87,7 +89,7 @@ export const StickyNavbar = ({ toggleDarkMode, darkMode }) => {
             {/* Mobile Menu Button */}
             <div className="lg:hidden">
               <button className="mr-1" onClick={toggleDarkMode}>
-                {darkMode ? (
+                {isDarkMode ? (
                   <SunIcon className="w-6 h-6 dark:text-white" />
                 ) : (
                   <MoonIcon className="h-6 w-6 text-slate-500" />
