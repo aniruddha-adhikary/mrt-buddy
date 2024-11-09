@@ -48,7 +48,13 @@ fun StationSelectionSection(viewModel: FareCalculatorViewModel) {
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.fromExpanded) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ExposedDropdownMenuDefaults.textFieldColors(
+                    backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.1f),
+                    focusedIndicatorColor = MaterialTheme.colors.primary.copy(alpha = 0f),
+                    unfocusedIndicatorColor = MaterialTheme.colors.primary.copy(alpha = 0f)
+                ),
+                shape = RoundedCornerShape(12.dp)
             )
 
             ExposedDropdownMenu(
@@ -75,7 +81,13 @@ fun StationSelectionSection(viewModel: FareCalculatorViewModel) {
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.toExpanded) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ExposedDropdownMenuDefaults.textFieldColors(
+                    backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.1f),
+                    focusedIndicatorColor = MaterialTheme.colors.primary.copy(alpha = 0f),
+                    unfocusedIndicatorColor = MaterialTheme.colors.primary.copy(alpha = 0f)
+                ),
+                shape = RoundedCornerShape(12.dp)
             )
 
             ExposedDropdownMenu(
