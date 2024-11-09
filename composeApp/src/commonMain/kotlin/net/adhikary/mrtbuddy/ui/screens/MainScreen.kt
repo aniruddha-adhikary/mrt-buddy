@@ -3,9 +3,6 @@ package net.adhikary.mrtbuddy.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +11,8 @@ import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.model.TransactionWithAmount
 import net.adhikary.mrtbuddy.ui.components.BalanceCard
+import net.adhikary.mrtbuddy.ui.components.CalculatorIcon
+import net.adhikary.mrtbuddy.ui.components.CardIcon
 import net.adhikary.mrtbuddy.ui.components.Footer
 import net.adhikary.mrtbuddy.ui.components.TransactionHistoryList
 
@@ -52,14 +51,16 @@ fun MainScreen(
         bottomBar = {
             BottomNavigation {
                 BottomNavigationItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                    label = { Text("Card Scan") },
+                    icon = { CardIcon() },
+                    label = { Text("Balance") },
                     selected = currentScreen == Screen.Home,
                     onClick = { currentScreen = Screen.Home }
                 )
                 BottomNavigationItem(
-                    icon = { Icon(Icons.Default.Search, contentDescription = "Calculator") },
-                    label = { Text("Fare Calculator") },
+                    icon = {
+                        CalculatorIcon()
+                    },
+                    label = { Text("Fare") },
                     selected = currentScreen == Screen.Calculator,
                     onClick = { currentScreen = Screen.Calculator }
                 )
