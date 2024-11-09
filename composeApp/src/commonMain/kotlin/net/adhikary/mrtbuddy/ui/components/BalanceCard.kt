@@ -24,7 +24,7 @@ fun BalanceCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(200.dp),
+            .height(220.dp),
         shape = RoundedCornerShape(24.dp), // Increased corner radius
         backgroundColor = MaterialTheme.colors.surface
     ) {

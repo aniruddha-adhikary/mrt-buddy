@@ -9,41 +9,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ExposedDropdownMenuBox
+import androidx.compose.material.ExposedDropdownMenuDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import net.adhikary.mrtbuddy.model.CardState
-import net.adhikary.mrtbuddy.model.TransactionType
 import net.adhikary.mrtbuddy.ui.theme.DarkPositiveGreen
 import net.adhikary.mrtbuddy.ui.theme.LightPositiveGreen
 import net.adhikary.mrtbuddy.ui.viewmodel.FareCalculatorViewModel
 
-@Composable
-fun FareCalculatorTopBar() {
-    TopAppBar(
-        title = {
-            Text(
-                text = "Fare Calculator",
-                style = MaterialTheme.typography.h6
-            )
-        },
-        navigationIcon = {
-            Icon(
-                Icons.Default.Search,
-                contentDescription = "Calculator",
-                modifier = Modifier.padding(start = 12.dp)
-            )
-        },
-        backgroundColor = MaterialTheme.colors.primary,
-        contentColor = MaterialTheme.colors.onPrimary,
-        elevation = 4.dp
-    )
-}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -109,12 +96,47 @@ fun StationSelectionSection(viewModel: FareCalculatorViewModel) {
 
 @Composable
 fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
-    if (viewModel.fromStation != null && viewModel.toStation != null) {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            elevation = 4.dp,
-            shape = RoundedCornerShape(24.dp)
-        ) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(220.dp),
+        shape = RoundedCornerShape(24.dp),
+        backgroundColor = MaterialTheme.colors.surface
+    ) {
+        if (viewModel.fromStation == null || viewModel.toStation == null) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = "Select stations",
+                        modifier = Modifier.height(48.dp),
+                        tint = MaterialTheme.colors.primary
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Select Stations",
+                        style = MaterialTheme.typography.h6,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Choose origin and destination\nto calculate fare",
+                        style = MaterialTheme.typography.body1,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+        } else {
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
