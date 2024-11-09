@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import net.adhikary.mrtbuddy.model.CardState
+import net.adhikary.mrtbuddy.getPlatform
 import net.adhikary.mrtbuddy.ui.theme.DarkPositiveGreen
 import net.adhikary.mrtbuddy.ui.theme.LightPositiveGreen
 import net.adhikary.mrtbuddy.ui.viewmodel.FareCalculatorViewModel
@@ -212,13 +213,23 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                         }
                     }
                     else -> {
-                        Text(
-                            text = "Tap your card to check if you have sufficient balance",
-                            style = MaterialTheme.typography.body2,
-                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                        if (getPlatform().name == "android") {
+                            Text(
+                                text = "Tap your card to check if you have sufficient balance",
+                                style = MaterialTheme.typography.body2,
+                                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        } else {
+                            Text(
+                                text = "Return to balance screen and rescan your card to check if you have sufficient balance",
+                                style = MaterialTheme.typography.body2,
+                                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.weight(1f))
