@@ -153,7 +153,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                     Text(
                         text = "৳ ${viewModel.discountedFare}",
                         style = MaterialTheme.typography.h4,
-                        color = MaterialTheme.colors.primary
+                        color = MaterialTheme.colors.onSurface
                     )
                 }
 
@@ -163,7 +163,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Regular ৳ ${viewModel.calculatedFare}",
+                        text = "Single Ticket ৳ ${viewModel.calculatedFare}",
                         style = MaterialTheme.typography.caption
                     )
                     Text(
@@ -177,43 +177,39 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                 Divider()
                 Spacer(modifier = Modifier.height(2.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    when (cardState) {
-                        is CardState.Balance -> {
-                            val balance = cardState.amount
-                            if (balance >= viewModel.calculatedFare) {
-                                Text(
-                                    text = "Your balance (৳ $balance) is sufficient.",
-                                    style = MaterialTheme.typography.body2,
-                                    color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            } else {
-                                Text(
-                                    text = "Your balance (৳ $balance) is too low.",
-                                    style = MaterialTheme.typography.body2,
-                                    color = MaterialTheme.colors.error.copy(alpha = 0.7f),
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            }
-                        }
-                        else -> {
+                Spacer(modifier = Modifier.weight(1f))
+                when (cardState) {
+                    is CardState.Balance -> {
+                        val balance = cardState.amount
+                        if (balance >= viewModel.calculatedFare) {
                             Text(
-                                text = "Tap your card to check if you have sufficient balance",
+                                text = "Your balance (৳ $balance) is sufficient.",
                                 style = MaterialTheme.typography.body2,
-                                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                                color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        } else {
+                            Text(
+                                text = "Your balance (৳ $balance) is too low.",
+                                style = MaterialTheme.typography.body2,
+                                color = MaterialTheme.colors.error.copy(alpha = 0.7f),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
                     }
+                    else -> {
+                        Text(
+                            text = "Tap your card to check if you have sufficient balance",
+                            style = MaterialTheme.typography.body2,
+                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
+                Spacer(modifier = Modifier.weight(1f))
             }
         }
     }

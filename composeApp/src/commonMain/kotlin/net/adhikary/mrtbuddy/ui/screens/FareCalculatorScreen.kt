@@ -34,7 +34,7 @@ fun FareCalculatorScreen(cardState: CardState) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         FareDisplayCard(viewModel, cardState)
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         StationSelectionSection(viewModel)
     }
 }
