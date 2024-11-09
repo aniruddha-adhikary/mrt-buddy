@@ -7,11 +7,9 @@ import { Features } from "../components/Features";
 import { Footer } from "../components/Footer";
 import { Hero } from "../components/Hero";
 import { StickyNavbar } from "../components/Navbar";
-import { useTheme } from "../contexts";
 
 const HomeComponent = () => {
   const [isAnimating, setIsAnimating] = React.useState(false);
-  const { isDarkMode } = useTheme();
   const handleDownloadClick = () => {
     if (!isAnimating) {
       setIsAnimating(true);
@@ -22,7 +20,7 @@ const HomeComponent = () => {
   };
 
   return (
-    <main className={"min-h-screen bg-white"}>
+    <main className="min-h-screen bg-white">
       <Head>
         <title>MRT Buddy - Your Dhaka Metro Rail Companion</title>
       </Head>
