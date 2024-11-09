@@ -14,7 +14,7 @@ import net.adhikary.mrtbuddy.database.AppDatabase
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.nfc.getNFCManager
-import net.adhikary.mrtbuddy.ui.components.MainScreen
+import net.adhikary.mrtbuddy.ui.screens.MainScreen
 import net.adhikary.mrtbuddy.ui.theme.MRTBuddyTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
