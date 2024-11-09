@@ -27,7 +27,7 @@ class FareCalculator {
         Station("Karwan Bazar", 11),
         Station("Shahbagh", 12),
         Station("Dhaka University", 13),
-        Station("Secretariat", 14),
+        Station("Bangladesh Secretariat", 14),
         Station("Motijheel", 15),
         Station("Kamalapur", 16)
     )
