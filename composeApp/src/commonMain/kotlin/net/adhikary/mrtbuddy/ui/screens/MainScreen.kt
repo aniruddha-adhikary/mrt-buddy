@@ -24,7 +24,6 @@ enum class Screen {
 fun MainScreen(
     cardState: CardState,
     transactions: List<Transaction> = emptyList(),
-    onTapClick: () -> Unit
 ) {
     var currentScreen by remember { mutableStateOf(Screen.Home) }
     val hasTransactions = transactions.isNotEmpty()
@@ -84,10 +83,7 @@ fun MainScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        BalanceCard(
-                            cardState = cardState,
-                            onTapClick = onTapClick
-                        )
+                        BalanceCard(cardState = cardState)
 
                         if (hasTransactions) {
                             TransactionHistoryList(transactionsWithAmounts)

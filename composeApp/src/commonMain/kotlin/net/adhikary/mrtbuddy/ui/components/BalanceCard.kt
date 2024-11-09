@@ -13,12 +13,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import net.adhikary.mrtbuddy.getPlatform
+import net.adhikary.mrtbuddy.managers.RescanManager
 import net.adhikary.mrtbuddy.model.CardState
 
 @Composable
 fun BalanceCard(
     cardState: CardState,
-    onTapClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -34,7 +34,7 @@ fun BalanceCard(
                     "Rescan",
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .clickable { onTapClick() },
+                        .clickable { RescanManager.getInstance().requestRescan() },
                     style = MaterialTheme.typography.body1,
                     color = MaterialTheme.colors.primary
                 )

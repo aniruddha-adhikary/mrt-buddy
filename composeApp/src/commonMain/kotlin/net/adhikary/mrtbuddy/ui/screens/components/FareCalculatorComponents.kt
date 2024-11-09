@@ -1,10 +1,13 @@
 package net.adhikary.mrtbuddy.ui.screens.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.getPlatform
+import net.adhikary.mrtbuddy.managers.RescanManager
 import net.adhikary.mrtbuddy.ui.theme.DarkPositiveGreen
 import net.adhikary.mrtbuddy.ui.theme.LightPositiveGreen
 import net.adhikary.mrtbuddy.ui.viewmodel.FareCalculatorViewModel
@@ -150,89 +154,101 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                 }
             }
         } else {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            Box(Modifier.fillMaxSize().padding(24.dp)) {
+                if (getPlatform().name != "android") {
+                    Text(
+                        text = "Rescan",
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .clickable { RescanManager.getInstance().requestRescan() },
+                        style = MaterialTheme.typography.body1,
+                        color = MaterialTheme.colors.primary
+                    )
+                }
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(
-                        text = "MRT Pass / Rapid Pass",
-                        style = MaterialTheme.typography.h6
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "৳ ${viewModel.discountedFare}",
-                        style = MaterialTheme.typography.h4,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Text(
+                            text = "with MRT Pass / Rapid Pass",
+                            style = MaterialTheme.typography.caption
+                        )
+                        Text(
+                            text = "৳ ${viewModel.discountedFare}",
+                            style = MaterialTheme.typography.h4,
+                            color = MaterialTheme.colors.onSurface
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Single Ticket ৳ ${viewModel.calculatedFare}",
-                        style = MaterialTheme.typography.caption
-                    )
-                    Text(
-                        text = "Discount ৳ ${viewModel.getSavings()}",
-                        style = MaterialTheme.typography.caption,
-                        color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
-                    )
-                }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Single Ticket ৳ ${viewModel.calculatedFare}",
+                            style = MaterialTheme.typography.caption
+                        )
+                        Text(
+                            text = "Discount ৳ ${viewModel.getSavings()}",
+                            style = MaterialTheme.typography.caption,
+                            color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
+                        )
+                    }
 
-                Spacer(modifier = Modifier.height(2.dp))
-                Divider()
-                Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
 
-                Spacer(modifier = Modifier.weight(1f))
-                when (cardState) {
-                    is CardState.Balance -> {
-                        val balance = cardState.amount
-                        if (balance >= viewModel.calculatedFare) {
-                            Text(
-                                text = "Your balance (৳ $balance) is sufficient.",
-                                style = MaterialTheme.typography.body2,
-                                color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        } else {
-                            Text(
-                                text = "Your balance (৳ $balance) is too low.",
-                                style = MaterialTheme.typography.body2,
-                                color = MaterialTheme.colors.error.copy(alpha = 0.7f),
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                    Spacer(modifier = Modifier.weight(1f))
+                    when (cardState) {
+                        is CardState.Balance -> {
+                            val balance = cardState.amount
+                            if (balance >= viewModel.calculatedFare) {
+                                Text(
+                                    text = "Your balance (৳ $balance) is sufficient.",
+                                    style = MaterialTheme.typography.body2,
+                                    color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            } else {
+                                Text(
+                                    text = "Your balance (৳ $balance) is too low.",
+                                    style = MaterialTheme.typography.body2,
+                                    color = MaterialTheme.colors.error.copy(alpha = 0.7f),
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        }
+
+                        else -> {
+                            if (getPlatform().name == "android") {
+                                Text(
+                                    text = "Tap your card to check if you have sufficient balance",
+                                    style = MaterialTheme.typography.body2,
+                                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            } else {
+                                Text(
+                                    text = "Rescan your card to check if you have sufficient balance",
+                                    style = MaterialTheme.typography.body2,
+                                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
                         }
                     }
-                    else -> {
-                        if (getPlatform().name == "android") {
-                            Text(
-                                text = "Tap your card to check if you have sufficient balance",
-                                style = MaterialTheme.typography.body2,
-                                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        } else {
-                            Text(
-                                text = "Return to balance screen and rescan your card to check if you have sufficient balance",
-                                style = MaterialTheme.typography.body2,
-                                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
+                    Spacer(modifier = Modifier.weight(1f))
                 }
-                Spacer(modifier = Modifier.weight(1f))
             }
         }
     }
