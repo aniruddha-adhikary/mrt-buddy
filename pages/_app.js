@@ -1,6 +1,7 @@
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Noto_Sans } from "next/font/google";
 import Head from "next/head";
+import { useTheme } from "../contexts";
 import ThemeProvider from "../providers/ThemeProvider";
 import "../styles/globals.css";
 
@@ -12,7 +13,16 @@ const notoSans = Noto_Sans({
 
 export default function App({ Component, pageProps }) {
   return (
-    <main className={notoSans.className}>
+    <ThemeProvider>
+      <MainContent Component={Component} pageProps={pageProps} />
+    </ThemeProvider>
+  );
+}
+
+function MainContent({ Component, pageProps }) {
+  const { isDarkMode } = useTheme();
+  return (
+    <main className={`${notoSans.className} ${isDarkMode ? "dark" : ""}`}>
       <Head>
         <meta property="og:url" content="https://mrtbuddy.com/" />
         <meta property="og:type" content="website" />
@@ -40,10 +50,7 @@ export default function App({ Component, pageProps }) {
         />
         <meta property="twitter:image" content="/card.jpeg" />
       </Head>
-      <ThemeProvider>
-        <Component {...pageProps} />
-      </ThemeProvider>
-
+      <Component {...pageProps} />
       <GoogleAnalytics gaId="G-1YW6R1YDTY" />
     </main>
   );

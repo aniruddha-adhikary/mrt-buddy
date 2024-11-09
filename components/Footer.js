@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="py-8 text-center text-gray-600 border-t border-gray-100 dark:border-gray-800 dark:bg-[#121212]">
+    <footer className="py-8 w-full text-center text-gray-600 border-t border-gray-100 dark:border-gray-800 dark:bg-[#121212]">
       <p className="text-sm dark:text-white">
         Built with ❤️ by the
         <Link

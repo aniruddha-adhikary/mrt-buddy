@@ -22,7 +22,7 @@ const HomeComponent = () => {
   };
 
   return (
-    <main className={`min-h-screen bg-white ${isDarkMode && "dark"}`}>
+    <main className={"min-h-screen bg-white"}>
       <Head>
         <title>MRT Buddy - Your Dhaka Metro Rail Companion</title>
       </Head>

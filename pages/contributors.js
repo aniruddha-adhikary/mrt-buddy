@@ -1,29 +1,33 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import Head from 'next/head';
-import { StickyNavbar } from '../components/Navbar';
-import pre_contributors from './contributors.json';
-import { Footer } from '../components/Footer';
+import Head from "next/head";
+import React, { useEffect, useState } from "react";
+import { Footer } from "../components/Footer";
+import { StickyNavbar } from "../components/Navbar";
+import { useTheme } from "../contexts";
+import pre_contributors from "./contributors.json";
 
 export default function Contributors() {
-
   // pre dumped contributors list
   const [contributors, setContributors] = useState(pre_contributors);
+  const { isDarkMode } = useTheme();
 
   // Fetch contributors from GitHub API dynamically
   useEffect(() => {
     // console.log(contributors);
-    fetch("https://api.github.com/repos/aniruddha-adhikary/mrt-buddy/contributors").then(res => res.json()).then((data) => {
-      const list = data.map((contributor) => {
-        return {
-          username: contributor.login,
-          avatar_url: contributor.avatar_url
-        };
+    fetch(
+      "https://api.github.com/repos/aniruddha-adhikary/mrt-buddy/contributors"
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        const list = data.map((contributor) => {
+          return {
+            username: contributor.login,
+            avatar_url: contributor.avatar_url,
+          };
+        });
+        setContributors(list);
       });
-      setContributors(list);
-    });
-
   }, []);
 
   return (
@@ -33,9 +37,9 @@ export default function Contributors() {
       </Head>
       <StickyNavbar />
 
-      <section className="relative pt-28 sm:pt-32 pb-16 sm:pb-20 overflow-hidden w-full">
+      <section className="relative pt-28 sm:pt-32 pb-16 sm:pb-20 overflow-hidden w-full dark:bg-[#121212]">
         <div className="relative z-10">
-          <h1 className="text-4xl sm:text-5xl font-bold text-center mb-8">
+          <h1 className="text-4xl sm:text-5xl font-bold text-center mb-8 dark:text-white">
             Contributors
           </h1>
 
@@ -47,14 +51,14 @@ export default function Contributors() {
                   href={`https://github.com/${contributor.username}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full group flex flex-col items-center bg-gray-100 py-8 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform"
+                  className="w-full group flex flex-col items-center bg-gray-100 dark:bg-gray-800 py-8 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform"
                 >
                   <img
                     src={contributor.avatar_url}
                     alt={contributor.username}
                     className="w-24 h-24 rounded-full mb-3 transition-transform "
                   />
-                  <h3 className="text-sm font-medium text-gray-900">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-gray-50">
                     {contributor.username}
                   </h3>
                 </a>
