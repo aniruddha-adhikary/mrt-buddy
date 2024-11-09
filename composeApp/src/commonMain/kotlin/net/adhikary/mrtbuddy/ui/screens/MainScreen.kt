@@ -49,7 +49,10 @@ fun MainScreen(
             .background(MaterialTheme.colors.background)
             .windowInsetsPadding(WindowInsets.safeDrawing),
         bottomBar = {
-            BottomNavigation {
+            BottomNavigation(
+                backgroundColor = MaterialTheme.colors.surface,
+                contentColor = MaterialTheme.colors.primary
+            ) {
                 BottomNavigationItem(
                     icon = { CardIcon() },
                     label = { Text("Balance") },
