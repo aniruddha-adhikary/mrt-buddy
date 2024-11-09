@@ -5,19 +5,19 @@ import { StickyNavbar } from "../components/Navbar";
 
 export default function FAQ() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-[#121212]">
       <Head>
         <title>FAQ - MRT Buddy</title>
       </Head>
       <StickyNavbar />
 
-      <main className="container mx-auto px-4 pt-24">
+      <main className="container mx-auto px-4 pt-24 dark:text-white">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-bold mb-8">
             Frequently Asked Questions
           </h1>
 
-          <p className="text-sm text-gray-600 mb-8">
+          <p className="text-sm text-gray-600 mb-8 dark:text-gray-50">
             Last updated: 4th November, 2024
           </p>
 
@@ -29,10 +29,10 @@ export default function FAQ() {
 
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 dark:text-gray-50">
                     What does MRT Buddy do?
                   </h3>
-                  <p className="text-gray-700">
+                  <p className="text-gray-700 dark:text-gray-50">
                     MRT Buddy is designed to help you manage your transit
                     experience by scanning your Dhaka MRT Pass or RapidPass. The
                     app displays your current card balance and shows you your
@@ -42,10 +42,10 @@ export default function FAQ() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-2">
                     How does the app handle my data?
                   </h3>
-                  <p className="text-gray-700">
+                  <p className="text-gray-700 dark:text-gray-50">
                     Your privacy is our top priority. MRT Buddy operates
                     completely offline and only extracts data directly from your
                     card to display it to you. The app has no internet
@@ -62,10 +62,10 @@ export default function FAQ() {
 
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 dark:text-gray-50">
                     Why isn't the app available on the Google Play Store?
                   </h3>
-                  <p className="text-gray-700">
+                  <p className="text-gray-700 dark:text-gray-50">
                     The app is currently undergoing Google's review process.
                     We've submitted it to the Play Store and are working to
                     ensure it meets all of Google's quality and security
@@ -75,10 +75,10 @@ export default function FAQ() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 dark:text-gray-50">
                     Is there an iOS version available?
                   </h3>
-                  <p className="text-gray-700">
+                  <p className="text-gray-700 dark:text-gray-50">
                     Yes, we've developed an iOS version of MRT Buddy! It's
                     currently in Apple's review process. Once approved, it will
                     be available on the App Store.
@@ -92,10 +92,10 @@ export default function FAQ() {
 
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 dark:text-gray-50">
                     Does the app have API access to the Dhaka MRT System?
                   </h3>
-                  <p className="text-gray-700">
+                  <p className="text-gray-700 dark:text-gray-50">
                     No, we don't have or need direct API access to the Dhaka MRT
                     System. The Bangladeshi MRT Card uses sophisticated Japanese
                     transit system technology, specifically Sony FeliCa cards.
@@ -109,13 +109,13 @@ export default function FAQ() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     Is the app secure? Can it modify my card balance?
                   </h3>
-                  <p className="text-gray-700">
+                  <p className="text-gray-700 dark:text-gray-50">
                     The app is completely secure and cannot modify your card
                     balance. The MRT cards use advanced chip technology that
                     functions like a small computer. The system implements
                     strict security measures:
                   </p>
-                  <ul className="list-disc pl-6 mt-2 space-y-2 text-gray-700">
+                  <ul className="list-disc pl-6 mt-2 space-y-2 text-gray-700 dark:text-gray-50">
                     <li>
                       Access to card data is strictly controlled and limited to
                       specific regions
@@ -138,7 +138,7 @@ export default function FAQ() {
             </div>
 
             <div className="pt-8">
-              <p className="text-gray-700">
+              <p className="text-gray-700 dark:text-gray-50">
                 Have more questions? Feel free to reach out to us through our
                 support channels.
               </p>
