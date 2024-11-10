@@ -66,7 +66,9 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(transactions) { transactionWithAmount ->
+                val validTransactions = transactions.filter { it.amount != null }
+
+                items(validTransactions) { transactionWithAmount ->
                     val isCommute = transactionWithAmount.transaction.fixedHeader.startsWith(
                         "08 52 10 00"
                     )
@@ -80,7 +82,7 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
                         amountValue = transactionWithAmount.amount
                     )
 
-                    if (transactionWithAmount != transactions.last()) {
+                    if (transactionWithAmount != validTransactions.last()) {
                         Divider(
                             modifier = Modifier.padding(top = 12.dp),
                             color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
