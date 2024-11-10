@@ -4,7 +4,8 @@ class NfcCommandGenerator {
     fun generateReadCommand(
         idm: ByteArray,
         serviceCode: Int = 0x220F,
-        numberOfBlocksToRead: Int = 10
+        numberOfBlocksToRead: Int = 10,
+        startBlockNumber: Int = 0
     ): ByteArray {
         // Convert the service code into a byte array (little-endian)
         val serviceCodeList = byteArrayOf(
@@ -16,7 +17,7 @@ class NfcCommandGenerator {
         val blockListElements = ByteArray(numberOfBlocksToRead * 2)
         for (i in 0 until numberOfBlocksToRead) {
             blockListElements[i * 2] = 0x80.toByte() // Control byte
-            blockListElements[i * 2 + 1] = i.toByte() // Block number
+            blockListElements[i * 2 + 1] = (startBlockNumber + i).toByte() // Block number
         }
 
         // Calculate the total length of the command
