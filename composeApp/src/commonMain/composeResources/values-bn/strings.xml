@@ -52,7 +52,7 @@
     <string name="selectStation">স্টেশন নির্বাচন করুন</string>
     <string name="chooseOrgDest">ভাড়া হিসাব করার জন্য শুরু ও গন্তব্য\nনির্বাচন করুন</string>
     <string name="withMRT">এমআরটি/র‍্যাপিড পাস সহ</string>
-    <string name="singleTicket">একক যাত্রার টিকেট</string>
+    <string name="singleTicket">সিঙ্গেল টিকেট</string>
     <string name="discount">ডিসকাউন্ট</string>
     <string name="yourBalance">আপনার ব্যালেন্স</string>
     <string name="sufficient">পর্যাপ্ত!</string>

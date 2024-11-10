@@ -52,7 +52,7 @@
     <string name="selectStation">Select stations</string>
     <string name="chooseOrgDest">Choose origin and destination\nto calculate fare</string>
     <string name="withMRT">with MRT/Rapid Pass</string>
-    <string name="singleTicket">Single Journey Ticket</string>
+    <string name="singleTicket">Single Ticket</string>
     <string name="discount">Discount</string>
     <string name="yourBalance">Your balance</string>
     <string name="sufficient">is sufficient.</string>
