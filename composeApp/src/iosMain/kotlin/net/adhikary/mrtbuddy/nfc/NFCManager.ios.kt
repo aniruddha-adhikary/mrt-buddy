@@ -115,30 +115,40 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
                         return@readWithoutEncryptionWithServiceCodeList
                     }
 
-                    val entries: List<Transaction>? = (dataList)
-                        ?.map { (it as NSData).toByteArray() }
-                        ?.map { transactionParser.parseTransactionBlock(it) }
+                    // Read next 10 blocks (10-19)
+                    val blockList2 = (10 until 20).map { byteArrayOf(0x80.toByte(), it.toByte()) }
 
-                    if (entries == null) {
-                        scope.launch {
-                            _cardState.emit(CardState.Error("No transactions found on card"))
-                        }
-                    } else {
-                        scope.launch {
-                            //_cardState.tryEmit(CardState.Balance(234))
-                            _transactions.emit(entries)
-                            val latestBalance = entries.firstOrNull()?.balance
-
-                            latestBalance?.let {
-                               _cardState.emit(CardState.Balance(it))
-                               // session.alertMessage = "Balance: $latestBalance BDT"
-                            } ?: run {
-                                _cardState.emit(CardState.Error("Balance not found. " +
-                                        "You may have moved the card too fast."))
+                    tag.readWithoutEncryptionWithServiceCodeList(
+                        serviceCodeList = serviceCodeList.map { it.toNSData() },
+                        blockList = blockList2.map { it.toNSData() },
+                        completionHandler = { statusFlag1, statusFlag2, dataList2, error2 ->
+                            if (error2 != nil) {
+                                session.invalidateSessionWithErrorMessage("Card reading failed")
+                                scope.launch { _cardState.emit(CardState.Error("Card reading failed")) }
+                                return@readWithoutEncryptionWithServiceCodeList
                             }
+
+                            // Combine data from both reads
+                            val allData = ((dataList ?: emptyList<Any>()) + (dataList2 ?: emptyList<Any>())).map { (it as NSData).toByteArray() }
+                            val entries = allData.map { transactionParser.parseTransactionBlock(it) }
+
+                            if (entries.isEmpty()) {
+                                scope.launch { _cardState.emit(CardState.Error("No transactions found on card")) }
+                            } else {
+                                scope.launch {
+                                    _transactions.emit(entries)
+                                    val latestBalance = entries.firstOrNull()?.balance
+
+                                    latestBalance?.let {
+                                        _cardState.emit(CardState.Balance(it))
+                                    } ?: run {
+                                        _cardState.emit(CardState.Error("Balance not found. You may have moved the card too fast."))
+                                    }
+                                }
+                            }
+                            session.invalidateSession()
                         }
-                    }
-                    session.invalidateSession()
+                    )
                 }
             )
         }
