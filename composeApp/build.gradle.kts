@@ -34,6 +34,10 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.maps.compose)
+            implementation(libs.maps.compose.utils)
+            implementation(libs.play.services.maps)
+            implementation(libs.kotlinx.coroutines.play.services)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -103,6 +107,7 @@ android {
 
 
 dependencies {
+    implementation(libs.play.services.location)
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
     add("kspIosX64", libs.androidx.room.compiler)

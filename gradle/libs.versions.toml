@@ -1,6 +1,6 @@
 [versions]
 agp = "8.7.2"
-android-compileSdk = "34"
+android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "34"
 androidx-activityCompose = "1.9.3"
@@ -19,6 +19,9 @@ kotlinxCoroutine = "1.9.0"
 androidx-room = "2.7.0-alpha11"
 ksp = "2.0.20-1.0.24"
 sqlite = "2.5.0-SNAPSHOT"
+mapsCompose = "6.2.1"
+playServicesMaps = "19.0.0"
+playServicesLocation = "21.3.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -38,6 +41,11 @@ kotlinx-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", 
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
+maps-compose-utils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "mapsCompose" }
+play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutine" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -61,4 +61,8 @@
     <string name="rescanToCheckSufficientBalance">Rescan your card to check if you have sufficient balance</string>
     <string name="selectOrigin">Select Origin Station</string>
     <string name="selectDestination">Select Destination Station</string>
+
+    <!-- metro map-->
+    <string name="nav_map">Map</string>
+    <string name="nearest_metro">Show Nearest Metro</string>
 </resources>

@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.balance
 import mrtbuddy.composeapp.generated.resources.fare
+import mrtbuddy.composeapp.generated.resources.nav_map
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.model.TransactionWithAmount
@@ -17,11 +18,13 @@ import net.adhikary.mrtbuddy.ui.components.BalanceCard
 import net.adhikary.mrtbuddy.ui.components.CalculatorIcon
 import net.adhikary.mrtbuddy.ui.components.CardIcon
 import net.adhikary.mrtbuddy.ui.components.Footer
+import net.adhikary.mrtbuddy.ui.components.MapIcon
 import net.adhikary.mrtbuddy.ui.components.TransactionHistoryList
 import org.jetbrains.compose.resources.stringResource
+import net.adhikary.mrtbuddy.ui.screens.map.MetroMap
 
 enum class Screen {
-    Home, Calculator
+    Home, Calculator, Map
 }
 
 @Composable
@@ -70,6 +73,15 @@ fun MainScreen(
                     selected = currentScreen == Screen.Calculator,
                     onClick = { currentScreen = Screen.Calculator }
                 )
+
+                BottomNavigationItem(
+                    icon = {
+                        MapIcon()
+                    },
+                    label = { Text(stringResource(Res.string.nav_map)) },
+                    selected = currentScreen == Screen.Map,
+                    onClick = { currentScreen = Screen.Map }
+                )
             }
         }
     ) { paddingValues ->
@@ -101,6 +113,10 @@ fun MainScreen(
             }
             Screen.Calculator -> {
                 FareCalculatorScreen(cardState = cardState)
+            }
+
+            Screen.Map -> {
+                MetroMap()
             }
         }
     }
