@@ -17,8 +17,8 @@ class FareCalculator {
         Station("Uttara Center", 1),
         Station("Uttara South", 2),
         Station("Pallabi", 3),
-        Station("Mirpur-11", 4),
-        Station("Mirpur-10", 5),
+        Station("Mirpur 11", 4),
+        Station("Mirpur 10", 5),
         Station("Kazipara", 6),
         Station("Shewrapara", 7),
         Station("Agargaon", 8),
@@ -59,13 +59,13 @@ class FareCalculator {
         Pair(3 to 11, 60), Pair(3 to 12, 70), Pair(3 to 13, 70), Pair(3 to 14, 80),
         Pair(3 to 15, 80), Pair(3 to 16, 80),
 
-        // Mirpur-11 (4)
+        // Mirpur 11 (4)
         Pair(4 to 4, 0), Pair(4 to 5, 20), Pair(4 to 6, 20), Pair(4 to 7, 30),
         Pair(4 to 8, 40), Pair(4 to 9, 50), Pair(4 to 10, 60), Pair(4 to 11, 60),
         Pair(4 to 12, 70), Pair(4 to 13, 70), Pair(4 to 14, 80), Pair(4 to 15, 80),
         Pair(4 to 16, 80),
 
-        // Mirpur-10 (5)
+        // Mirpur 10 (5)
         Pair(5 to 5, 0), Pair(5 to 6, 20), Pair(5 to 7, 20), Pair(5 to 8, 30),
         Pair(5 to 9, 40), Pair(5 to 10, 50), Pair(5 to 11, 50), Pair(5 to 12, 60),
         Pair(5 to 13, 60), Pair(5 to 14, 70), Pair(5 to 15, 70), Pair(5 to 16, 70),

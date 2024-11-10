@@ -31,13 +31,12 @@ import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.chooseOrgDest
 import mrtbuddy.composeapp.generated.resources.discount
-import mrtbuddy.composeapp.generated.resources.insufficient
-import mrtbuddy.composeapp.generated.resources.lowBalance
 import mrtbuddy.composeapp.generated.resources.rescan
 import mrtbuddy.composeapp.generated.resources.rescanToCheckSufficientBalance
 import mrtbuddy.composeapp.generated.resources.selectDestination
 import mrtbuddy.composeapp.generated.resources.selectOrigin
 import mrtbuddy.composeapp.generated.resources.singleTicket
+import mrtbuddy.composeapp.generated.resources.sufficient
 import mrtbuddy.composeapp.generated.resources.tapToCheckSufficientBalance
 import mrtbuddy.composeapp.generated.resources.tooLow
 import mrtbuddy.composeapp.generated.resources.withMRT
@@ -235,7 +234,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                             val balance = cardState.amount
                             if (balance >= viewModel.calculatedFare) {
                                 Text(
-                                    text = "${stringResource(Res.string.yourBalance)} (৳ $balance) ${stringResource(Res.string.insufficient)}",
+                                    text = "${stringResource(Res.string.yourBalance)} (৳ $balance) ${stringResource(Res.string.sufficient)}",
                                     style = MaterialTheme.typography.body2,
                                     color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen,
                                     textAlign = TextAlign.Center,

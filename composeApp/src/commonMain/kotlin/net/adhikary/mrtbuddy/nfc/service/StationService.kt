@@ -7,6 +7,7 @@ import mrtbuddy.composeapp.generated.resources.bangladeshSecretariat
 import mrtbuddy.composeapp.generated.resources.bijoySarani
 import mrtbuddy.composeapp.generated.resources.dhakaUniversity
 import mrtbuddy.composeapp.generated.resources.farmgate
+import mrtbuddy.composeapp.generated.resources.kamalapur
 import mrtbuddy.composeapp.generated.resources.karwanBazar
 import mrtbuddy.composeapp.generated.resources.kazipara
 import mrtbuddy.composeapp.generated.resources.mirpur10
@@ -47,6 +48,7 @@ class StationService {
         @Composable
         fun translate(stationName: String): String {
             return when (stationName) {
+                "Kamalapur" -> stringResource(Res.string.kamalapur)
                 "Motijheel" -> stringResource(Res.string.motijheel)
                 "Bangladesh Secretariat" -> stringResource(Res.string.bangladeshSecretariat)
                 "Dhaka University" -> stringResource(Res.string.dhakaUniversity)

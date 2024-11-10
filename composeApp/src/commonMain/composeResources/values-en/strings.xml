@@ -17,6 +17,7 @@
     <!-- transaction histories -->
     <string name="recentJourneys">Recent Journeys</string>
     <string name="balanceUpdate">Balance Update</string>
+    <string name="kamalapur">Kamalapur</string>
     <string name="motijheel">Motijheel</string>
     <string name="bangladeshSecretariat">Bangladesh Secretariat</string>
     <string name="dhakaUniversity">Dhaka University</string>
@@ -54,7 +55,7 @@
     <string name="singleTicket">Single Journey Ticket</string>
     <string name="discount">Discount</string>
     <string name="yourBalance">Your balance</string>
-    <string name="insufficient">is sufficient.</string>
+    <string name="sufficient">is sufficient.</string>
     <string name="tooLow">is too low.</string>
     <string name="tapToCheckSufficientBalance">Tap your card to check if you have sufficient balance</string>
     <string name="rescanToCheckSufficientBalance">Rescan your card to check if you have sufficient balance</string>

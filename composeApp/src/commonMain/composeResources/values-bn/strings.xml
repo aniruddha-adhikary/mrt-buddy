@@ -9,7 +9,7 @@
     <string name="tap">আপনার কার্ডটি ট্যাপ করুন</string>
     <string name="readingCard">কার্ড পড়া হচ্ছে...</string>
     <string name="keepCardSteady">দয়া করে আপনার কার্ডটি স্থির রাখুন</string>
-    <string name="hold">ব্যালেন্স পড়ার জন্য আপনার ফোনের পিছনে\nকার্ডটি ধরুন</string>
+    <string name="hold">ব্যালেন্স পড়ার জন্য আপনার ফোনের পিছনে কার্ডটি ধরুন</string>
     <string name="noNfcSupport">এই ডিভাইসটি এনএফসি সমর্থন করে না</string>
     <string name="requiredNfc">আপনার এমআরটি পাস পড়ার জন্য এনএফসি প্রয়োজন, যা এই ডিভাইসটি সমর্থন করে না</string>
     <string name="nfcDisabled">এনএফসি বন্ধ করা</string>
@@ -17,6 +17,7 @@
     <!-- transaction histories -->
     <string name="recentJourneys">সাম্প্রতিক ভ্রমণ</string>
     <string name="balanceUpdate">ব্যালেন্স আপডেট</string>
+    <string name="kamalapur">কমলাপুর</string>
     <string name="motijheel">মতিঝিল</string>
     <string name="bangladeshSecretariat">বাংলাদেশ সচিবালয়</string>
     <string name="dhakaUniversity">ঢাকা বিশ্ববিদ্যালয়</string>
@@ -54,7 +55,7 @@
     <string name="singleTicket">একক যাত্রার টিকেট</string>
     <string name="discount">ডিসকাউন্ট</string>
     <string name="yourBalance">আপনার ব্যালেন্স</string>
-    <string name="insufficient">পর্যাপ্ত নয়!</string>
+    <string name="sufficient">পর্যাপ্ত!</string>
     <string name="tooLow">অনেক কম।</string>
     <string name="tapToCheckSufficientBalance">আপনার পর্যাপ্ত ব্যালেন্স আছে কিনা জানতে আপনার কার্ডটি ট্যাপ করুন</string>
     <string name="rescanToCheckSufficientBalance">আপনার পর্যাপ্ত ব্যালেন্স আছে কিনা জানতে আপনার কার্ডটি পুনরায় স্ক্যান করুন</string>
