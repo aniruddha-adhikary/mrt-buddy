@@ -7,6 +7,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import mrtbuddy.composeapp.generated.resources.Res
+import mrtbuddy.composeapp.generated.resources.balance
+import mrtbuddy.composeapp.generated.resources.fare
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.model.TransactionWithAmount
@@ -15,6 +18,7 @@ import net.adhikary.mrtbuddy.ui.components.CalculatorIcon
 import net.adhikary.mrtbuddy.ui.components.CardIcon
 import net.adhikary.mrtbuddy.ui.components.Footer
 import net.adhikary.mrtbuddy.ui.components.TransactionHistoryList
+import org.jetbrains.compose.resources.stringResource
 
 enum class Screen {
     Home, Calculator
@@ -54,7 +58,7 @@ fun MainScreen(
             ) {
                 BottomNavigationItem(
                     icon = { CardIcon() },
-                    label = { Text("Balance") },
+                    label = { Text(stringResource(Res.string.balance)) },
                     selected = currentScreen == Screen.Home,
                     onClick = { currentScreen = Screen.Home }
                 )
@@ -62,7 +66,7 @@ fun MainScreen(
                     icon = {
                         CalculatorIcon()
                     },
-                    label = { Text("Fare") },
+                    label = { Text(stringResource(Res.string.fare)) },
                     selected = currentScreen == Screen.Calculator,
                     onClick = { currentScreen = Screen.Calculator }
                 )

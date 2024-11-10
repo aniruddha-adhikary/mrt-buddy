@@ -1,8 +1,10 @@
 package net.adhikary.mrtbuddy.model
 
+import kotlinx.datetime.LocalDateTime
+
 data class Transaction(
     val fixedHeader: String,
-    val timestamp: String,
+    val timestamp: LocalDateTime,
     val transactionType: String,
     val fromStation: String,
     val toStation: String,

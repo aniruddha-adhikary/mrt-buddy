@@ -1,0 +1,63 @@
+<resources>
+    <string name="appName">এমআরটি বাডি</string>
+    <string name="balance">ব্যালেন্স</string>
+    <string name="fare">ভাড়া</string>
+    <string name="language">বাংলা</string>
+    <string name="rescan">পুনরায় স্ক্যান করুন</string>
+    <string name="latestBalance">সর্বশেষ ব্যালেন্স</string>
+    <string name="lowBalance">পরবর্তী ভ্রমণের জন্য আপনার পর্যাপ্ত ব্যালেন্স নেই। টপ আপ করুন</string>
+    <string name="tap">আপনার কার্ডটি ট্যাপ করুন</string>
+    <string name="readingCard">কার্ড পড়া হচ্ছে...</string>
+    <string name="keepCardSteady">দয়া করে আপনার কার্ডটি স্থির রাখুন</string>
+    <string name="hold">ব্যালেন্স পড়ার জন্য আপনার ফোনের পিছনে\nকার্ডটি ধরুন</string>
+    <string name="noNfcSupport">এই ডিভাইসটি এনএফসি সমর্থন করে না</string>
+    <string name="requiredNfc">আপনার এমআরটি পাস পড়ার জন্য এনএফসি প্রয়োজন, যা এই ডিভাইসটি সমর্থন করে না</string>
+    <string name="nfcDisabled">এনএফসি বন্ধ করা</string>
+    <string name="enableNfc">আপনার এমআরটি পাস পড়ার জন্য দয়া করে আপনার ডিভাইসের সেটিংসে এনএফসি চালু করুন</string>
+    <!-- transaction histories -->
+    <string name="recentJourneys">সাম্প্রতিক ভ্রমণ</string>
+    <string name="balanceUpdate">ব্যালেন্স আপডেট</string>
+    <string name="motijheel">মতিঝিল</string>
+    <string name="bangladeshSecretariat">বাংলাদেশ সচিবালয়</string>
+    <string name="dhakaUniversity">ঢাকা বিশ্ববিদ্যালয়</string>
+    <string name="shahbagh">শাহবাগ</string>
+    <string name="karwanBazar">কারওয়ান বাজার</string>
+    <string name="farmgate">ফার্মগেট</string>
+    <string name="bijoySarani">বিজয় সরণি</string>
+    <string name="agargaon">আগারগাঁও</string>
+    <string name="shewrapara">শেওড়াপাড়া</string>
+    <string name="kazipara">কাজীপাড়া</string>
+    <string name="mirpur10">মিরপুর ১০</string>
+    <string name="mirpur11">মিরপুর ১১</string>
+    <string name="pallabi">পল্লবী</string>
+    <string name="uttaraSouth">উত্তরা দক্ষিণ</string>
+    <string name="uttaraCenter">উত্তরা কেন্দ্র</string>
+    <string name="uttaraNorth">উত্তরা উত্তর</string>
+
+    <string name="jan">জানুয়ারি</string>
+    <string name="feb">ফেব্রুয়ারি</string>
+    <string name="mar">মার্চ</string>
+    <string name="apr">এপ্রিল</string>
+    <string name="may">মে</string>
+    <string name="jun">জুন</string>
+    <string name="jul">জুলাই</string>
+    <string name="aug">আগস্ট</string>
+    <string name="sep">সেপ্টেম্বর</string>
+    <string name="oct">অক্টোবর</string>
+    <string name="nov">নভেম্বর</string>
+    <string name="dec">ডিসেম্বর</string>
+
+    <!-- fare calculator-->
+    <string name="selectStation">স্টেশন নির্বাচন করুন</string>
+    <string name="chooseOrgDest">ভাড়া হিসাব করার জন্য শুরু ও গন্তব্য\nনির্বাচন করুন</string>
+    <string name="withMRT">এমআরটি/র‍্যাপিড পাস সহ</string>
+    <string name="singleTicket">একক যাত্রার টিকেট</string>
+    <string name="discount">ডিসকাউন্ট</string>
+    <string name="yourBalance">আপনার ব্যালেন্স</string>
+    <string name="insufficient">পর্যাপ্ত নয়!</string>
+    <string name="tooLow">অনেক কম।</string>
+    <string name="tapToCheckSufficientBalance">আপনার পর্যাপ্ত ব্যালেন্স আছে কিনা জানতে আপনার কার্ডটি ট্যাপ করুন</string>
+    <string name="rescanToCheckSufficientBalance">আপনার পর্যাপ্ত ব্যালেন্স আছে কিনা জানতে আপনার কার্ডটি পুনরায় স্ক্যান করুন</string>
+    <string name="selectOrigin">শুরুর স্টেশন নির্বাচন করুন</string>
+    <string name="selectDestination">গন্তব্য স্টেশন নির্বাচন করুন</string>
+</resources>

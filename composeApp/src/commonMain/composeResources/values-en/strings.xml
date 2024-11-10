@@ -1,0 +1,63 @@
+<resources>
+    <string name="appName">MRT Buddy</string>
+    <string name="balance">Balance</string>
+    <string name="fare">Fare</string>
+    <string name="language">English</string>
+    <string name="rescan">Rescan</string>
+    <string name="latestBalance">Latest Balance</string>
+    <string name="lowBalance">Balance too low for the next trip. Top up needed</string>
+    <string name="tap">Tap Your Card</string>
+    <string name="readingCard">Reading card...</string>
+    <string name="keepCardSteady">Please keep your card steady</string>
+    <string name="hold">Hold your card behind your phone\nto read the balance</string>
+    <string name="noNfcSupport">NFC Not Supported</string>
+    <string name="requiredNfc">This device doesn't support NFC, which is required to read your MRT Pass</string>
+    <string name="nfcDisabled">NFC disabled</string>
+    <string name="enableNfc">Please enable NFC in your device settings to read your MRT Pass</string>
+    <!-- transaction histories -->
+    <string name="recentJourneys">Recent Journeys</string>
+    <string name="balanceUpdate">Balance Update</string>
+    <string name="motijheel">Motijheel</string>
+    <string name="bangladeshSecretariat">Bangladesh Secretariat</string>
+    <string name="dhakaUniversity">Dhaka University</string>
+    <string name="shahbagh">Shahbagh</string>
+    <string name="karwanBazar">Karwan Bazar</string>
+    <string name="farmgate">Farmgate</string>
+    <string name="bijoySarani">Bijoy Sarani</string>
+    <string name="agargaon">Agargaon</string>
+    <string name="shewrapara">Shewrapara</string>
+    <string name="kazipara">Kazipara</string>
+    <string name="mirpur10">Mirpur 10</string>
+    <string name="mirpur11">Mirpur 11</string>
+    <string name="pallabi">Pallabi</string>
+    <string name="uttaraSouth">Uttara South</string>
+    <string name="uttaraCenter">Uttara Center</string>
+    <string name="uttaraNorth">Uttara North</string>
+
+    <string name="jan">Jan</string>
+    <string name="feb">Feb</string>
+    <string name="mar">Mar</string>
+    <string name="apr">Apr</string>
+    <string name="may">May</string>
+    <string name="jun">Jun</string>
+    <string name="jul">Jul</string>
+    <string name="aug">Aug</string>
+    <string name="sep">Sep</string>
+    <string name="oct">Oct</string>
+    <string name="nov">Nov</string>
+    <string name="dec">Dec</string>
+
+    <!-- fare calculator-->
+    <string name="selectStation">Select stations</string>
+    <string name="chooseOrgDest">Choose origin and destination\nto calculate fare</string>
+    <string name="withMRT">with MRT/Rapid Pass</string>
+    <string name="singleTicket">Single Journey Ticket</string>
+    <string name="discount">Discount</string>
+    <string name="yourBalance">Your balance</string>
+    <string name="insufficient">is sufficient.</string>
+    <string name="tooLow">is too low.</string>
+    <string name="tapToCheckSufficientBalance">Tap your card to check if you have sufficient balance</string>
+    <string name="rescanToCheckSufficientBalance">Rescan your card to check if you have sufficient balance</string>
+    <string name="selectOrigin">Select Origin Station</string>
+    <string name="selectDestination">Select Destination Station</string>
+</resources>

@@ -28,12 +28,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import mrtbuddy.composeapp.generated.resources.Res
+import mrtbuddy.composeapp.generated.resources.chooseOrgDest
+import mrtbuddy.composeapp.generated.resources.discount
+import mrtbuddy.composeapp.generated.resources.insufficient
+import mrtbuddy.composeapp.generated.resources.lowBalance
+import mrtbuddy.composeapp.generated.resources.rescan
+import mrtbuddy.composeapp.generated.resources.rescanToCheckSufficientBalance
+import mrtbuddy.composeapp.generated.resources.selectDestination
+import mrtbuddy.composeapp.generated.resources.selectOrigin
+import mrtbuddy.composeapp.generated.resources.singleTicket
+import mrtbuddy.composeapp.generated.resources.tapToCheckSufficientBalance
+import mrtbuddy.composeapp.generated.resources.tooLow
+import mrtbuddy.composeapp.generated.resources.withMRT
+import mrtbuddy.composeapp.generated.resources.yourBalance
 import net.adhikary.mrtbuddy.getPlatform
 import net.adhikary.mrtbuddy.managers.RescanManager
 import net.adhikary.mrtbuddy.model.CardState
+import net.adhikary.mrtbuddy.nfc.service.StationService
+import net.adhikary.mrtbuddy.translateNumber
 import net.adhikary.mrtbuddy.ui.theme.DarkPositiveGreen
 import net.adhikary.mrtbuddy.ui.theme.LightPositiveGreen
 import net.adhikary.mrtbuddy.ui.viewmodel.FareCalculatorViewModel
+import org.jetbrains.compose.resources.stringResource
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -48,7 +65,8 @@ fun StationSelectionSection(viewModel: FareCalculatorViewModel) {
             onExpandedChange = { viewModel.toggleFromExpanded() }
         ) {
             TextField(
-                value = viewModel.fromStation?.name ?: "Select Origin Station",
+                value = StationService.translate(viewModel.fromStation?.name ?: "")
+                    .ifEmpty { stringResource(Res.string.selectOrigin) },
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.fromExpanded) },
@@ -69,7 +87,7 @@ fun StationSelectionSection(viewModel: FareCalculatorViewModel) {
                     DropdownMenuItem(
                         onClick = { viewModel.updateFromStation(station) }
                     ) {
-                        Text(text = station.name)
+                        Text(text = StationService.translate(station.name))
                     }
                 }
             }
@@ -81,7 +99,8 @@ fun StationSelectionSection(viewModel: FareCalculatorViewModel) {
             onExpandedChange = { viewModel.toggleToExpanded() }
         ) {
             TextField(
-                value = viewModel.toStation?.name ?: "Select Destination Station",
+                value = StationService.translate(viewModel.toStation?.name ?: "")
+                    .ifEmpty { stringResource(Res.string.selectDestination) },
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.toExpanded) },
@@ -102,7 +121,7 @@ fun StationSelectionSection(viewModel: FareCalculatorViewModel) {
                     DropdownMenuItem(
                         onClick = { viewModel.updateToStation(station) }
                     ) {
-                        Text(text = station.name)
+                        Text(text = StationService.translate(station.name))
                     }
                 }
             }
@@ -138,13 +157,13 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Select Stations",
+                        text = stringResource(Res.string.selectOrigin),
                         style = MaterialTheme.typography.h6,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Choose origin and destination\nto calculate fare",
+                        text = stringResource(Res.string.chooseOrgDest),
                         style = MaterialTheme.typography.body1,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
@@ -156,7 +175,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
             Box(Modifier.fillMaxSize().padding(24.dp)) {
                 if (getPlatform().name != "android") {
                     Text(
-                        text = "Rescan",
+                        text = stringResource(Res.string.rescan),
                         modifier = Modifier
                             .align(Alignment.TopEnd)
                             .clickable { RescanManager.requestRescan() },
@@ -178,14 +197,14 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                             Spacer(modifier = Modifier.height(12.dp))
                         }
                         Text(
-                            text = "with MRT Pass / Rapid Pass",
+                            text = stringResource(Res.string.withMRT),
                             style = MaterialTheme.typography.caption
                         )
                         if (getPlatform().name == "android") {
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                         Text(
-                            text = "৳ ${viewModel.discountedFare}",
+                            text = "৳ ${translateNumber(viewModel.discountedFare)}",
                             style = MaterialTheme.typography.h4,
                             color = MaterialTheme.colors.onSurface
                         )
@@ -198,11 +217,11 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Single Ticket ৳ ${viewModel.calculatedFare}",
+                            text = "${stringResource(Res.string.singleTicket)} ৳ ${translateNumber(viewModel.calculatedFare)}",
                             style = MaterialTheme.typography.caption
                         )
                         Text(
-                            text = "Discount ৳ ${viewModel.getSavings()}",
+                            text = "${stringResource(Res.string.discount)} ৳ ${translateNumber(viewModel.getSavings())}",
                             style = MaterialTheme.typography.caption,
                             color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
                         )
@@ -216,7 +235,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                             val balance = cardState.amount
                             if (balance >= viewModel.calculatedFare) {
                                 Text(
-                                    text = "Your balance (৳ $balance) is sufficient.",
+                                    text = "${stringResource(Res.string.yourBalance)} (৳ $balance) ${stringResource(Res.string.insufficient)}",
                                     style = MaterialTheme.typography.body2,
                                     color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen,
                                     textAlign = TextAlign.Center,
@@ -224,7 +243,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                                 )
                             } else {
                                 Text(
-                                    text = "Your balance (৳ $balance) is too low.",
+                                    text = "${stringResource(Res.string.yourBalance)} (৳ $balance) ${stringResource(Res.string.tooLow)}",
                                     style = MaterialTheme.typography.body2,
                                     color = MaterialTheme.colors.error.copy(alpha = 0.7f),
                                     textAlign = TextAlign.Center,
@@ -236,7 +255,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                         else -> {
                             if (getPlatform().name == "android") {
                                 Text(
-                                    text = "Tap your card to check if you have sufficient balance",
+                                    text = stringResource(Res.string.tapToCheckSufficientBalance),
                                     style = MaterialTheme.typography.body2,
                                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
                                     textAlign = TextAlign.Center,
@@ -244,7 +263,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                                 )
                             } else {
                                 Text(
-                                    text = "Rescan your card to check if you have sufficient balance",
+                                    text = stringResource(Res.string.rescanToCheckSufficientBalance),
                                     style = MaterialTheme.typography.body2,
                                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
                                     textAlign = TextAlign.Center,

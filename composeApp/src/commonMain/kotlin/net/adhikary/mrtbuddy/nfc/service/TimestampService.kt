@@ -1,16 +1,62 @@
 package net.adhikary.mrtbuddy.nfc.service
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.intl.Locale
 import kotlinx.datetime.LocalDateTime
+import mrtbuddy.composeapp.generated.resources.*
+import net.adhikary.mrtbuddy.translateNumber
+import org.jetbrains.compose.resources.stringResource
 
 class TimestampService {
     companion object {
-        private val monthNames = listOf(
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-        )
+        @Composable
+        fun formatDateTime(dateTime: LocalDateTime): String {
+            val zero = translateNumber(0)[0]
+            val day = translateNumber(dateTime.dayOfMonth).padStart(2, zero)
+            val month = getMonth(dateTime.monthNumber)
+            val year = translateNumber(dateTime.year)
+
+            return "$day $month $year, ${getHour(dateTime.hour)}:$zero$zero ${getAmPm(dateTime.hour)}"
+        }
+
+        fun getAmPm(hour: Int): String {
+            if (Locale.current.language == "bn") {
+                return if (hour < 12) "এএম" else "পিএম"
+            }
+            return if (hour < 12) "AM" else "PM"
+        }
+
+        fun getHour(hour: Int): String {
+            val hour12 = when {
+                hour == 0 -> 12
+                hour > 12 -> hour - 12
+                else -> hour
+            }
+            return translateNumber(hour12).padStart(2, translateNumber(0)[0])
+        }
+
+        @Composable
+        fun getMonth(month: Int): String {
+            return when(month) {
+                1 -> stringResource(Res.string.jan)
+                2 -> stringResource(Res.string.feb)
+                3 -> stringResource(Res.string.mar)
+                4 -> stringResource(Res.string.apr)
+                5 -> stringResource(Res.string.may)
+                6 -> stringResource(Res.string.jun)
+                7 -> stringResource(Res.string.jul)
+                8 -> stringResource(Res.string.aug)
+                9 -> stringResource(Res.string.sep)
+                10 -> stringResource(Res.string.oct)
+                11 -> stringResource(Res.string.nov)
+                12 -> stringResource(Res.string.dec)
+                else -> "Unknown"
+            }
+        }
     }
 
-    fun decodeTimestamp(value: Int): String {
+
+    fun decodeTimestamp(value: Int): LocalDateTime {
         val hour = (value shr 3) and 0x1F
         val day = (value shr 8) and 0x1F
         val month = (value shr 13) and 0x0F
@@ -24,7 +70,7 @@ class TimestampService {
         val validDay = if (day in 1..31) day else 1
 
         // Create a LocalDateTime instance
-        val dateTime = LocalDateTime(
+        return LocalDateTime(
             year = fullYear,
             monthNumber = validMonth,
             dayOfMonth = validDay,
@@ -33,25 +79,5 @@ class TimestampService {
             second = 0,
             nanosecond = 0
         )
-
-        // Format the date and time
-        return formatDateTime(dateTime)
-    }
-
-    private fun formatDateTime(dateTime: LocalDateTime): String {
-        val day = dateTime.dayOfMonth.toString().padStart(2, '0')
-        val month = monthNames.getOrElse(dateTime.monthNumber - 1) { "Unknown" }
-        val year = dateTime.year
-
-        // Convert to 12-hour format
-        val hour12 = when {
-            dateTime.hour == 0 -> 12
-            dateTime.hour > 12 -> dateTime.hour - 12
-            else -> dateTime.hour
-        }.toString().padStart(2, '0')
-
-        val amPm = if (dateTime.hour < 12) "AM" else "PM"
-
-        return "$day $month $year, $hour12:00 $amPm"
     }
 }

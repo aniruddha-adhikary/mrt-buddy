@@ -24,10 +24,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.card
+import mrtbuddy.composeapp.generated.resources.enableNfc
+import mrtbuddy.composeapp.generated.resources.hold
+import mrtbuddy.composeapp.generated.resources.keepCardSteady
+import mrtbuddy.composeapp.generated.resources.latestBalance
+import mrtbuddy.composeapp.generated.resources.lowBalance
+import mrtbuddy.composeapp.generated.resources.nfcDisabled
+import mrtbuddy.composeapp.generated.resources.noNfcSupport
+import mrtbuddy.composeapp.generated.resources.readingCard
+import mrtbuddy.composeapp.generated.resources.requiredNfc
+import mrtbuddy.composeapp.generated.resources.rescan
+import mrtbuddy.composeapp.generated.resources.tap
 import net.adhikary.mrtbuddy.getPlatform
 import net.adhikary.mrtbuddy.managers.RescanManager
 import net.adhikary.mrtbuddy.model.CardState
+import net.adhikary.mrtbuddy.translateNumber
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun BalanceCard(
@@ -44,7 +57,7 @@ fun BalanceCard(
         Box(Modifier.fillMaxSize().padding(24.dp)) { // Increased padding
             if (getPlatform().name != "android") {
                 Text(
-                    "Rescan",
+                    stringResource(Res.string.rescan),
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .clickable { RescanManager.requestRescan() },
@@ -74,13 +87,13 @@ fun BalanceCard(
 @Composable
 private fun BalanceContent(amount: Int) {
     Text(
-        text = "Latest Balance",
+        text = stringResource(Res.string.latestBalance),
         style = MaterialTheme.typography.h6,
         color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
     )
     Spacer(modifier = Modifier.height(12.dp))
     Text(
-        text = "৳ $amount",
+        text = "৳ ${translateNumber(amount)}",
         style = MaterialTheme.typography.h4.copy(
             fontWeight = FontWeight.SemiBold
         ),
@@ -89,7 +102,7 @@ private fun BalanceContent(amount: Int) {
     if (amount < 20) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Balance too low for the next trip. Top up needed",
+            text = stringResource(Res.string.lowBalance),
             style = MaterialTheme.typography.body2,
             color = MaterialTheme.colors.onSurface,
             textAlign = TextAlign.Center
@@ -111,13 +124,13 @@ private fun ReadingContent() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Reading Card",
+            text = stringResource(Res.string.readingCard),
             style = MaterialTheme.typography.h6,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Please keep your card steady",
+            text = stringResource(Res.string.keepCardSteady),
             style = MaterialTheme.typography.body1,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
@@ -139,13 +152,13 @@ private fun WaitingContent() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Tap Your Card",
+            text = stringResource(Res.string.tap),
             style = MaterialTheme.typography.h6,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Hold your card behind your phone\nto read the balance",
+            text = stringResource(Res.string.hold),
             style = MaterialTheme.typography.body1,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
@@ -195,13 +208,13 @@ private fun NoNfcSupportContent() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "NFC Not Supported",
+            text = stringResource(Res.string.noNfcSupport),
             style = MaterialTheme.typography.h6,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "This device doesn't support NFC, which is required to read your MRT Pass",
+            text = stringResource(Res.string.requiredNfc),
             style = MaterialTheme.typography.body1,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
@@ -223,13 +236,13 @@ private fun NfcDisabledContent() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "NFC Disabled",
+            text = stringResource(Res.string.nfcDisabled),
             style = MaterialTheme.typography.h6,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Please enable NFC in your device settings to read your MRT Pass",
+            text = stringResource(Res.string.enableNfc),
             style = MaterialTheme.typography.body1,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
