@@ -11,10 +11,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.Locale
+import kotlinx.datetime.LocalDateTime
+import mrtbuddy.composeapp.generated.resources.Res
+import mrtbuddy.composeapp.generated.resources.agargaon
+import mrtbuddy.composeapp.generated.resources.balanceUpdate
+import mrtbuddy.composeapp.generated.resources.bangladeshSecretariat
+import mrtbuddy.composeapp.generated.resources.bijoySarani
+import mrtbuddy.composeapp.generated.resources.dhakaUniversity
+import mrtbuddy.composeapp.generated.resources.farmgate
+import mrtbuddy.composeapp.generated.resources.karwanBazar
+import mrtbuddy.composeapp.generated.resources.kazipara
+import mrtbuddy.composeapp.generated.resources.mirpur10
+import mrtbuddy.composeapp.generated.resources.mirpur11
+import mrtbuddy.composeapp.generated.resources.motijheel
+import mrtbuddy.composeapp.generated.resources.pallabi
+import mrtbuddy.composeapp.generated.resources.recentJourneys
+import mrtbuddy.composeapp.generated.resources.shahbagh
+import mrtbuddy.composeapp.generated.resources.shewrapara
+import mrtbuddy.composeapp.generated.resources.uttaraCenter
+import mrtbuddy.composeapp.generated.resources.uttaraNorth
+import mrtbuddy.composeapp.generated.resources.uttaraSouth
 import net.adhikary.mrtbuddy.model.TransactionType
 import net.adhikary.mrtbuddy.model.TransactionWithAmount
+import net.adhikary.mrtbuddy.nfc.service.StationService
+import net.adhikary.mrtbuddy.nfc.service.TimestampService
+import net.adhikary.mrtbuddy.translateNumber
 import net.adhikary.mrtbuddy.ui.theme.LightPositiveGreen
 import net.adhikary.mrtbuddy.ui.theme.DarkPositiveGreen
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
@@ -26,7 +51,7 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
             modifier = Modifier.padding(24.dp),
         ) {
             Text(
-                text = "Recent Transactions",
+                text =  stringResource(Res.string.recentJourneys),
                 style = MaterialTheme.typography.h6,
                 fontWeight = FontWeight.SemiBold
             )
@@ -41,7 +66,9 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(transactions) { transactionWithAmount ->
+                val validTransactions = transactions.filter { it.amount != null }
+
+                items(validTransactions) { transactionWithAmount ->
                     val isCommute = transactionWithAmount.transaction.fixedHeader.startsWith(
                         "08 52 10 00"
                     )
@@ -51,11 +78,11 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
                         fromStation = transactionWithAmount.transaction.fromStation,
                         toStation = transactionWithAmount.transaction.toStation,
                         balance = "৳ ${transactionWithAmount.transaction.balance}",
-                        amount = transactionWithAmount.amount?.let { "৳ $it" } ?: "N/A",
+                        amount = transactionWithAmount.amount?.let { "৳ ${translateNumber(it)}" } ?: "N/A",
                         amountValue = transactionWithAmount.amount
                     )
 
-                    if (transactionWithAmount != transactions.last()) {
+                    if (transactionWithAmount != validTransactions.last()) {
                         Divider(
                             modifier = Modifier.padding(top = 12.dp),
                             color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
@@ -70,7 +97,7 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
 @Composable
 fun TransactionItem(
     type: TransactionType,
-    date: String,
+    date: LocalDateTime,
     fromStation: String,
     toStation: String,
     balance: String,
@@ -91,13 +118,15 @@ fun TransactionItem(
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = if (type == TransactionType.Commute) "$fromStation → $toStation" else "Balance Update",
+                text = if (type == TransactionType.Commute)
+                    "${StationService.translate(fromStation)} → ${StationService.translate(toStation)}"
+                    else stringResource(Res.string.balanceUpdate),
                 style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.onSurface
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = date,
+                text = TimestampService.formatDateTime(date),
                 style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
             )
@@ -108,7 +137,7 @@ fun TransactionItem(
             modifier = Modifier.padding(start = 8.dp)
         ) {
             val amountColor = when {
-                type == TransactionType.BalanceUpdate && (amountValue ?: 0) > 0 -> 
+                type == TransactionType.BalanceUpdate && (amountValue ?: 0) > 0 ->
                     if (isDarkTheme) DarkPositiveGreen else LightPositiveGreen
                 else -> MaterialTheme.colors.primary
             }

@@ -1,5 +1,6 @@
 package net.adhikary.mrtbuddy.nfc.parser
 
+import kotlinx.datetime.LocalDateTime
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.nfc.service.StationService
 import net.adhikary.mrtbuddy.nfc.service.TimestampService
@@ -9,6 +10,11 @@ class TransactionParser(
     private val timestampService: TimestampService,
     private val stationService: StationService
 ) {
+    private fun isValidTransaction(transaction: Transaction): Boolean {
+        val cutoffDate = LocalDateTime(2020, 1, 1, 0, 0)
+        return transaction.timestamp > cutoffDate;
+    }
+
     fun parseTransactionResponse(response: ByteArray): List<Transaction> {
         val transactions = mutableListOf<Transaction>()
 
@@ -40,7 +46,9 @@ class TransactionParser(
             val offset = i * blockSize
             val block = blockData.copyOfRange(offset, offset + blockSize)
             val transaction = parseTransactionBlock(block)
-            transactions.add(transaction)
+            if (isValidTransaction(transaction)) {
+                transactions.add(transaction)
+            }
         }
 
         return transactions

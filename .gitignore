@@ -19,3 +19,5 @@ captures
 .aider*
 .env
 release
+.next
+node_modules

@@ -5,3 +5,5 @@ interface Platform {
 }
 
 expect fun getPlatform(): Platform
+
+expect val isDebug: Boolean

@@ -1,0 +1,2 @@
+- A fare calculator has been added to the app.
+- Misc. user interface updates have been made.

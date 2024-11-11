@@ -22,8 +22,13 @@ class NfcReader {
 
         try {
             val command = commandGenerator.generateReadCommand(idm)
-            val response = nfcF.transceive(command)
-            transactions.addAll(transactionParser.parseTransactionResponse(response))
+            val response1 = nfcF.transceive(command)
+            transactions.addAll(transactionParser.parseTransactionResponse(response1))
+
+            // Second read command for blocks 10-19
+            val command2 = commandGenerator.generateReadCommand(idm, startBlockNumber = 10)
+            val response2 = nfcF.transceive(command2)
+            transactions.addAll(transactionParser.parseTransactionResponse(response2))
         } catch (e: IOException) {
             Log.e("NFC", "Error communicating with card", e)
         }

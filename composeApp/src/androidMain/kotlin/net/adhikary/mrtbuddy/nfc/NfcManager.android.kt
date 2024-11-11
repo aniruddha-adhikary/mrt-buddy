@@ -27,6 +27,7 @@ import net.adhikary.mrtbuddy.model.Transaction
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class NFCManager actual constructor() {
     private var nfcAdapter: NfcAdapter? = null
+    private var activity: Activity? = null
     private val nfcReader = NfcReader()
     private val scope = CoroutineScope(SupervisorJob())
 
@@ -109,7 +110,8 @@ actual class NFCManager actual constructor() {
     actual fun startScan() {
         val context = LocalContext.current as Activity
 
-        DisposableEffect(Unit) {
+        DisposableEffect(context) {
+            activity = context  // Store the activity
             // Check NFC support first
             if (!checkNfcSupport(context)) {
                 return@DisposableEffect onDispose { }
@@ -154,7 +156,10 @@ actual class NFCManager actual constructor() {
     }
 
     actual fun stopScan() {
-        nfcAdapter?.disableReaderMode(null)
+        activity?.let {
+            nfcAdapter?.disableReaderMode(it)
+            activity = null  // Reset the activity reference
+        }
     }
 
     private fun setupForegroundDispatch(activity: Activity) {
