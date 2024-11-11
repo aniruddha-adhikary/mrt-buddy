@@ -62,7 +62,7 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
     actual fun isEnabled(): Boolean = NFCTagReaderSession.readingAvailable()
     actual fun isSupported(): Boolean = NFCTagReaderSession.readingAvailable()
 
-@Composable
+    @Composable
     actual fun startScan() {
         if (NFCTagReaderSession.readingAvailable()) {
             session = NFCTagReaderSession(NFCPollingISO18092, this, null)
