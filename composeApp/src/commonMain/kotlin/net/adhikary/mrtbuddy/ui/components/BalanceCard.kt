@@ -28,13 +28,13 @@ import mrtbuddy.composeapp.generated.resources.nonfcanother
 import mrtbuddy.composeapp.generated.resources.tapnfcicon
 import mrtbuddy.composeapp.generated.resources.wireless
 import net.adhikary.mrtbuddy.getPlatform
+import net.adhikary.mrtbuddy.managers.RescanManager
 import net.adhikary.mrtbuddy.model.CardState
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun BalanceCard(
     cardState: CardState,
-    onTapClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -52,7 +52,7 @@ fun BalanceCard(
                 "Rescan",
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .clickable { onTapClick() }
+                    .clickable { RescanManager.requestRescan() }
                     .padding(top = 24.dp, end = 24.dp),
                 style = MaterialTheme.typography.body1,
                 color = MaterialTheme.colors.primary
