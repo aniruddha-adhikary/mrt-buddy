@@ -1,4 +1,4 @@
-package net.adhikary.mrtbuddy.ui.screens
+package net.adhikary.mrtbuddy.ui.screens.fare
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -50,6 +50,8 @@ kotlin {
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
             implementation(libs.napier)
+            implementation(compose.materialIconsExtended)
+            implementation(libs.navigation.compose)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

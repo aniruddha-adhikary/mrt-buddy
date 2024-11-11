@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.2"
+agp = "8.5.0"
 android-compileSdk = "34"
 android-minSdk = "24"
 android-targetSdk = "34"
@@ -19,6 +19,7 @@ kotlinxCoroutine = "1.9.0"
 androidx-room = "2.7.0-alpha11"
 ksp = "2.0.20-1.0.24"
 lifecycleViewmodelCompose = "2.8.2"
+navigationCompose = "2.8.0-alpha10"
 sqlite = "2.5.0-SNAPSHOT"
 napier = "2.7.1"
 
@@ -40,6 +41,7 @@ kotlinx-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", 
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
 lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
