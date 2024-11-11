@@ -1,4 +1,4 @@
-package net.adhikary.mrtbuddy.ui.screens
+package net.adhikary.mrtbuddy.ui.screens.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,6 +18,7 @@ import net.adhikary.mrtbuddy.ui.components.CalculatorIcon
 import net.adhikary.mrtbuddy.ui.components.CardIcon
 import net.adhikary.mrtbuddy.ui.components.Footer
 import net.adhikary.mrtbuddy.ui.components.TransactionHistoryList
+import net.adhikary.mrtbuddy.ui.screens.FareCalculatorScreen
 import org.jetbrains.compose.resources.stringResource
 
 enum class Screen {
@@ -26,26 +27,10 @@ enum class Screen {
 
 @Composable
 fun MainScreen(
-    cardState: CardState,
-    transactions: List<Transaction> = emptyList(),
+    uiState : MainScreenState
 ) {
     var currentScreen by remember { mutableStateOf(Screen.Home) }
-    val hasTransactions = transactions.isNotEmpty()
-
-    val transactionsWithAmounts = remember(transactions) {
-        transactions.mapIndexed { index, transaction ->
-            val amount = if (index + 1 < transactions.size) {
-                transaction.balance - transactions[index + 1].balance
-            } else {
-                null
-            }
-            TransactionWithAmount(
-                transaction = transaction,
-                amount = amount
-            )
-        }
-    }
-
+    val hasTransactions = uiState.transaction.isNotEmpty()
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -87,10 +72,10 @@ fun MainScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        BalanceCard(cardState = cardState)
+                        BalanceCard(cardState = uiState.cardState)
 
                         if (hasTransactions) {
-                            TransactionHistoryList(transactionsWithAmounts)
+                            TransactionHistoryList(uiState.transactionWithAmount)
                         }
                     }
 
@@ -100,7 +85,7 @@ fun MainScreen(
                 }
             }
             Screen.Calculator -> {
-                FareCalculatorScreen(cardState = cardState)
+                FareCalculatorScreen(cardState = uiState.cardState)
             }
         }
     }

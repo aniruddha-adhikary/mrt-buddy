@@ -18,6 +18,7 @@ kotlinxDatetime = "0.4.0"
 kotlinxCoroutine = "1.9.0"
 androidx-room = "2.7.0-alpha11"
 ksp = "2.0.20-1.0.24"
+lifecycleViewmodelCompose = "2.8.2"
 sqlite = "2.5.0-SNAPSHOT"
 napier = "2.7.1"
 
@@ -38,6 +39,7 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 kotlinx-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutine" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
+lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
