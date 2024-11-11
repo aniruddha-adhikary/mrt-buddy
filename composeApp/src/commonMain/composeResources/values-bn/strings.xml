@@ -61,4 +61,9 @@
     <string name="rescanToCheckSufficientBalance">আপনার পর্যাপ্ত ব্যালেন্স আছে কিনা জানতে আপনার কার্ডটি পুনরায় স্ক্যান করুন</string>
     <string name="selectOrigin">শুরুর স্টেশন নির্বাচন করুন</string>
     <string name="selectDestination">গন্তব্য স্টেশন নির্বাচন করুন</string>
+
+    <!-- metro map-->
+    <string name="nav_map">ম্যাপ</string>
+    <string name="nearest_metro">সব চেয়ে কাছের মেট্রো</string>
+
 </resources>
