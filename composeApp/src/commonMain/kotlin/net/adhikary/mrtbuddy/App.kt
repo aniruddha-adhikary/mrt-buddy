@@ -37,7 +37,7 @@ fun App(
     cardDao: CardDao,
     scanDao: ScanDao,
     transactionDao: TransactionDao,
-    mainVm: MainScreenViewModel = viewModel { MainScreenViewModel() }
+    mainVm: MainScreenViewModel = viewModel { MainScreenViewModel(cardDao, scanDao, transactionDao) }
 ) { // TODO need injection
     val scope = rememberCoroutineScope()
     val nfcManager = getNFCManager()
