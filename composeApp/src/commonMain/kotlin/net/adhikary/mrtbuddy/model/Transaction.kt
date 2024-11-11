@@ -30,3 +30,8 @@ sealed class CardState {
     data object NoNfcSupport : CardState()
     data object NfcDisabled : CardState()
 }
+
+data class CardReadResult(
+    val idm: String,
+    val transactions: List<Transaction>
+)

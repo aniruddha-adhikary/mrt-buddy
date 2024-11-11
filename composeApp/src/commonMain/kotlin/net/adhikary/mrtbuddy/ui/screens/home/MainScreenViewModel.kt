@@ -42,13 +42,17 @@ class MainScreenViewModel : ViewModel() {
 
             }
 
-            is MainScreenAction.UpdateTransactions -> {
+            is MainScreenAction.UpdateCardReadResult -> {
                 // here state has been copied over new state with new transactions
                 // rest will not be updated
                 // hence no ui will be redrawn
-                val transactionsWithAmount = transactionMapper(action.transactions)
+                val transactionsWithAmount = transactionMapper(action.cardReadResult.transactions)
                 _state.update {
-                    it.copy(transaction = action.transactions , transactionWithAmount = transactionsWithAmount)
+                    it.copy(
+                        cardIdm = action.cardReadResult.idm,
+                        transaction = action.cardReadResult.transactions,
+                        transactionWithAmount = transactionsWithAmount
+                    )
                 }
 
             }

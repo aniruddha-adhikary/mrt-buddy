@@ -10,6 +10,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import net.adhikary.mrtbuddy.model.CardReadResult
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.nfc.parser.ByteParser
@@ -32,8 +33,12 @@ fun ByteArray.toNSData(): NSData = this.usePinned { pinned ->
     NSData.create(bytes = pinned.addressOf(0), length = this.size.toULong())
 }
 
-@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+private fun NSData.toHexString(): String {
+    val bytes = this.toByteArray()
+    return ByteParser().toHexString(bytes);
+}
 
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 fun NSData.toByteArray(): ByteArray {
     val byteArray = ByteArray(this.length.toInt())
     this.bytes?.let { bytesPointer ->
@@ -56,8 +61,8 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
     private val _cardState = MutableStateFlow<CardState>(CardState.WaitingForTap)
     actual val cardState: StateFlow<CardState> = _cardState
 
-    private val _transactions = MutableStateFlow<List<Transaction>>(emptyList())
-    actual val transactions: StateFlow<List<Transaction>> = _transactions
+    private val _cardReadResults = MutableStateFlow<CardReadResult?>(null)
+    actual val cardReadResults: StateFlow<CardReadResult?> = _cardReadResults
 
     actual fun isEnabled(): Boolean = NFCTagReaderSession.readingAvailable()
     actual fun isSupported(): Boolean = NFCTagReaderSession.readingAvailable()
@@ -97,6 +102,8 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
                 _cardState.emit(CardState.Reading)
             }
 
+            val idmData = tag.currentIDm()
+            val idm = idmData.toHexString()
             val serviceCodeList = listOf(byteArrayOf(0x22, 0x0f).reversedArray())
 
             val blockList = (0 until 10).map { byteArrayOf(0x80.toByte(), it.toByte()) }
@@ -122,21 +129,23 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
                         serviceCodeList = serviceCodeList.map { it.toNSData() },
                         blockList = blockList2.map { it.toNSData() },
                         completionHandler = { statusFlag1, statusFlag2, dataList2, error2 ->
-                            if (error2 != nil) {
+                            if (error2 != null) {
                                 session.invalidateSessionWithErrorMessage("Card reading failed")
                                 scope.launch { _cardState.emit(CardState.Error("Card reading failed")) }
                                 return@readWithoutEncryptionWithServiceCodeList
                             }
 
                             // Combine data from both reads
-                            val allData = ((dataList ?: emptyList<Any>()) + (dataList2 ?: emptyList<Any>())).map { (it as NSData).toByteArray() }
-                            val entries = allData.map { transactionParser.parseTransactionBlock(it) }
+                            val allData = ((dataList ?: emptyList<Any>()) + (dataList2
+                                ?: emptyList<Any>())).map { (it as NSData).toByteArray() }
+                            val entries =
+                                allData.map { transactionParser.parseTransactionBlock(it) }
 
                             if (entries.isEmpty()) {
                                 scope.launch { _cardState.emit(CardState.Error("No transactions found on card")) }
                             } else {
                                 scope.launch {
-                                    _transactions.emit(entries)
+                                    _cardReadResults.emit(CardReadResult(idm, entries))
                                     val latestBalance = entries.firstOrNull()?.balance
 
                                     latestBalance?.let {

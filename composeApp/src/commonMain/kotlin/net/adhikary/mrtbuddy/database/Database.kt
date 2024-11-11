@@ -23,12 +23,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getCardDao(): CardDao
     abstract fun getScanDao(): ScanDao
     abstract fun getTransactionDao(): TransactionDao
-
-    // Repository getters
-    fun getDemoRepository() = DemoRepository(getDao())
-    fun getCardRepository() = CardRepository(getCardDao())
-    fun getScanRepository() = ScanRepository(getScanDao())
-    fun getTransactionRepository() = TransactionRepository(getTransactionDao())
 }
 
 // The Room compiler generates the `actual` implementations.
