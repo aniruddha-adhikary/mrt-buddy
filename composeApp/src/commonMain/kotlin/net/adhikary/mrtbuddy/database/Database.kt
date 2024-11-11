@@ -9,11 +9,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import net.adhikary.mrtbuddy.dao.DemoDao
 import net.adhikary.mrtbuddy.data.DemoLocal
+import net.adhikary.mrtbuddy.data.CardEntity
 
-@Database(entities = [DemoLocal::class], version = 1) // you must add the entities here
+@Database(entities = [DemoLocal::class, CardEntity::class], version = 2) // you must add the entities here
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getDao(): DemoDao
+    abstract fun getCardDao(): CardDao
 }
 
 // The Room compiler generates the `actual` implementations.

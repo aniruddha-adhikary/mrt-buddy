@@ -18,6 +18,9 @@ expect class NFCManager() {
 
     fun isEnabled(): Boolean
     fun isSupported(): Boolean
+    suspend fun saveCard(idm: String, name: String)
+
+    suspend fun getCardName(idm: String): String?
 }
 
 @Composable
