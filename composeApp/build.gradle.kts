@@ -48,6 +48,7 @@ kotlin {
             implementation(libs.kotlinx.coroutine)
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
+            implementation(libs.napier)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -99,6 +100,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    buildFeatures {
+        compose = true
+        buildConfig = true
     dependenciesInfo {
         includeInApk = false
         includeInBundle = false

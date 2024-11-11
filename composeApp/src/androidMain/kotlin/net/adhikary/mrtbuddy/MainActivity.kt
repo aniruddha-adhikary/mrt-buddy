@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import io.github.aakira.napier.Napier
 import net.adhikary.mrtbuddy.database.getDatabase
 
 class MainActivity : ComponentActivity() {
@@ -22,6 +23,8 @@ class MainActivity : ComponentActivity() {
         // TODO will be removed once code structure and dependancy injection is intruduced
 
         val dao = getDatabase(applicationContext).getDao()
+
+        Napier.d("App Running.....")
 
         setContent {
             App(dao)
