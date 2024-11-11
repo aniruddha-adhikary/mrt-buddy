@@ -4,10 +4,6 @@ name: Release Build
 on:
   workflow_dispatch: # Manually trigger the workflow
 
-  push:
-    branches:
-      - master
-
 permissions:
   contents: write
 
