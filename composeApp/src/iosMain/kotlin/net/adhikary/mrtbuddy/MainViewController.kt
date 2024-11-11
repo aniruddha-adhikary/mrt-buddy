@@ -10,11 +10,20 @@ fun MainViewController() = ComposeUIViewController {
     val dao = remember {
         getDatabase().getDao()
     }
+    val cardDao = remember {
+        getDatabase().getCardDao()
+    }
+    val scanDao = remember {
+        getDatabase().getScanDao()
+    }
+    val transactionDao = remember {
+        getDatabase().getTransactionDao()
+    }
     if (isDebug) {
         Napier.base(DebugAntilog())
     }
     
 
-    App(dao = dao)
+    App(dao, cardDao, scanDao, transactionDao)
 
 }
