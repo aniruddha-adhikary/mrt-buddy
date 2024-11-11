@@ -22,10 +22,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
-import mrtbuddy.composeapp.generated.resources.message
+import mrtbuddy.composeapp.generated.resources.error_page
 import mrtbuddy.composeapp.generated.resources.nonfc
 import mrtbuddy.composeapp.generated.resources.nonfcanother
-import mrtbuddy.composeapp.generated.resources.tapnfcicon
+import mrtbuddy.composeapp.generated.resources.tapnfc
 import mrtbuddy.composeapp.generated.resources.wireless
 import net.adhikary.mrtbuddy.getPlatform
 import net.adhikary.mrtbuddy.managers.RescanManager
@@ -60,7 +60,6 @@ fun BalanceCard(
         }
     }
 }
-
 
 @Composable
 private fun BalanceContent(
@@ -108,7 +107,7 @@ private fun ReadingContent() {
 private fun WaitingContent() {
     ContentDesign(
         message = "Tap your card to read balance",
-        image = painterResource(Res.drawable.tapnfcicon)
+        image = painterResource(Res.drawable.tapnfc)
     )
 }
 
@@ -116,7 +115,7 @@ private fun WaitingContent() {
 private fun ErrorContent(message: String) {
     ContentDesign(
         message = message,
-        image = painterResource(Res.drawable.message)
+        image = painterResource(Res.drawable.error_page)
     )
 }
 
