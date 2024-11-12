@@ -30,11 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
+import mrtbuddy.composeapp.generated.resources.balanceAmount
 import mrtbuddy.composeapp.generated.resources.chooseOrgDest
-import mrtbuddy.composeapp.generated.resources.discount
-import mrtbuddy.composeapp.generated.resources.one_way_arrow
 import mrtbuddy.composeapp.generated.resources.rescan
-import mrtbuddy.composeapp.generated.resources.rescanToCheckSufficientBalance
 import mrtbuddy.composeapp.generated.resources.roundTrips
 import mrtbuddy.composeapp.generated.resources.selectDestination
 import mrtbuddy.composeapp.generated.resources.selectOrigin
@@ -226,7 +224,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "Balance ৳ $balance",
+                                        text = "${stringResource(Res.string.balanceAmount)} ৳ ${translateNumber(balance)}",
                                         style = MaterialTheme.typography.body1,
                                         color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
                                     )
@@ -243,7 +241,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                                             )
                                             Spacer(modifier = Modifier.width(4.dp))
                                             Text(
-                                                text = "$roundTrips x ${stringResource(Res.string.roundTrips)}",
+                                                text = "${translateNumber(roundTrips)} ${stringResource(Res.string.roundTrips)}",
                                                 style = MaterialTheme.typography.body1,
                                                 color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
                                             )

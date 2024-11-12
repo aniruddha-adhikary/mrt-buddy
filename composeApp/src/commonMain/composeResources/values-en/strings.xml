@@ -61,7 +61,8 @@
     <string name="rescanToCheckSufficientBalance">Rescan your card to check if you have sufficient balance</string>
     <string name="selectOrigin">Select Origin Station</string>
     <string name="selectDestination">Select Destination Station</string>
-    <string name="roundTrips">Round Trip(s)</string>
+    <string name="roundTrips">x Round Trip(s)</string>
+    <string name="balanceAmount">Balance</string>
 
     <!-- more screen -->
     <string name="aboutHeader">About</string>

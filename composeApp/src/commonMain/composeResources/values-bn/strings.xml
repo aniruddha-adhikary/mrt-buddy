@@ -61,7 +61,8 @@
     <string name="rescanToCheckSufficientBalance">আপনার পর্যাপ্ত ব্যালেন্স আছে কিনা জানতে আপনার কার্ডটি পুনরায় স্ক্যান করুন</string>
     <string name="selectOrigin">শুরুর স্টেশন নির্বাচন করুন</string>
     <string name="selectDestination">গন্তব্য স্টেশন নির্বাচন করুন</string>
-    <string name="roundTrips">আপ-ডাউন</string>
+    <string name="roundTrips">বার আপ-ডাউন</string>
+    <string name="balanceAmount">ব্যালেন্স</string>
 
     <!-- more screen -->
     <string name="aboutHeader">আরও জানুন</string>
