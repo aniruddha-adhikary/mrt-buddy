@@ -1,5 +1,6 @@
 package net.adhikary.mrtbuddy
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -16,10 +17,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.balance
@@ -38,14 +45,18 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-@Preview
 fun App(
     dao: DemoDao,
+    prefs: DataStore<Preferences>,
     mainVm: MainScreenViewModel = viewModel { MainScreenViewModel() }
 ) { // TODO need injection
     val scope = rememberCoroutineScope()
     val nfcManager = getNFCManager()
 
+    val theme by prefs.data.map {
+        val themekey = intPreferencesKey("themeKey")
+        it[themekey] ?: 0
+    }.collectAsState(0)
 
     mainVm.events.observeAsActions { event ->
         when (event) {
@@ -54,7 +65,6 @@ fun App(
 
         }
     }
-
 
     if (RescanManager.isRescanRequested.value) {
         nfcManager.startScan()
@@ -89,7 +99,13 @@ fun App(
     var currentIndex by rememberSaveable { mutableStateOf(0) }
     val navController = rememberNavController()
 
-    MRTBuddyTheme {
+    MRTBuddyTheme(
+        darkTheme = when (theme) {
+            0 -> isSystemInDarkTheme() // System default
+            1 -> true // Dark
+            else -> false // Light theme
+        }
+    ) {
         var lang by remember { mutableStateOf(Language.English.isoFormat) }
         val state: MainScreenState by mainVm.state.collectAsState()
 
@@ -129,6 +145,8 @@ fun App(
             ) { innerPadding ->
                 Navigation(
                     state = state,
+                    prefs = prefs,
+                    contentPadding = innerPadding,
                     navController = navController
                 )
             }

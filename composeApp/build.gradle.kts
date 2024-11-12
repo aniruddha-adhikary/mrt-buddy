@@ -52,6 +52,8 @@ kotlin {
             implementation(libs.napier)
             implementation(compose.materialIconsExtended)
             implementation(libs.navigation.compose)
+            implementation(libs.androidx.datastore.preferences)
+
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -115,6 +117,7 @@ android {
 
 
 dependencies {
+    implementation(libs.androidx.appcompat)
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
     add("kspIosX64", libs.androidx.room.compiler)

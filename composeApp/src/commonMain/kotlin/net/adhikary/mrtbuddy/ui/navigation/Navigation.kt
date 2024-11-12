@@ -1,9 +1,15 @@
 package net.adhikary.mrtbuddy.ui.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import kotlinx.datetime.Month
 import net.adhikary.mrtbuddy.ui.screens.fare.FareCalculatorScreen
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreen
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenState
@@ -14,7 +20,9 @@ import net.adhikary.mrtbuddy.ui.screens.settings.SettingScreenRoute
  */
 @Composable
 fun Navigation(
+    contentPadding : PaddingValues,
     state: MainScreenState,
+    prefs : DataStore<Preferences>,
     navController: NavHostController
 ) {
     NavHost(
@@ -24,9 +32,7 @@ fun Navigation(
         composable(
             route = NavHomeDestinationScreens.HomeScreen.route
         ) {
-            MainScreen(
-                uiState = state
-            )
+            MainScreen(uiState = state)
         }
 
         composable(
@@ -38,7 +44,7 @@ fun Navigation(
         composable(
             route = NavHomeDestinationScreens.SettingsScreen.route
         ) {
-            SettingScreenRoute()
+            SettingScreenRoute(prefs = prefs, modifier = Modifier.padding(contentPadding))
         }
     }
 }

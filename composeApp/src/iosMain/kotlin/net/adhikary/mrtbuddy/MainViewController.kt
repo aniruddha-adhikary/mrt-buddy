@@ -4,6 +4,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.window.ComposeUIViewController
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
+import net.adhikary.mrtbuddy.database.createDataStore
 import net.adhikary.mrtbuddy.database.getDatabase
 
 fun MainViewController() = ComposeUIViewController {
@@ -13,8 +14,10 @@ fun MainViewController() = ComposeUIViewController {
     if (isDebug) {
         Napier.base(DebugAntilog())
     }
-    
 
-    App(dao = dao)
 
+    App(
+        dao = dao,
+        createDataStore()
+    )
 }
