@@ -1,6 +1,18 @@
 package net.adhikary.mrtbuddy.ui.components
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -85,6 +98,44 @@ fun BalanceCard(
 }
 
 @Composable
+private fun PulsingCircle(iconSize: Dp) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val pulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.5f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        )
+    )
+    val density = LocalDensity.current
+    val initialRadiusPx = with(density) { iconSize.toPx() / 2 }
+    val targetRadiusPx = initialRadiusPx * 2
+
+    val pulseRadius by infiniteTransition.animateFloat(
+        initialValue = initialRadiusPx,
+        targetValue = targetRadiusPx,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    // Retrieve the color outside the Canvas lambda
+    val circleColor = MaterialTheme.colors.primary.copy(alpha = pulseAlpha)
+
+    Canvas(
+        modifier = Modifier.size(iconSize * 2)
+    ) {
+        drawCircle(
+            color = circleColor,
+            radius = pulseRadius,
+            center = center
+        )
+    }
+}
+
+@Composable
 private fun BalanceContent(amount: Int) {
     Text(
         text = stringResource(Res.string.latestBalance),
@@ -144,12 +195,15 @@ private fun WaitingContent() {
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(
-            painter = painterResource(Res.drawable.card),
-            contentDescription = "Tap Card",
-            modifier = Modifier.height(48.dp),
-            tint = MaterialTheme.colors.primary
-        )
+        Box(contentAlignment = Alignment.Center) {
+            PulsingCircle(iconSize = 48.dp)
+            Icon(
+                painter = painterResource(Res.drawable.card),
+                contentDescription = "Tap Card",
+                modifier = Modifier.height(48.dp),
+                tint = MaterialTheme.colors.primary
+            )
+        }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.tap),
