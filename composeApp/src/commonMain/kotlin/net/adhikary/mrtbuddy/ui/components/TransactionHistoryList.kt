@@ -9,36 +9,21 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDateTime
 import mrtbuddy.composeapp.generated.resources.Res
-import mrtbuddy.composeapp.generated.resources.agargaon
 import mrtbuddy.composeapp.generated.resources.balanceUpdate
-import mrtbuddy.composeapp.generated.resources.bangladeshSecretariat
-import mrtbuddy.composeapp.generated.resources.bijoySarani
-import mrtbuddy.composeapp.generated.resources.dhakaUniversity
-import mrtbuddy.composeapp.generated.resources.farmgate
-import mrtbuddy.composeapp.generated.resources.karwanBazar
-import mrtbuddy.composeapp.generated.resources.kazipara
-import mrtbuddy.composeapp.generated.resources.mirpur10
-import mrtbuddy.composeapp.generated.resources.mirpur11
-import mrtbuddy.composeapp.generated.resources.motijheel
-import mrtbuddy.composeapp.generated.resources.pallabi
 import mrtbuddy.composeapp.generated.resources.recentJourneys
-import mrtbuddy.composeapp.generated.resources.shahbagh
-import mrtbuddy.composeapp.generated.resources.shewrapara
-import mrtbuddy.composeapp.generated.resources.uttaraCenter
-import mrtbuddy.composeapp.generated.resources.uttaraNorth
-import mrtbuddy.composeapp.generated.resources.uttaraSouth
 import net.adhikary.mrtbuddy.model.TransactionType
 import net.adhikary.mrtbuddy.model.TransactionWithAmount
 import net.adhikary.mrtbuddy.nfc.service.StationService
 import net.adhikary.mrtbuddy.nfc.service.TimestampService
 import net.adhikary.mrtbuddy.translateNumber
-import net.adhikary.mrtbuddy.ui.theme.LightPositiveGreen
+import net.adhikary.mrtbuddy.ui.theme.DarkNegativeRed
 import net.adhikary.mrtbuddy.ui.theme.DarkPositiveGreen
+import net.adhikary.mrtbuddy.ui.theme.LightNegativeRed
+import net.adhikary.mrtbuddy.ui.theme.LightPositiveGreen
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -139,6 +124,8 @@ fun TransactionItem(
             val amountColor = when {
                 type == TransactionType.BalanceUpdate && (amountValue ?: 0) > 0 ->
                     if (isDarkTheme) DarkPositiveGreen else LightPositiveGreen
+                type == TransactionType.Commute || (amountValue ?: 0) < 0 ->
+                    if (isDarkTheme) DarkNegativeRed else LightNegativeRed
                 else -> MaterialTheme.colors.primary
             }
             
