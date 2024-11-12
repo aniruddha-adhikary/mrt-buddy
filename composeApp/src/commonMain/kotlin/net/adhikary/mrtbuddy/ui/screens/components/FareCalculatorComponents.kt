@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.DropdownMenuItem
@@ -31,14 +32,16 @@ import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.chooseOrgDest
 import mrtbuddy.composeapp.generated.resources.discount
+import mrtbuddy.composeapp.generated.resources.one_way_arrow
 import mrtbuddy.composeapp.generated.resources.rescan
 import mrtbuddy.composeapp.generated.resources.rescanToCheckSufficientBalance
+import mrtbuddy.composeapp.generated.resources.roundTrips
 import mrtbuddy.composeapp.generated.resources.selectDestination
 import mrtbuddy.composeapp.generated.resources.selectOrigin
 import mrtbuddy.composeapp.generated.resources.singleTicket
-import mrtbuddy.composeapp.generated.resources.sufficient
 import mrtbuddy.composeapp.generated.resources.tapToCheckSufficientBalance
 import mrtbuddy.composeapp.generated.resources.tooLow
+import mrtbuddy.composeapp.generated.resources.two_way_arrows
 import mrtbuddy.composeapp.generated.resources.withMRT
 import mrtbuddy.composeapp.generated.resources.yourBalance
 import net.adhikary.mrtbuddy.getPlatform
@@ -49,6 +52,7 @@ import net.adhikary.mrtbuddy.translateNumber
 import net.adhikary.mrtbuddy.ui.theme.DarkPositiveGreen
 import net.adhikary.mrtbuddy.ui.theme.LightPositiveGreen
 import net.adhikary.mrtbuddy.ui.viewmodel.FareCalculatorViewModel
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 
@@ -233,13 +237,35 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                         is CardState.Balance -> {
                             val balance = cardState.amount
                             if (balance >= viewModel.calculatedFare) {
-                                Text(
-                                    text = "${stringResource(Res.string.yourBalance)} (৳ $balance) ${stringResource(Res.string.sufficient)}",
-                                    style = MaterialTheme.typography.body2,
-                                    color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
+                                val roundTrips = balance / (viewModel.calculatedFare * 2)
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    if (roundTrips > 0) {
+                                        Text(
+                                            text = "৳ $balance",
+                                            style = MaterialTheme.typography.body1,
+                                            color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
+                                        )
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(Res.drawable.two_way_arrows),
+                                                contentDescription = "Round trips",
+                                                tint = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
+                                            )
+                                            Text(
+                                                text = "$roundTrips x ${stringResource(Res.string.roundTrips)}",
+                                                style = MaterialTheme.typography.body1,
+                                                color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
+                                            )
+                                        }
+                                    }
+                                }
                             } else {
                                 Text(
                                     text = "${stringResource(Res.string.yourBalance)} (৳ $balance) ${stringResource(Res.string.tooLow)}",

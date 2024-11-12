@@ -56,12 +56,12 @@
     <string name="singleTicket">Single Ticket</string>
     <string name="discount">Discount</string>
     <string name="yourBalance">Your balance</string>
-    <string name="sufficient">is sufficient.</string>
     <string name="tooLow">is too low.</string>
     <string name="tapToCheckSufficientBalance">Tap your card to check if you have sufficient balance</string>
     <string name="rescanToCheckSufficientBalance">Rescan your card to check if you have sufficient balance</string>
     <string name="selectOrigin">Select Origin Station</string>
     <string name="selectDestination">Select Destination Station</string>
+    <string name="roundTrips">Round Trip(s)</string>
 
     <!-- more screen -->
     <string name="aboutHeader">About</string>
