@@ -211,26 +211,8 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                             style = MaterialTheme.typography.h4,
                             color = MaterialTheme.colors.onSurface
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
                     }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "${stringResource(Res.string.singleTicket)} ৳ ${translateNumber(viewModel.calculatedFare)}",
-                            style = MaterialTheme.typography.caption
-                        )
-                        Text(
-                            text = "${stringResource(Res.string.discount)} ৳ ${translateNumber(viewModel.getSavings())}",
-                            style = MaterialTheme.typography.caption,
-                            color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(4.dp))
 
                     Spacer(modifier = Modifier.weight(1f))
                     when (cardState) {
@@ -238,26 +220,28 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                             val balance = cardState.amount
                             if (balance >= viewModel.calculatedFare) {
                                 val roundTrips = balance / (viewModel.calculatedFare * 2)
-                                Row(
+                                Column(
                                     modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
+                                    Text(
+                                        text = "Balance ৳ $balance",
+                                        style = MaterialTheme.typography.body1,
+                                        color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
+                                    )
                                     if (roundTrips > 0) {
-                                        Text(
-                                            text = "৳ $balance",
-                                            style = MaterialTheme.typography.body1,
-                                            color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
-                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                            horizontalArrangement = Arrangement.Center
                                         ) {
                                             Icon(
                                                 painter = painterResource(Res.drawable.two_way_arrows),
                                                 contentDescription = "Round trips",
                                                 tint = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
                                             )
+                                            Spacer(modifier = Modifier.width(4.dp))
                                             Text(
                                                 text = "$roundTrips x ${stringResource(Res.string.roundTrips)}",
                                                 style = MaterialTheme.typography.body1,
@@ -268,7 +252,11 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                                 }
                             } else {
                                 Text(
-                                    text = "${stringResource(Res.string.yourBalance)} (৳ $balance) ${stringResource(Res.string.tooLow)}",
+                                    text = "${stringResource(Res.string.yourBalance)} (৳ $balance) ${
+                                        stringResource(
+                                            Res.string.tooLow
+                                        )
+                                    }",
                                     style = MaterialTheme.typography.body2,
                                     color = MaterialTheme.colors.error.copy(alpha = 0.7f),
                                     textAlign = TextAlign.Center,
@@ -278,23 +266,24 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                         }
 
                         else -> {
-                            if (getPlatform().name == "android") {
-                                Text(
-                                    text = stringResource(Res.string.tapToCheckSufficientBalance),
-                                    style = MaterialTheme.typography.body2,
-                                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            } else {
-                                Text(
-                                    text = stringResource(Res.string.rescanToCheckSufficientBalance),
-                                    style = MaterialTheme.typography.body2,
-                                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            }
+                            Text(
+                                text = "${stringResource(Res.string.singleTicket)} ৳ ${
+                                    translateNumber(
+                                        viewModel.calculatedFare
+                                    )
+                                }",
+                                style = MaterialTheme.typography.caption,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = stringResource(Res.string.tapToCheckSufficientBalance),
+                                style = MaterialTheme.typography.body2,
+                                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
                         }
                     }
                     Spacer(modifier = Modifier.weight(1f))
