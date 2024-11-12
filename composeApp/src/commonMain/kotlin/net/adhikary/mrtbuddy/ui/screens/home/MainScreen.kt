@@ -118,7 +118,7 @@ fun MainScreen(
                 FareCalculatorScreen(cardState = uiState.cardState)
             }
             Screen.More -> {
-                MoreScreen()
+                MoreScreen(Modifier.padding(paddingValues))
             }
         }
     }

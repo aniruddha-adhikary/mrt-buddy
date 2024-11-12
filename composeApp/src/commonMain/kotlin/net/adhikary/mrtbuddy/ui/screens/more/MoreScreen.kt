@@ -1,10 +1,8 @@
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -35,7 +33,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun MoreScreen() {
+fun MoreScreen(modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current;
 
     Column(
@@ -43,46 +41,49 @@ fun MoreScreen() {
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
+            .then(modifier),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
+        Column {
+            SectionHeader(text = stringResource(Res.string.aboutHeader))
+            RoundedButton(
+                text = stringResource(Res.string.privacyPolicy),
+                painter = painterResource(Res.drawable.policy),
+                onClick = {
+                    uriHandler.openUri("https://mrtbuddy.com/privacy-policy")
+                }
+            )
+            RoundedButton(
+                text = stringResource(Res.string.helpAndSupportButton),
+                painter = painterResource(Res.drawable.help),
+                onClick = {
+                    uriHandler.openUri("https://mrtbuddy.com/support")
+                }
+            )
+        }
 
-        SectionHeader(text =  stringResource(Res.string.aboutHeader))
-        RoundedButton(
-            text = stringResource(Res.string.privacyPolicy),
-            painter = painterResource(Res.drawable.policy),
-            onClick = {
-                uriHandler.openUri("https://mrtbuddy.com/privacy-policy")
-            }
-        )
-        RoundedButton(
-            text = stringResource(Res.string.helpAndSupportButton),
-            painter = painterResource(Res.drawable.help),
-            onClick = {
-                uriHandler.openUri("https://mrtbuddy.com/support")
-            }
-        )
+        Column {
+            Text(
+                text = stringResource(Res.string.nonAffiliationDisclaimer),
+                fontSize = 12.sp,
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = stringResource(Res.string.readOnlyDisclaimer),
+                fontSize = 12.sp,
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
 
-        Text(
-            text = stringResource(Res.string.nonAffiliationDisclaimer),
-            fontSize = 12.sp,
-            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-
-        Text(
-            text =  stringResource(Res.string.readOnlyDisclaimer),
-            fontSize = 12.sp,
-            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-
-        Text(
-            text = "Copyright © 2024 Aniruddha Adhikary.",
-            fontSize = 12.sp,
-            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+            Text(
+                text = "Copyright © 2024 Aniruddha Adhikary.",
+                fontSize = 12.sp,
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
     }
 }
 
