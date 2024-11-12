@@ -81,14 +81,23 @@ actual class NFCManager actual constructor() {
                             scope.launch {
                                 _cardState.emit(CardState.WaitingForTap)
                             }
-                            setupForegroundDispatch(context as Activity)
+                            activity?.let {
+                                nfcAdapter?.enableReaderMode(
+                                    it,
+                                    readerCallback,
+                                    NfcAdapter.FLAG_READER_NFC_F,
+                                    null
+                                )
+                            }
                         }
                         NfcAdapter.STATE_OFF -> {
                             scope.launch {
                                 _cardState.emit(CardState.NfcDisabled)
 //                                _cardState.emit(CardState.Error("No nfc card detected"))
                             }
-                            disableForegroundDispatch(context as Activity)
+                            activity?.let {
+                                nfcAdapter?.disableReaderMode(it)
+                            }
                         }
                     }
                 }
@@ -162,22 +171,6 @@ actual class NFCManager actual constructor() {
         }
     }
 
-    private fun setupForegroundDispatch(activity: Activity) {
-        if (nfcAdapter?.isEnabled == true) {
-            val intent = Intent(activity, activity.javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            pendingIntent = PendingIntent.getActivity(
-                activity, 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-            )
-            val filters = arrayOf(IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED))
-            val techList = arrayOf(arrayOf(NfcF::class.java.name))
-            nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, filters, techList)
-        }
-    }
-
-    private fun disableForegroundDispatch(activity: Activity) {
-        nfcAdapter?.disableForegroundDispatch(activity)
-    }
 
     fun onNewIntent(intent: Intent) {
         // First check if device supports NFC
