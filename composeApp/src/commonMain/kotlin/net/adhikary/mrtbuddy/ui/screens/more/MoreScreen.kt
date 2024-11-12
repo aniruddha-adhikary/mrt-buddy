@@ -66,28 +66,21 @@ fun MoreScreen() {
         Text(
             text = stringResource(Res.string.nonAffiliationDisclaimer),
             fontSize = 12.sp,
-            color = Color.Gray,
+            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
             modifier = Modifier.padding(vertical = 8.dp)
         )
 
         Text(
             text =  stringResource(Res.string.readOnlyDisclaimer),
             fontSize = 12.sp,
-            color = Color.Gray,
+            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
             modifier = Modifier.padding(vertical = 8.dp)
         )
 
         Text(
-            text = "The software is provided \"as is\", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software.",
+            text = "Copyright © 2024 Aniruddha Adhikary.",
             fontSize = 12.sp,
-            color = Color.Gray,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        Text(
-            text = "Copyright © 2024 Aniruddha Adhikary",
-            fontSize = 12.sp,
-            color = Color.Gray,
+            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
             modifier = Modifier.padding(bottom = 8.dp)
         )
     }

@@ -68,5 +68,5 @@
     <string name="privacyPolicy">Privacy Policy</string>
     <string name="helpAndSupportButton">Help and Support</string>
     <string name="nonAffiliationDisclaimer">This is an independent project and is not officially endorsed by or affiliated with Dhaka Mass Transit Company Limited (DMTCL).</string>
-    <string name="readOnlyDisclaimer">The app card only read cards, and are not able to recharge, top up or modify balances of such cards.</string>
+    <string name="readOnlyDisclaimer">The app is designed solely for reading card information and does not support recharging, topping up, or modifying card balances.</string>
 </resources>
