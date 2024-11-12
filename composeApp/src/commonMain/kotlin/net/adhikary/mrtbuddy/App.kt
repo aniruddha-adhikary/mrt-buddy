@@ -127,7 +127,7 @@ fun App(
                                         contentDescription = item.title
                                     )
                                 },
-                                label = { Text(stringResource(Res.string.balance)) },
+                                label = { Text(item.title) },
                                 selected = currentIndex == index,
                                 onClick = {
                                     currentIndex = index

@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Card
-import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Scaffold
@@ -21,11 +21,12 @@ import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Nightlight
-import androidx.compose.material.icons.filled.RoundaboutLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,8 +37,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -52,11 +53,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun SettingScreenRoute(
     modifier: Modifier = Modifier,
-    prefs: DataStore<Preferences>
+    prefs: DataStore<Preferences>,
+    navigateBack: () -> Unit
 ) {
     var showThemeDialog by rememberSaveable { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val uriHandler = LocalUriHandler.current
 
     val themes = remember {
         listOf(
@@ -113,9 +116,23 @@ fun SettingScreenRoute(
             }
         )
     }
+
     Scaffold(
         modifier = modifier,
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            TopAppBar(
+                title = { Text("App Settings") },
+                navigationIcon = {
+                    IconButton(onClick = { navigateBack() }) {
+                        Icon(
+                            Icons.Filled.ArrowBackIosNew,
+                            contentDescription = "Arrow back"
+                        )
+                    }
+                },
+            )
+        }
     ) {
         Column {
             SettingsItem(
@@ -128,23 +145,16 @@ fun SettingScreenRoute(
             )
             SettingsItem(
                 title = "View Source",
-                details = "view source code of this app",
+                details = "View source code of this app",
                 icon = Icons.Filled.Code,
                 onclick = {
-                    //TODO add source code link
-                }
-            )
-            SettingsItem(
-                title = "About MRTBuddy",
-                details = "view about",
-                icon = Icons.Filled.Info,
-                onclick = {
-
+                    uriHandler.openUri("https://github.com/aniruddha-adhikary/mrt-buddy")
                 }
             )
         }
     }
 }
+
 
 sealed class Themes(
     val title: String,

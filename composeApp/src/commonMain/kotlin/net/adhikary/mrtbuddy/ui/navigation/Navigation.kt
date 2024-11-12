@@ -9,7 +9,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import kotlinx.datetime.Month
 import net.adhikary.mrtbuddy.ui.screens.fare.FareCalculatorScreen
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreen
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenState
@@ -44,7 +43,11 @@ fun Navigation(
         composable(
             route = NavHomeDestinationScreens.SettingsScreen.route
         ) {
-            SettingScreenRoute(prefs = prefs, modifier = Modifier.padding(contentPadding))
+            SettingScreenRoute(
+                prefs = prefs,
+                modifier = Modifier.padding(contentPadding),
+                navigateBack = navController::navigateUp
+            )
         }
     }
 }
