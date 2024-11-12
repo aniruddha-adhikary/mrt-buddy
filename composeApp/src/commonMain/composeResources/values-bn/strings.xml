@@ -2,6 +2,7 @@
     <string name="appName">এমআরটি বাডি</string>
     <string name="balance">ব্যালেন্স</string>
     <string name="fare">ভাড়া</string>
+    <string name="more">অন্যান্য</string>
     <string name="language">বাংলা</string>
     <string name="rescan">পুনরায় স্ক্যান করুন</string>
     <string name="latestBalance">সর্বশেষ ব্যালেন্স</string>
@@ -61,4 +62,11 @@
     <string name="rescanToCheckSufficientBalance">আপনার পর্যাপ্ত ব্যালেন্স আছে কিনা জানতে আপনার কার্ডটি পুনরায় স্ক্যান করুন</string>
     <string name="selectOrigin">শুরুর স্টেশন নির্বাচন করুন</string>
     <string name="selectDestination">গন্তব্য স্টেশন নির্বাচন করুন</string>
+
+    <!-- more screen -->
+    <string name="aboutHeader">আরও জানুন</string>
+    <string name="privacyPolicy">গোপনীয়তা নীতি</string>
+    <string name="helpAndSupportButton">সাহায্য</string>
+    <string name="nonAffiliationDisclaimer">এটি একটি স্বাধীন প্রকল্প এবং এটি ঢাকা ম্যাস ট্রানজিট কোম্পানি লিমিটেড (ডিএমটিসিএল) দ্বারা আনুষ্ঠানিকভাবে অনুমোদিত বা সংযুক্ত নয়।</string>
+    <string name="readOnlyDisclaimer">অ্যাপটি শুধুমাত্র কার্ডের তথ্য পড়তে সক্ষম, এবং কার্ডের ব্যালেন্স রিচার্জ, টপ-আপ বা পরিবর্তন করতে সক্ষম নয়।</string>
 </resources>

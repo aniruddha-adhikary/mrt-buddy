@@ -2,6 +2,7 @@
     <string name="appName">MRT Buddy</string>
     <string name="balance">Balance</string>
     <string name="fare">Fare</string>
+    <string name="more">More</string>
     <string name="language">English</string>
     <string name="rescan">Rescan</string>
     <string name="latestBalance">Latest Balance</string>
@@ -61,4 +62,11 @@
     <string name="rescanToCheckSufficientBalance">Rescan your card to check if you have sufficient balance</string>
     <string name="selectOrigin">Select Origin Station</string>
     <string name="selectDestination">Select Destination Station</string>
+
+    <!-- more screen -->
+    <string name="aboutHeader">About</string>
+    <string name="privacyPolicy">Privacy Policy</string>
+    <string name="helpAndSupportButton">Help and Support</string>
+    <string name="nonAffiliationDisclaimer">This is an independent project and is not officially endorsed by or affiliated with Dhaka Mass Transit Company Limited (DMTCL).</string>
+    <string name="readOnlyDisclaimer">The app card only read cards, and are not able to recharge, top up or modify balances of such cards.</string>
 </resources>

@@ -3,6 +3,7 @@ package net.adhikary.mrtbuddy.ui.components
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import mrtbuddy.composeapp.generated.resources.Res
+import mrtbuddy.composeapp.generated.resources.apps
 import mrtbuddy.composeapp.generated.resources.calculate
 import mrtbuddy.composeapp.generated.resources.card
 import org.jetbrains.compose.resources.painterResource
@@ -20,5 +21,13 @@ public fun CardIcon() {
     return Icon(
         painter = painterResource(Res.drawable.card),
         contentDescription = "Calculate"
+    )
+}
+
+@Composable
+public fun AppsIcon() {
+    return Icon(
+        painter = painterResource(Res.drawable.apps),
+        contentDescription = "Apps"
     )
 }

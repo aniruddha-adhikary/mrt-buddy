@@ -3,7 +3,7 @@ package net.adhikary.mrtbuddy.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // Light Theme Colors
-val LightPrimary = Color(0xFF1976D2)
+val LightPrimary = Color(0xFF408E2D)
 val LightSecondary = Color(0xFF03DAC6)
 val LightBackground = Color(0xFFF5F5F5)
 val LightSurface = Color(0xFFFFFFFF)
@@ -16,7 +16,7 @@ val LightOnError = Color(0xFFFFFFFF)
 val LightPositiveGreen = Color(0xFF4CAF50)
 
 // Dark Theme Colors
-val DarkPrimary = Color(0xFF90CAF9)
+val DarkPrimary = Color(0xFF4CAF50)
 val DarkSecondary = Color(0xFF03DAC6)
 val DarkBackground = Color(0xFF121212)
 val DarkSurface = Color(0xFF1E1E1E)

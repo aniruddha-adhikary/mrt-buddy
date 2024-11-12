@@ -1,18 +1,34 @@
 package net.adhikary.mrtbuddy.ui.screens.home
 
+import MoreScreen
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.balance
 import mrtbuddy.composeapp.generated.resources.fare
-import net.adhikary.mrtbuddy.model.CardState
-import net.adhikary.mrtbuddy.model.Transaction
-import net.adhikary.mrtbuddy.model.TransactionWithAmount
+import mrtbuddy.composeapp.generated.resources.more
+import net.adhikary.mrtbuddy.ui.components.AppsIcon
 import net.adhikary.mrtbuddy.ui.components.BalanceCard
 import net.adhikary.mrtbuddy.ui.components.CalculatorIcon
 import net.adhikary.mrtbuddy.ui.components.CardIcon
@@ -22,7 +38,7 @@ import net.adhikary.mrtbuddy.ui.screens.FareCalculatorScreen
 import org.jetbrains.compose.resources.stringResource
 
 enum class Screen {
-    Home, Calculator
+    Home, Calculator, More
 }
 
 @Composable
@@ -39,21 +55,35 @@ fun MainScreen(
         bottomBar = {
             BottomNavigation(
                 backgroundColor = MaterialTheme.colors.surface,
-                contentColor = MaterialTheme.colors.primary
+                contentColor = MaterialTheme.colors.onSurface
             ) {
-                BottomNavigationItem(
-                    icon = { CardIcon() },
-                    label = { Text(stringResource(Res.string.balance)) },
-                    selected = currentScreen == Screen.Home,
-                    onClick = { currentScreen = Screen.Home }
-                )
                 BottomNavigationItem(
                     icon = {
                         CalculatorIcon()
                     },
                     label = { Text(stringResource(Res.string.fare)) },
                     selected = currentScreen == Screen.Calculator,
-                    onClick = { currentScreen = Screen.Calculator }
+                    onClick = { currentScreen = Screen.Calculator },
+                    selectedContentColor = MaterialTheme.colors.primary,
+                    unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                )
+                BottomNavigationItem(
+                    icon = { CardIcon() },
+                    label = { Text(stringResource(Res.string.balance)) },
+                    selected = currentScreen == Screen.Home,
+                    onClick = { currentScreen = Screen.Home },
+                    selectedContentColor = MaterialTheme.colors.primary,
+                    unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                )
+                BottomNavigationItem(
+                    icon = {
+                        AppsIcon()
+                    },
+                    label = { Text(stringResource(Res.string.more)) },
+                    selected = currentScreen == Screen.More,
+                    onClick = { currentScreen = Screen.More },
+                    selectedContentColor = MaterialTheme.colors.primary,
+                    unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
                 )
             }
         }
@@ -86,6 +116,9 @@ fun MainScreen(
             }
             Screen.Calculator -> {
                 FareCalculatorScreen(cardState = uiState.cardState)
+            }
+            Screen.More -> {
+                MoreScreen()
             }
         }
     }
