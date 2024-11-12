@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
-import mrtbuddy.composeapp.generated.resources.error_page
+import mrtbuddy.composeapp.generated.resources.errormessageicon
 import mrtbuddy.composeapp.generated.resources.nonfc
 import mrtbuddy.composeapp.generated.resources.nonfcanother
 import mrtbuddy.composeapp.generated.resources.tapnfc
@@ -115,7 +115,7 @@ private fun WaitingContent() {
 private fun ErrorContent(message: String) {
     ContentDesign(
         message = message,
-        image = painterResource(Res.drawable.error_page)
+        image = painterResource(Res.drawable.errormessageicon)
     )
 }
 
