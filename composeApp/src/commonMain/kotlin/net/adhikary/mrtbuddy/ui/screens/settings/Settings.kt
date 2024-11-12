@@ -223,7 +223,6 @@ private fun ThemeOptionRow(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
             .clickable { onOptionSelected(label) }
     ) {
         RadioButton(
