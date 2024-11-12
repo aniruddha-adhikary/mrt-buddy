@@ -46,4 +46,13 @@ class TransactionRepository(
     private fun generateTransactionId(txn: Transaction): String {
         return "${txn.fixedHeader}_${txn.fromStation}_${txn.toStation}_${txn.balance}_${txn.timestamp}"
     }
+
+    suspend fun getAllCards(): List<CardEntity> {
+        return cardDao.getAllCards()
+    }
+
+    suspend fun getTransactionsByCardIdm(cardIdm: String): List<TransactionEntity> {
+        return transactionDao.getTransactionsByCardIdm(cardIdm)
+    }
+
 }

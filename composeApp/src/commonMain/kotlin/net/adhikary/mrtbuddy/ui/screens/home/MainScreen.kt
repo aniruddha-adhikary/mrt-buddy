@@ -20,7 +20,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.setValue
+import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreen
+import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListScreen
+import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListScreen
+import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListScreen
+import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListViewModel
+import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListViewModelFactory
+import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreenViewModel
+import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreenAction
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,6 +39,7 @@ import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.balance
 import mrtbuddy.composeapp.generated.resources.fare
 import mrtbuddy.composeapp.generated.resources.more
+import net.adhikary.mrtbuddy.repository.TransactionRepository
 import net.adhikary.mrtbuddy.ui.components.AppsIcon
 import net.adhikary.mrtbuddy.ui.components.BalanceCard
 import net.adhikary.mrtbuddy.ui.components.CalculatorIcon
@@ -35,18 +47,23 @@ import net.adhikary.mrtbuddy.ui.components.CardIcon
 import net.adhikary.mrtbuddy.ui.components.Footer
 import net.adhikary.mrtbuddy.ui.components.TransactionHistoryList
 import net.adhikary.mrtbuddy.ui.screens.FareCalculatorScreen
+import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreen
+import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreenViewModelFactory
 import org.jetbrains.compose.resources.stringResource
 
 enum class Screen {
-    Home, Calculator, More
+    Home, Calculator, More, History, TransactionList
 }
 
 @Composable
 fun MainScreen(
-    uiState : MainScreenState
+    uiState: MainScreenState,
+    transactionRepository: TransactionRepository
 ) {
     var currentScreen by remember { mutableStateOf(Screen.Home) }
+    var selectedCardIdm by remember { mutableStateOf<String?>(null) }
     val hasTransactions = uiState.transaction.isNotEmpty()
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -72,6 +89,14 @@ fun MainScreen(
                     label = { Text(stringResource(Res.string.balance)) },
                     selected = currentScreen == Screen.Home,
                     onClick = { currentScreen = Screen.Home },
+                    selectedContentColor = MaterialTheme.colors.primary,
+                    unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                )
+                BottomNavigationItem(
+                    icon = { CalculatorIcon() },
+                    label = { Text("History") },
+                    selected = currentScreen == Screen.History || currentScreen == Screen.TransactionList,
+                    onClick = { currentScreen = Screen.History },
                     selectedContentColor = MaterialTheme.colors.primary,
                     unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
                 )
@@ -119,6 +144,36 @@ fun MainScreen(
             }
             Screen.More -> {
                 MoreScreen(Modifier.padding(paddingValues))
+            }
+            Screen.History -> {
+                val historyViewModel: HistoryScreenViewModel = viewModel(
+                    factory = HistoryScreenViewModelFactory(transactionRepository)
+                )
+
+                LaunchedEffect(Unit) {
+                    historyViewModel.onAction(HistoryScreenAction.OnInit)
+                }
+
+                val uiState = historyViewModel.state.collectAsState().value
+
+                HistoryScreen(
+                    uiState = uiState,
+                    onCardSelected = { cardIdm ->
+                        selectedCardIdm = cardIdm
+                        currentScreen = Screen.TransactionList
+                    }
+                )
+            }
+            Screen.TransactionList -> {
+                selectedCardIdm?.let { cardIdm ->
+                    TransactionListScreen(
+                        cardIdm = cardIdm,
+                        transactionRepository = transactionRepository,
+                        onBack = {
+                            currentScreen = Screen.History
+                        }
+                    )
+                }
             }
         }
     }

@@ -37,7 +37,7 @@ fun App(
     val nfcManager = getNFCManager()
 
 
-    mainVm.events.observeAsActions {event ->
+    mainVm.events.observeAsActions { event ->
         when (event) {
             is MainScreenEvent.Error -> {}
             MainScreenEvent.ShowMessage -> {}
@@ -72,7 +72,7 @@ fun App(
 
     MRTBuddyTheme {
         var lang by remember { mutableStateOf(Language.English.isoFormat) }
-        val state  : MainScreenState by  mainVm.state.collectAsState()
+        val state: MainScreenState by mainVm.state.collectAsState()
 
         LocalizedApp(
             language = lang
@@ -83,7 +83,8 @@ fun App(
                 ) {
                     Column {
                         MainScreen(
-                            uiState = state
+                            uiState = state,
+                            transactionRepository = transactionRepository,
                         )
                     }
                 }
