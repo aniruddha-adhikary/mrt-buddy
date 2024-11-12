@@ -22,15 +22,12 @@ class MainActivity : ComponentActivity() {
 
         // TODO will be removed once code structure and dependancy injection is intruduced
 
-        val dao = getDatabase(applicationContext).getDao()
-        val cardDao = getDatabase(applicationContext).getCardDao()
-        val scanDao = getDatabase(applicationContext).getScanDao()
-        val transactionDao = getDatabase(applicationContext).getTransactionDao()
+        val transactionRepository = getDatabase(applicationContext).getTransactionRepository()
 
         Napier.d("App Running.....")
 
         setContent {
-            App(dao, cardDao, scanDao, transactionDao)
+            App(transactionRepository)
         }
     }
 }
@@ -39,10 +36,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppAndroidPreview() {
     val localContext = LocalContext.current
-    val dao = getDatabase(localContext).getDao()
-    val cardDao = getDatabase(localContext).getCardDao()
-    val scanDao = getDatabase(localContext).getScanDao()
-    val transactionDao = getDatabase(localContext).getTransactionDao()
+    val transactionRepository = getDatabase(localContext).getTransactionRepository()
 
-    App(dao, cardDao, scanDao, transactionDao)
+    App(transactionRepository)
 }

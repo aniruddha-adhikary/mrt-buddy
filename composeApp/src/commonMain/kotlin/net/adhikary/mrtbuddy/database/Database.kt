@@ -12,6 +12,7 @@ import net.adhikary.mrtbuddy.data.CardEntity
 import net.adhikary.mrtbuddy.data.DemoLocal
 import net.adhikary.mrtbuddy.data.ScanEntity
 import net.adhikary.mrtbuddy.data.TransactionEntity
+import net.adhikary.mrtbuddy.repository.TransactionRepository
 
 @Database(
     entities = [DemoLocal::class, CardEntity::class, ScanEntity::class, TransactionEntity::class],
@@ -23,6 +24,12 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getCardDao(): CardDao
     abstract fun getScanDao(): ScanDao
     abstract fun getTransactionDao(): TransactionDao
+
+    fun getTransactionRepository(): TransactionRepository = TransactionRepository(
+        getCardDao(),
+        getScanDao(),
+        getTransactionDao(),
+    )
 }
 
 // The Room compiler generates the `actual` implementations.

@@ -11,22 +11,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
-import net.adhikary.mrtbuddy.dao.CardDao
-import net.adhikary.mrtbuddy.dao.ScanDao
-import net.adhikary.mrtbuddy.dao.TransactionDao
-import net.adhikary.mrtbuddy.data.CardEntity
-import net.adhikary.mrtbuddy.data.ScanEntity
-import net.adhikary.mrtbuddy.data.TransactionEntity
 import net.adhikary.mrtbuddy.model.CardReadResult
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.model.TransactionWithAmount
+import net.adhikary.mrtbuddy.repository.TransactionRepository
 
 class MainScreenViewModel(
-    private val cardDao: CardDao,
-    private val scanDao: ScanDao,
-    private val transactionDao: TransactionDao
+    private val transactionRepository: TransactionRepository
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<MainScreenState> =
@@ -71,31 +62,9 @@ class MainScreenViewModel(
         }
     }
 
-    private fun generateTransactionId(txn: Transaction): String {
-        return "${txn.fixedHeader}_${txn.fromStation}_${txn.toStation}_${txn.balance}_${txn.timestamp}"
-    }
-
     private fun saveCardReadResult(result: CardReadResult) {
         viewModelScope.launch {
-            val cardEntity = CardEntity(idm = result.idm, name = null)
-            cardDao.insertCard(cardEntity)
-
-            val scanEntity = ScanEntity(cardIdm = result.idm)
-            val scanId = scanDao.insertScan(scanEntity)
-
-            val transactionEntities = result.transactions.map { txn ->
-                TransactionEntity(
-                    cardIdm = result.idm,
-                    transactionId = generateTransactionId(txn),
-                    scanId = scanId,
-                    fromStation = txn.fromStation,
-                    toStation = txn.toStation,
-                    balance = txn.balance,
-                    dateTime = txn.timestamp.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
-                )
-            }
-
-            transactionDao.insertTransactions(transactionEntities)
+            transactionRepository.saveCardReadResult(result)
         }
     }
 

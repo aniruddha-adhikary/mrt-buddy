@@ -7,23 +7,14 @@ import io.github.aakira.napier.Napier
 import net.adhikary.mrtbuddy.database.getDatabase
 
 fun MainViewController() = ComposeUIViewController {
-    val dao = remember {
-        getDatabase().getDao()
-    }
-    val cardDao = remember {
-        getDatabase().getCardDao()
-    }
-    val scanDao = remember {
-        getDatabase().getScanDao()
-    }
-    val transactionDao = remember {
-        getDatabase().getTransactionDao()
+    val transactionRepository = remember {
+        getDatabase().getTransactionRepository()
     }
     if (isDebug) {
         Napier.base(DebugAntilog())
     }
     
 
-    App(dao, cardDao, scanDao, transactionDao)
+    App(transactionRepository)
 
 }

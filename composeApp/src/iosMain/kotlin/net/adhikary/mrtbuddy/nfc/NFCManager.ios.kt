@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.model.CardReadResult
 import net.adhikary.mrtbuddy.model.CardState
-import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.nfc.parser.ByteParser
 import net.adhikary.mrtbuddy.nfc.parser.TransactionParser
 import net.adhikary.mrtbuddy.nfc.service.StationService
