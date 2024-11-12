@@ -1,0 +1,5 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <tech-list>
+        <tech>android.nfc.tech.NfcF</tech>
+    </tech-list>
+</resources>
