@@ -1,13 +1,13 @@
 package net.adhikary.mrtbuddy.ui.screens.history
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,7 +26,9 @@ fun HistoryScreen(
     }
     
     var showRenameDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
     var cardToRename by remember { mutableStateOf<Pair<String, String?>>("" to null) }
+    var cardToDelete by remember { mutableStateOf("") }
     if (showRenameDialog) {
         RenameDialog(
             currentName = cardToRename.second,
@@ -34,6 +36,29 @@ fun HistoryScreen(
             onConfirm = { newName ->
                 cardToRename.first?.let { cardIdm ->
                     viewModel.onAction(HistoryScreenAction.RenameCard(cardIdm, newName))
+                }
+            }
+        )
+    }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Delete Card") },
+            text = { Text("Are you sure you want to delete this card? This action cannot be undone.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.onAction(HistoryScreenAction.DeleteCard(cardToDelete))
+                        showDeleteDialog = false
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
                 }
             }
         )
@@ -56,6 +81,10 @@ fun HistoryScreen(
                     onRenameClick = {
                         cardToRename = card.idm to card.name
                         showRenameDialog = true
+                    },
+                    onDeleteClick = {
+                        cardToDelete = card.idm
+                        showDeleteDialog = true
                     }
                 )
             }

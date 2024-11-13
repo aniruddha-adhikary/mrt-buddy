@@ -48,6 +48,18 @@ class HistoryScreenViewModel(
                     }
                 }
             }
+            is HistoryScreenAction.DeleteCard -> {
+                viewModelScope.launch {
+                    try {
+                        transactionRepository.deleteCard(action.cardIdm)
+                        _events.send(HistoryScreenEvent.DeleteSuccess)
+                        // Refresh the list
+                        onAction(HistoryScreenAction.OnInit)
+                    } catch (e: Exception) {
+                        _events.send(HistoryScreenEvent.Error(e.message ?: "Failed to delete card"))
+                    }
+                }
+            }
         }
     }
 }

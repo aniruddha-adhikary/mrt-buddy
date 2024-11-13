@@ -11,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,7 +24,8 @@ import net.adhikary.mrtbuddy.ui.theme.LightRapidPass
 fun CardItem(
     card: CardEntity,
     onCardSelected: () -> Unit,
-    onRenameClick: () -> Unit
+    onRenameClick: () -> Unit,
+    onDeleteClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -60,15 +62,26 @@ fun CardItem(
                         color = MaterialTheme.colors.onPrimary,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                     )
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Rename card",
-                        tint = MaterialTheme.colors.onPrimary,
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                            .size(24.dp)
-                            .clickable { onRenameClick() }
-                    )
+                    Row {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Rename card",
+                            tint = MaterialTheme.colors.onPrimary,
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .size(24.dp)
+                                .clickable { onRenameClick() }
+                        )
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete card",
+                            tint = MaterialTheme.colors.onPrimary,
+                            modifier = Modifier
+                                .padding(end = 16.dp)
+                                .size(24.dp)
+                                .clickable { onDeleteClick() }
+                        )
+                    }
                 }
             }
             

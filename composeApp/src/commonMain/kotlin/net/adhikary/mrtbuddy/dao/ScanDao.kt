@@ -13,4 +13,7 @@ interface ScanDao {
 
     @Query("SELECT * FROM scans WHERE cardIdm = :cardIdm")
     suspend fun getScansByCardIdm(cardIdm: String): List<ScanEntity>
+
+    @Query("DELETE FROM scans WHERE cardIdm = :cardIdm")
+    suspend fun deleteScansByCardIdm(cardIdm: String)
 }

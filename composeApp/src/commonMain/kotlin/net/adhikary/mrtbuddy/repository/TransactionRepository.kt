@@ -77,4 +77,10 @@ class TransactionRepository(
         cardDao.updateCardName(cardIdm, newName)
     }
 
+    suspend fun deleteCard(cardIdm: String) {
+        cardDao.deleteCard(cardIdm)
+        scanDao.deleteScansByCardIdm(cardIdm)
+        transactionDao.deleteTransactionsByCardIdm(cardIdm)
+    }
+
 }
