@@ -3,6 +3,8 @@ package net.adhikary.mrtbuddy.di
 import net.adhikary.mrtbuddy.database.AppDatabase
 import net.adhikary.mrtbuddy.database.DatabaseProvider
 import net.adhikary.mrtbuddy.repository.TransactionRepository
+import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreenState
+import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreenViewModel
 import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -18,11 +20,22 @@ val appModule = module {
         scanDao = get(),
         transactionDao = get()
     ) }
+
     viewModel { parameters -> 
         TransactionListViewModel(
             cardIdm = parameters.get(),
             transactionRepository = get()
         )
+    }
+    
+    viewModel { 
+        HistoryScreenViewModel(
+            transactionRepository = get()
+        )
+    }
+    
+    factory { 
+        HistoryScreenState()
     }
 }
 

@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,13 +26,14 @@ import mrtbuddy.composeapp.generated.resources.deleteCardConfirm
 import mrtbuddy.composeapp.generated.resources.noCardsFound
 import mrtbuddy.composeapp.generated.resources.scanCardPrompt
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun HistoryScreen(
-    uiState: HistoryScreenState,
     onCardSelected: (String) -> Unit,
-    viewModel: HistoryScreenViewModel
+    viewModel: HistoryScreenViewModel = koinViewModel(),
 ) {
+    val uiState = viewModel.state.collectAsState().value
     LaunchedEffect(Unit) {
         viewModel.onAction(HistoryScreenAction.OnInit)
     }

@@ -17,8 +17,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,8 +38,6 @@ import net.adhikary.mrtbuddy.ui.components.HistoryIcon
 import net.adhikary.mrtbuddy.ui.components.TransactionHistoryList
 import net.adhikary.mrtbuddy.ui.screens.FareCalculatorScreen
 import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreen
-import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreenAction
-import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreenViewModelFactory
 import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListScreen
 import org.jetbrains.compose.resources.stringResource
 
@@ -139,23 +135,11 @@ fun MainScreen(
                 MoreScreen(Modifier.padding(paddingValues))
             }
             Screen.History -> {
-                val historyViewModel = remember {
-                    HistoryScreenViewModelFactory().create()
-                }
-
-                LaunchedEffect(Unit) {
-                    historyViewModel.onAction(HistoryScreenAction.OnInit)
-                }
-
-                val uiState = historyViewModel.state.collectAsState().value
-
                 HistoryScreen(
-                    uiState = uiState,
                     onCardSelected = { cardIdm ->
                         selectedCardIdm = cardIdm
                         currentScreen = Screen.TransactionList
-                    },
-                    viewModel = historyViewModel
+                    }
                 )
             }
             Screen.TransactionList -> {
