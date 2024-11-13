@@ -2,6 +2,7 @@ package net.adhikary.mrtbuddy.ui.screens.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,8 @@ class HistoryScreenViewModel(
     private val transactionRepository: TransactionRepository
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<HistoryScreenState> = MutableStateFlow(HistoryScreenState())
+    private val _state: MutableStateFlow<HistoryScreenState> =
+        MutableStateFlow(HistoryScreenState())
     val state: StateFlow<HistoryScreenState> get() = _state.asStateFlow()
 
     private val _events: Channel<HistoryScreenEvent> = Channel(Channel.BUFFERED)
@@ -36,6 +38,13 @@ class HistoryScreenViewModel(
                     }
                 }
             }
+
+            is HistoryScreenAction.OnCardAdded -> {
+                viewModelScope.launch {
+                    onAction(HistoryScreenAction.OnInit)
+                }
+            }
+
             is HistoryScreenAction.RenameCard -> {
                 viewModelScope.launch {
                     try {
@@ -44,10 +53,15 @@ class HistoryScreenViewModel(
                         // Refresh the list
                         onAction(HistoryScreenAction.OnInit)
                     } catch (e: Exception) {
-                        _events.send(HistoryScreenEvent.Error(e.message ?: "Failed to rename card"))
+                        _events.send(
+                            HistoryScreenEvent.Error(
+                                e.message ?: "Failed to rename card"
+                            )
+                        )
                     }
                 }
             }
+
             is HistoryScreenAction.DeleteCard -> {
                 viewModelScope.launch {
                     try {
@@ -56,7 +70,11 @@ class HistoryScreenViewModel(
                         // Refresh the list
                         onAction(HistoryScreenAction.OnInit)
                     } catch (e: Exception) {
-                        _events.send(HistoryScreenEvent.Error(e.message ?: "Failed to delete card"))
+                        _events.send(
+                            HistoryScreenEvent.Error(
+                                e.message ?: "Failed to delete card"
+                            )
+                        )
                     }
                 }
             }

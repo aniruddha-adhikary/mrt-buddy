@@ -7,8 +7,8 @@ import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.model.CardReadResult
 import net.adhikary.mrtbuddy.model.CardState
@@ -57,11 +57,17 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
     private val stationService = StationService()
     private val transactionParser = TransactionParser(byteParser, timestampService, stationService)
 
-    private val _cardState = MutableStateFlow<CardState>(CardState.WaitingForTap)
-    actual val cardState: StateFlow<CardState> = _cardState
+    private val _cardState = MutableSharedFlow<CardState>(replay = 1)
+    actual val cardState: SharedFlow<CardState> = _cardState
 
-    private val _cardReadResults = MutableStateFlow<CardReadResult?>(null)
-    actual val cardReadResults: StateFlow<CardReadResult?> = _cardReadResults
+    private val _cardReadResults = MutableSharedFlow<CardReadResult?>(replay = 1)
+    actual val cardReadResults: SharedFlow<CardReadResult?> = _cardReadResults
+
+    init {
+        scope.launch {
+            _cardState.emit(CardState.WaitingForTap)
+        }
+    }
 
     actual fun isEnabled(): Boolean = NFCTagReaderSession.readingAvailable()
     actual fun isSupported(): Boolean = NFCTagReaderSession.readingAvailable()
