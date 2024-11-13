@@ -217,7 +217,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                         is CardState.Balance -> {
                             val balance = cardState.amount
                             if (balance >= viewModel.calculatedFare) {
-                                val roundTrips = balance / (viewModel.calculatedFare * 2)
+                                val roundTrips = if (viewModel.calculatedFare > 0) balance / (viewModel.calculatedFare * 2) else 0
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.Center,
