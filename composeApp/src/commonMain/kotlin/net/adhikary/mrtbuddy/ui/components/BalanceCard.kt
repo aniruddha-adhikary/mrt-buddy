@@ -69,8 +69,8 @@ fun BalanceCard(
         backgroundColor = MaterialTheme.colors.surface
     ) {
         Box(Modifier.fillMaxSize()) {
-            // Card name at the top with rounded background
-            if (!cardName.isNullOrBlank()) {
+            // Card name at the top with rounded background only in Balance state
+            if (!cardName.isNullOrBlank() && cardState is CardState.Balance) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -83,16 +83,23 @@ fun BalanceCard(
                         color = MaterialTheme.colors.onPrimary,
                         modifier = Modifier.align(Alignment.Center)
                     )
-                    if (getPlatform().name != "android") {
-                        Text(
-                            stringResource(Res.string.rescan),
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .clickable { RescanManager.requestRescan() },
-                            style = MaterialTheme.typography.body1,
-                            color = MaterialTheme.colors.onPrimary
-                        )
-                    }
+                }
+            }
+            
+            if (getPlatform().name != "android") {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        stringResource(Res.string.rescan),
+                        modifier = Modifier
+                            .clickable { RescanManager.requestRescan() },
+                        style = MaterialTheme.typography.body1,
+                        color = if (!cardName.isNullOrBlank()) MaterialTheme.colors.onPrimary 
+                               else MaterialTheme.colors.onSurface
+                    )
                 }
             }
 
