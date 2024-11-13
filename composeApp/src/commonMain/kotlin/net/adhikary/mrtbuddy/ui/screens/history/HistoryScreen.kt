@@ -23,7 +23,7 @@ fun HistoryScreen(
     uiState: HistoryScreenState,
     onCardSelected: (String) -> Unit // Change parameter to accept cardIdm
 ) {
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(16.dp))
 
     if (uiState.isLoading) {
         // Display a loading indicator

@@ -65,15 +65,18 @@ fun CardItem(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "Card ID",
-                            style = MaterialTheme.typography.caption,
-                            color = Color.Gray
-                        )
-                        Text(
-                            text = card.idm,
-                            style = MaterialTheme.typography.body1
-                        )
+                        Column {
+                            Text(
+                                modifier = Modifier.padding(bottom = 2.dp),
+                                text = "Card ID",
+                                style = MaterialTheme.typography.caption,
+                                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                            )
+                            Text(
+                                text = card.idm,
+                                style = MaterialTheme.typography.body1
+                            )
+                        }
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = "View transactions",
