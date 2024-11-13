@@ -57,6 +57,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun BalanceCard(
     cardState: CardState,
+    cardName: String? = null,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -84,7 +85,7 @@ fun BalanceCard(
                 verticalArrangement = Arrangement.Center
             ) {
                 when (cardState) {
-                    is CardState.Balance -> BalanceContent(amount = cardState.amount)
+                    is CardState.Balance -> BalanceContent(amount = cardState.amount, cardName = cardName)
                     CardState.Reading -> ReadingContent()
                     CardState.WaitingForTap -> WaitingContent()
                     is CardState.Error -> ErrorContent(message = cardState.message)
@@ -135,7 +136,7 @@ private fun PulsingCircle(iconSize: Dp) {
 }
 
 @Composable
-private fun BalanceContent(amount: Int) {
+private fun BalanceContent(amount: Int, cardName: String? = null) {
     Text(
         text = stringResource(Res.string.latestBalance),
         style = MaterialTheme.typography.h6,
@@ -149,6 +150,15 @@ private fun BalanceContent(amount: Int) {
         ),
         color = if (amount < 20) MaterialTheme.colors.onSurface else MaterialTheme.colors.onSurface
     )
+    if (!cardName.isNullOrBlank()) {
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = cardName,
+            style = MaterialTheme.typography.h6,
+            color = MaterialTheme.colors.primary
+        )
+    }
+    Spacer(modifier = Modifier.height(4.dp))
     if (amount < 20) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(

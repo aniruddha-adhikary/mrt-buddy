@@ -52,6 +52,10 @@ class TransactionRepository(
     }
 
 
+    suspend fun getCardByIdm(idm: String): CardEntity? {
+        return cardDao.getCardByIdm(idm)
+    }
+
     suspend fun getAllCards(): List<CardEntity> {
         return cardDao.getAllCards()
     }

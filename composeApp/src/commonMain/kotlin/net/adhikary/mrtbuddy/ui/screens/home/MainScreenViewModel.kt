@@ -65,13 +65,17 @@ class MainScreenViewModel(
                 if (autoSaveEnabled) {
                     saveCardReadResult(action.cardReadResult)
                 }
-                val transactionsWithAmount = transactionMapper(action.cardReadResult.transactions)
-                _state.update {
-                    it.copy(
-                        cardIdm = action.cardReadResult.idm,
-                        transaction = action.cardReadResult.transactions,
-                        transactionWithAmount = transactionsWithAmount
-                    )
+                viewModelScope.launch {
+                    val card = transactionRepository.getCardByIdm(action.cardReadResult.idm)
+                    val transactionsWithAmount = transactionMapper(action.cardReadResult.transactions)
+                    _state.update {
+                        it.copy(
+                            cardIdm = action.cardReadResult.idm,
+                            cardName = card?.name,
+                            transaction = action.cardReadResult.transactions,
+                            transactionWithAmount = transactionsWithAmount
+                        )
+                    }
                 }
             }
         }

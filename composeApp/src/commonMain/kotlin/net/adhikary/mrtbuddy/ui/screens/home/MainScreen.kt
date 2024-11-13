@@ -116,7 +116,10 @@ fun MainScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        BalanceCard(cardState = uiState.cardState)
+                        BalanceCard(
+                            cardState = uiState.cardState,
+                            cardName = uiState.cardName,
+                        )
 
                         if (hasTransactions) {
                             TransactionHistoryList(uiState.transactionWithAmount)
