@@ -88,4 +88,5 @@
     <string name="cardName">কার্ডের নাম</string>
     <string name="rename">নাম পরিবর্তন করুন</string>
     <string name="unnamedCard">নামহীন কার্ড</string>
+    <string name="cardId">কার্ড আইডি</string>
 </resources>

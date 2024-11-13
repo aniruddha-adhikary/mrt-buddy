@@ -6,7 +6,7 @@ import androidx.room.Index
 
 @Entity(
     tableName = "transactions",
-    primaryKeys = ["cardIdm", "transactionId", "dateTime"],
+    primaryKeys = ["cardIdm", "fromStation", "toStation", "balance", "dateTime", "fixedHeader"],
     foreignKeys = [
         ForeignKey(
             entity = ScanEntity::class,
@@ -22,12 +22,12 @@ import androidx.room.Index
 )
 data class TransactionEntity(
     val cardIdm: String,
-    val transactionId: String,
     val scanId: Long,
     val fromStation: String,
     val toStation: String,
     val balance: Int,
     val dateTime: Long,
+    val fixedHeader: String,
     val order: Int = 0
 )
 

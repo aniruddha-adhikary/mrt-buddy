@@ -88,4 +88,5 @@
     <string name="cardName">Card Name</string>
     <string name="rename">Rename</string>
     <string name="unnamedCard">Unnamed Card</string>
+    <string name="cardId">Card ID</string>
 </resources>

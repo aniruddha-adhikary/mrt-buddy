@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "3ab24735ae9eebecc4a55fa7d7816fac",
+    "identityHash": "20d81dda0187d28ca80a0b74b0d1ba75",
     "entities": [
       {
         "tableName": "DemoLocal",
@@ -106,17 +106,11 @@
       },
       {
         "tableName": "transactions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cardIdm` TEXT NOT NULL, `transactionId` TEXT NOT NULL, `scanId` INTEGER NOT NULL, `fromStation` TEXT NOT NULL, `toStation` TEXT NOT NULL, `balance` INTEGER NOT NULL, `dateTime` INTEGER NOT NULL, `order` INTEGER NOT NULL, PRIMARY KEY(`cardIdm`, `transactionId`, `dateTime`), FOREIGN KEY(`scanId`) REFERENCES `scans`(`scanId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cardIdm` TEXT NOT NULL, `scanId` INTEGER NOT NULL, `fromStation` TEXT NOT NULL, `toStation` TEXT NOT NULL, `balance` INTEGER NOT NULL, `dateTime` INTEGER NOT NULL, `fixedHeader` TEXT NOT NULL, `order` INTEGER NOT NULL, PRIMARY KEY(`cardIdm`, `fromStation`, `toStation`, `balance`, `dateTime`, `fixedHeader`), FOREIGN KEY(`scanId`) REFERENCES `scans`(`scanId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "cardIdm",
             "columnName": "cardIdm",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "transactionId",
-            "columnName": "transactionId",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -151,6 +145,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "fixedHeader",
+            "columnName": "fixedHeader",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "order",
             "columnName": "order",
             "affinity": "INTEGER",
@@ -161,8 +161,11 @@
           "autoGenerate": false,
           "columnNames": [
             "cardIdm",
-            "transactionId",
-            "dateTime"
+            "fromStation",
+            "toStation",
+            "balance",
+            "dateTime",
+            "fixedHeader"
           ]
         },
         "indices": [
@@ -202,7 +205,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3ab24735ae9eebecc4a55fa7d7816fac')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '20d81dda0187d28ca80a0b74b0d1ba75')"
     ]
   }
 }

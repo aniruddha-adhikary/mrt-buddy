@@ -26,34 +26,29 @@ class TransactionRepository(
         val scanEntity = ScanEntity(cardIdm = result.idm)
         val scanId = scanDao.insertScan(scanEntity)
 
-        val existingTransactions = transactionDao.getTransactionsByCardIdm(result.idm)
-        val existingTransactionIds = existingTransactions.map { it.transactionId }.toSet()
-
         val newTransactionEntities = result.transactions.map { txn ->
+            val dateTime = txn.timestamp.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
             TransactionEntity(
                 cardIdm = result.idm,
-                transactionId = generateTransactionId(txn),
                 scanId = scanId,
                 fromStation = txn.fromStation,
                 toStation = txn.toStation,
                 balance = txn.balance,
-                dateTime = txn.timestamp.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+                dateTime = dateTime,
+                fixedHeader = txn.fixedHeader
             )
         }
 
         val lastOrder = transactionDao.getLastOrder() ?: 0
         val transactionsToInsert = newTransactionEntities
             .reversed()
-            .filter { it.transactionId !in existingTransactionIds }
-            .mapIndexed { index, entity -> 
+            .mapIndexed { index, entity ->
                 entity.copy(order = lastOrder + index + 1)
             }
+
         transactionDao.insertTransactions(transactionsToInsert)
     }
 
-    private fun generateTransactionId(txn: Transaction): String {
-        return "${txn.fixedHeader}_${txn.fromStation}_${txn.toStation}_${txn.balance}_${txn.timestamp}"
-    }
 
     suspend fun getAllCards(): List<CardEntity> {
         return cardDao.getAllCards()

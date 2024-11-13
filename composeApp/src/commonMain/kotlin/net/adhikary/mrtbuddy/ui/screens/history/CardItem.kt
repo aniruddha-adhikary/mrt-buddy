@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
+import mrtbuddy.composeapp.generated.resources.cardId
 import mrtbuddy.composeapp.generated.resources.unnamedCard
 import net.adhikary.mrtbuddy.data.CardEntity
 import net.adhikary.mrtbuddy.ui.theme.DarkRapidPass
@@ -107,7 +108,7 @@ fun CardItem(
                         Column {
                             Text(
                                 modifier = Modifier.padding(bottom = 2.dp),
-                                text = "Card ID",
+                                text = stringResource(Res.string.cardId),
                                 style = MaterialTheme.typography.caption,
                                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
                             )
