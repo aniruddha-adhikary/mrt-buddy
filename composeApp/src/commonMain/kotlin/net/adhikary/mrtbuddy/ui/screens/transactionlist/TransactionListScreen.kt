@@ -24,7 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -47,6 +46,8 @@ import net.adhikary.mrtbuddy.ui.theme.DarkPositiveGreen
 import net.adhikary.mrtbuddy.ui.theme.LightNegativeRed
 import net.adhikary.mrtbuddy.ui.theme.LightPositiveGreen
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun TransactionListScreen(
@@ -54,9 +55,10 @@ fun TransactionListScreen(
     onBack: () -> Unit,
     paddingValues: PaddingValues
 ) {
-    val viewModel = remember {
-        TransactionListViewModelFactory(cardIdm).create()
-    }
+    val viewModel: TransactionListViewModel = koinViewModel(
+        key = cardIdm,
+        parameters = { parametersOf(cardIdm) }
+    )
 
     val uiState = viewModel.state.collectAsState().value
 
@@ -143,7 +145,11 @@ fun TransactionItem(trxEntity: TransactionEntityWithAmount) {
         TransactionType.Commute
     }
 
-    val amountText = if (trxEntity.amount != null) { "৳ ${translateNumber(trxEntity.amount)}" } else { "N/A" }
+    val amountText = if (trxEntity.amount != null) {
+        "৳ ${translateNumber(trxEntity.amount)}"
+    } else {
+        "N/A"
+    }
     val tz = TimeZone.of("Asia/Dhaka")
     val dateTimeFormatted = TimestampService.formatDateTime(
         Instant.fromEpochMilliseconds(transaction.dateTime).toLocalDateTime(tz)
