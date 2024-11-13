@@ -9,6 +9,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import mrtbuddy.composeapp.generated.resources.Res
+import mrtbuddy.composeapp.generated.resources.cancel
+import mrtbuddy.composeapp.generated.resources.cardName
+import mrtbuddy.composeapp.generated.resources.rename
+import mrtbuddy.composeapp.generated.resources.renameCard
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun RenameDialog(
@@ -20,12 +26,12 @@ fun RenameDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Rename Card") },
+        title = { Text(stringResource(Res.string.renameCard)) },
         text = {
             TextField(
                 value = newName,
                 onValueChange = { newName = it },
-                label = { Text("Card Name") }
+                label = { Text(stringResource(Res.string.cardName)) }
             )
         },
         confirmButton = {
@@ -35,12 +41,12 @@ fun RenameDialog(
                     onDismiss()
                 }
             ) {
-                Text("Rename")
+                Text(stringResource(Res.string.rename))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(Res.string.cancel))
             }
         }
     )

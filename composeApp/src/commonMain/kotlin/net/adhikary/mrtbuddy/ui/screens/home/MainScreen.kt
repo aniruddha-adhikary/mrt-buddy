@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.balance
 import mrtbuddy.composeapp.generated.resources.fare
+import mrtbuddy.composeapp.generated.resources.historyTab
 import mrtbuddy.composeapp.generated.resources.more
 import net.adhikary.mrtbuddy.repository.TransactionRepository
 import net.adhikary.mrtbuddy.ui.components.AppsIcon
@@ -45,6 +46,7 @@ import net.adhikary.mrtbuddy.ui.components.BalanceCard
 import net.adhikary.mrtbuddy.ui.components.CalculatorIcon
 import net.adhikary.mrtbuddy.ui.components.CardIcon
 import net.adhikary.mrtbuddy.ui.components.Footer
+import net.adhikary.mrtbuddy.ui.components.HistoryIcon
 import net.adhikary.mrtbuddy.ui.components.TransactionHistoryList
 import net.adhikary.mrtbuddy.ui.screens.FareCalculatorScreen
 import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreen
@@ -93,8 +95,8 @@ fun MainScreen(
                     unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
                 )
                 BottomNavigationItem(
-                    icon = { CalculatorIcon() },
-                    label = { Text("History") },
+                    icon = { HistoryIcon() },
+                    label = { Text(stringResource(Res.string.historyTab)) },
                     selected = currentScreen == Screen.History || currentScreen == Screen.TransactionList,
                     onClick = { currentScreen = Screen.History },
                     selectedContentColor = MaterialTheme.colors.primary,

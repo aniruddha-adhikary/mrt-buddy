@@ -2,7 +2,14 @@ package net.adhikary.mrtbuddy.ui.screens.history
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -10,15 +17,17 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import mrtbuddy.composeapp.generated.resources.Res
+import mrtbuddy.composeapp.generated.resources.unnamedCard
 import net.adhikary.mrtbuddy.data.CardEntity
 import net.adhikary.mrtbuddy.ui.theme.DarkRapidPass
 import net.adhikary.mrtbuddy.ui.theme.LightRapidPass
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun CardItem(
@@ -57,7 +66,7 @@ fun CardItem(
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
                 ) {
                     Text(
-                        text = card.name ?: "Unnamed Card",
+                        text = card.name ?: stringResource(Res.string.unnamedCard),
                         style = MaterialTheme.typography.h6,
                         color = MaterialTheme.colors.onPrimary,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)

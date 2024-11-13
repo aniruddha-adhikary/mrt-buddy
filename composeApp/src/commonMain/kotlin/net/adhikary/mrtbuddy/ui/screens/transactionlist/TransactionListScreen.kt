@@ -2,6 +2,7 @@ package net.adhikary.mrtbuddy.ui.screens.transactionlist
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,9 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.balanceUpdate
+import mrtbuddy.composeapp.generated.resources.noTransactionsFound
+import mrtbuddy.composeapp.generated.resources.transactions
+import mrtbuddy.composeapp.generated.resources.transactionsAppearPrompt
 import net.adhikary.mrtbuddy.data.TransactionEntityWithAmount
 import net.adhikary.mrtbuddy.model.TransactionType
 import net.adhikary.mrtbuddy.nfc.service.StationService
@@ -69,7 +73,7 @@ fun TransactionListScreen(
                 .padding(paddingValues),
         ) {
             TopAppBar(
-                title = { Text("Transactions") },
+                title = { Text(stringResource(Res.string.transactions)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -86,19 +90,43 @@ fun TransactionListScreen(
                 modifier = Modifier.padding(24.dp)
             ) {
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(uiState.transactions) { transaction ->
-                        TransactionItem(transaction)
-                        if (transaction != uiState.transactions.last()) {
-                            Divider(
-                                modifier = Modifier.padding(top = 12.dp),
-                                color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
+                if (uiState.transactions.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.noTransactionsFound),
+                                style = MaterialTheme.typography.h6,
+                                modifier = Modifier.padding(bottom = 8.dp)
                             )
+                            Text(
+                                text = stringResource(Res.string.transactionsAppearPrompt),
+                                style = MaterialTheme.typography.body1,
+                                color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+                                modifier = Modifier.padding(horizontal = 32.dp),
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            )
+                        }
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        items(uiState.transactions) { transaction ->
+                            TransactionItem(transaction)
+                            if (transaction != uiState.transactions.last()) {
+                                Divider(
+                                    modifier = Modifier.padding(top = 12.dp),
+                                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
+                                )
+                            }
                         }
                     }
                 }

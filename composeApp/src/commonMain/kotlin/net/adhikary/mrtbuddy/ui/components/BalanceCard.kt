@@ -204,7 +204,7 @@ private fun WaitingContent() {
                 tint = MaterialTheme.colors.primary
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = stringResource(Res.string.tap),
             style = MaterialTheme.typography.h6,

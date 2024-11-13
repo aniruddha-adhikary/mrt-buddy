@@ -17,6 +17,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import mrtbuddy.composeapp.generated.resources.Res
+import mrtbuddy.composeapp.generated.resources.cancel
+import mrtbuddy.composeapp.generated.resources.delete
+import mrtbuddy.composeapp.generated.resources.deleteCard
+import mrtbuddy.composeapp.generated.resources.deleteCardConfirm
+import mrtbuddy.composeapp.generated.resources.noCardsFound
+import mrtbuddy.composeapp.generated.resources.scanCardPrompt
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HistoryScreen(
@@ -47,8 +55,8 @@ fun HistoryScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete Card") },
-            text = { Text("Are you sure you want to delete this card? This action cannot be undone.") },
+            title = { Text(stringResource(Res.string.deleteCard)) },
+            text = { Text(stringResource(Res.string.deleteCardConfirm)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -56,12 +64,12 @@ fun HistoryScreen(
                         showDeleteDialog = false
                     }
                 ) {
-                    Text("Delete")
+                    Text(stringResource(Res.string.delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(Res.string.cancel))
                 }
             }
         )
@@ -83,12 +91,12 @@ fun HistoryScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "No cards found",
+                    text = stringResource(Res.string.noCardsFound),
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 Text(
-                    text = "Scan a card in the Balance Tab to get started.\n\nCome back here afterwards.",
+                    text = stringResource(Res.string.scanCardPrompt),
                     style = MaterialTheme.typography.body1,
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
                     modifier = Modifier.padding(horizontal = 32.dp),
