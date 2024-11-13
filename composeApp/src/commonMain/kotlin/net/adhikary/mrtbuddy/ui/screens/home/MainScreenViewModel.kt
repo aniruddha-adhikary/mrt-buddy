@@ -18,11 +18,12 @@ import net.adhikary.mrtbuddy.repository.TransactionRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class MainScreenViewModel : ViewModel(), KoinComponent {
-    private val transactionRepository: TransactionRepository by inject()
+class MainScreenViewModel(
+    private val transactionRepository: TransactionRepository,
+    private val initialState: MainScreenState
+) : ViewModel() {
 
-    private val _state: MutableStateFlow<MainScreenState> =
-        MutableStateFlow(MainScreenState())
+    private val _state: MutableStateFlow<MainScreenState> = MutableStateFlow(initialState)
 
     val state: StateFlow<MainScreenState> get() = _state.asStateFlow()
 

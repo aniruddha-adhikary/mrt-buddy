@@ -24,11 +24,12 @@ import net.adhikary.mrtbuddy.ui.screens.home.MainScreenViewModel
 import net.adhikary.mrtbuddy.ui.theme.MRTBuddyTheme
 import net.adhikary.mrtbuddy.utils.observeAsActions
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
 fun App() {
-    val mainVm = remember { MainScreenViewModel() }
+    val mainVm = koinViewModel<MainScreenViewModel>()
     val scope = rememberCoroutineScope()
     val nfcManager = getNFCManager()
 
