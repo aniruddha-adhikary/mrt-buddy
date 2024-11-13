@@ -12,12 +12,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.managers.RescanManager
 import net.adhikary.mrtbuddy.nfc.getNFCManager
-import net.adhikary.mrtbuddy.repository.TransactionRepository
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreen
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenAction
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenEvent
@@ -29,10 +27,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun App(
-    transactionRepository: TransactionRepository,
-    mainVm: MainScreenViewModel = viewModel { MainScreenViewModel(transactionRepository) }
-) { // TODO need injection
+fun App() {
+    val mainVm = remember { MainScreenViewModel() }
     val scope = rememberCoroutineScope()
     val nfcManager = getNFCManager()
 
@@ -84,15 +80,10 @@ fun App(
                     Column {
                         MainScreen(
                             uiState = state,
-                            transactionRepository = transactionRepository,
                         )
                     }
                 }
             }
-
-
         }
-
-
     }
 }

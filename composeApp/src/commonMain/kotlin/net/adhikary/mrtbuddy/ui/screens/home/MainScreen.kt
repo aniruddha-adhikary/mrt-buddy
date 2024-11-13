@@ -17,21 +17,12 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.setValue
-import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreen
-import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListScreen
-import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListScreen
-import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListScreen
-import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListViewModel
-import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListViewModelFactory
-import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreenViewModel
-import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreenAction
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -40,7 +31,6 @@ import mrtbuddy.composeapp.generated.resources.balance
 import mrtbuddy.composeapp.generated.resources.fare
 import mrtbuddy.composeapp.generated.resources.historyTab
 import mrtbuddy.composeapp.generated.resources.more
-import net.adhikary.mrtbuddy.repository.TransactionRepository
 import net.adhikary.mrtbuddy.ui.components.AppsIcon
 import net.adhikary.mrtbuddy.ui.components.BalanceCard
 import net.adhikary.mrtbuddy.ui.components.CalculatorIcon
@@ -50,7 +40,9 @@ import net.adhikary.mrtbuddy.ui.components.HistoryIcon
 import net.adhikary.mrtbuddy.ui.components.TransactionHistoryList
 import net.adhikary.mrtbuddy.ui.screens.FareCalculatorScreen
 import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreen
+import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreenAction
 import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreenViewModelFactory
+import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListScreen
 import org.jetbrains.compose.resources.stringResource
 
 enum class Screen {
@@ -60,7 +52,6 @@ enum class Screen {
 @Composable
 fun MainScreen(
     uiState: MainScreenState,
-    transactionRepository: TransactionRepository
 ) {
     var currentScreen by remember { mutableStateOf(Screen.Home) }
     var selectedCardIdm by remember { mutableStateOf<String?>(null) }
@@ -149,7 +140,7 @@ fun MainScreen(
             }
             Screen.History -> {
                 val historyViewModel = remember {
-                    HistoryScreenViewModelFactory(transactionRepository).create()
+                    HistoryScreenViewModelFactory().create()
                 }
 
                 LaunchedEffect(Unit) {
@@ -171,7 +162,6 @@ fun MainScreen(
                 selectedCardIdm?.let { cardIdm ->
                     TransactionListScreen(
                         cardIdm = cardIdm,
-                        transactionRepository = transactionRepository,
                         onBack = {
                             currentScreen = Screen.History
                         },

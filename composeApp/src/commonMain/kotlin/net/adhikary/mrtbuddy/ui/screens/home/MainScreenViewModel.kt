@@ -15,10 +15,11 @@ import net.adhikary.mrtbuddy.model.CardReadResult
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.model.TransactionWithAmount
 import net.adhikary.mrtbuddy.repository.TransactionRepository
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class MainScreenViewModel(
-    private val transactionRepository: TransactionRepository
-) : ViewModel() {
+class MainScreenViewModel : ViewModel(), KoinComponent {
+    private val transactionRepository: TransactionRepository by inject()
 
     private val _state: MutableStateFlow<MainScreenState> =
         MutableStateFlow(MainScreenState())

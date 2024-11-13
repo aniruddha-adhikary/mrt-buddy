@@ -1,19 +1,22 @@
 package net.adhikary.mrtbuddy.ui.screens.history
 
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.cancel
-import mrtbuddy.composeapp.generated.resources.cardName
 import mrtbuddy.composeapp.generated.resources.rename
 import mrtbuddy.composeapp.generated.resources.renameCard
 import org.jetbrains.compose.resources.stringResource
@@ -25,6 +28,11 @@ fun RenameDialog(
     onConfirm: (String) -> Unit
 ) {
     var newName by remember { mutableStateOf(currentName ?: "") }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
     
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -33,10 +41,10 @@ fun RenameDialog(
             TextField(
                 value = newName,
                 onValueChange = { newName = it },
-                label = { Text(stringResource(Res.string.cardName)) },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Words
-                )
+                ),
+                modifier = Modifier.focusRequester(focusRequester)
             )
         },
         confirmButton = {

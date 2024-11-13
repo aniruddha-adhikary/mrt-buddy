@@ -41,7 +41,6 @@ import net.adhikary.mrtbuddy.data.TransactionEntityWithAmount
 import net.adhikary.mrtbuddy.model.TransactionType
 import net.adhikary.mrtbuddy.nfc.service.StationService
 import net.adhikary.mrtbuddy.nfc.service.TimestampService
-import net.adhikary.mrtbuddy.repository.TransactionRepository
 import net.adhikary.mrtbuddy.translateNumber
 import net.adhikary.mrtbuddy.ui.theme.DarkNegativeRed
 import net.adhikary.mrtbuddy.ui.theme.DarkPositiveGreen
@@ -52,12 +51,11 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun TransactionListScreen(
     cardIdm: String,
-    transactionRepository: TransactionRepository,
     onBack: () -> Unit,
     paddingValues: PaddingValues
 ) {
     val viewModel = remember {
-        TransactionListViewModelFactory(cardIdm, transactionRepository).create()
+        TransactionListViewModelFactory(cardIdm).create()
     }
 
     val uiState = viewModel.state.collectAsState().value
