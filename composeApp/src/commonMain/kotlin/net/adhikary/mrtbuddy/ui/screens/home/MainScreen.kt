@@ -161,7 +161,8 @@ fun MainScreen(
                     onCardSelected = { cardIdm ->
                         selectedCardIdm = cardIdm
                         currentScreen = Screen.TransactionList
-                    }
+                    },
+                    viewModel = historyViewModel
                 )
             }
             Screen.TransactionList -> {

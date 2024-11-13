@@ -73,4 +73,8 @@ class TransactionRepository(
         }.filter { transaction -> transaction.amount != null }
     }
 
+    suspend fun renameCard(cardIdm: String, newName: String) {
+        cardDao.updateCardName(cardIdm, newName)
+    }
+
 }

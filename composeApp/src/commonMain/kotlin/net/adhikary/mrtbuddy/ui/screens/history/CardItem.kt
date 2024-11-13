@@ -10,6 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,7 +22,8 @@ import net.adhikary.mrtbuddy.ui.theme.LightRapidPass
 @Composable
 fun CardItem(
     card: CardEntity,
-    onCardSelected: () -> Unit
+    onCardSelected: () -> Unit,
+    onRenameClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -47,12 +49,27 @@ fun CardItem(
                     ),
                 contentAlignment = androidx.compose.ui.Alignment.CenterStart
             ) {
-                Text(
-                    text = card.name ?: "Unnamed Card",
-                    style = MaterialTheme.typography.h6,
-                    color = MaterialTheme.colors.onPrimary,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = card.name ?: "Unnamed Card",
+                        style = MaterialTheme.typography.h6,
+                        color = MaterialTheme.colors.onPrimary,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Rename card",
+                        tint = MaterialTheme.colors.onPrimary,
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .size(24.dp)
+                            .clickable { onRenameClick() }
+                    )
+                }
             }
             
             // Card details

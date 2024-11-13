@@ -15,4 +15,7 @@ interface CardDao {
     suspend fun getCardByIdm(idm: String): CardEntity?
     @Query("SELECT * FROM cards")
     suspend fun getAllCards(): List<CardEntity>
+
+    @Query("UPDATE cards SET name = :newName WHERE idm = :cardIdm")
+    suspend fun updateCardName(cardIdm: String, newName: String)
 }

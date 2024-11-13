@@ -24,7 +24,7 @@ class HistoryScreenViewModel(
 
     fun onAction(action: HistoryScreenAction) {
         when (action) {
-            HistoryScreenAction.OnInit -> {
+            is HistoryScreenAction.OnInit -> {
                 viewModelScope.launch {
                     _state.update { it.copy(isLoading = true) }
                     try {
@@ -33,6 +33,18 @@ class HistoryScreenViewModel(
                     } catch (e: Exception) {
                         _state.update { it.copy(isLoading = false, error = e.message) }
                         _events.send(HistoryScreenEvent.Error(e.message ?: "Unknown Error"))
+                    }
+                }
+            }
+            is HistoryScreenAction.RenameCard -> {
+                viewModelScope.launch {
+                    try {
+                        transactionRepository.renameCard(action.cardIdm, action.newName)
+                        _events.send(HistoryScreenEvent.RenameSuccess)
+                        // Refresh the list
+                        onAction(HistoryScreenAction.OnInit)
+                    } catch (e: Exception) {
+                        _events.send(HistoryScreenEvent.Error(e.message ?: "Failed to rename card"))
                     }
                 }
             }

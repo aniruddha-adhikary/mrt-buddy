@@ -14,7 +14,7 @@ interface TransactionDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertTransactions(transactions: List<TransactionEntity>)
 
-    @Query("SELECT * FROM transactions WHERE cardIdm = :cardIdm ORDER BY dateTime DESC")
+    @Query("SELECT * FROM transactions WHERE cardIdm = :cardIdm ORDER BY `order` DESC")
     suspend fun getTransactionsByCardIdm(cardIdm: String): List<TransactionEntity>
 
     @Query("SELECT MAX(`order`) FROM transactions")
