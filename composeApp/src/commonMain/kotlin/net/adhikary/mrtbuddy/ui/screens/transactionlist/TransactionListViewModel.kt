@@ -22,7 +22,7 @@ class TransactionListViewModel(
             _state.update { it.copy(isLoading = true) }
             try {
                 val transactions = transactionRepository.getTransactionsByCardIdm(cardIdm)
-                _state.update { it.copy(isLoading = false, transactions = emptyList()) }
+                _state.update { it.copy(isLoading = false, transactions = transactions) }
             } catch (e: Exception) {
                 _state.update { it.copy(isLoading = false, error = e.message) }
             }
