@@ -16,7 +16,8 @@ class TimestampService {
             val month = getMonth(dateTime.monthNumber)
             val year = translateNumber(dateTime.year)
 
-            return "$day $month $year, ${getHour(dateTime.hour)}:$zero$zero ${getAmPm(dateTime.hour)}"
+            val minutes = if (dateTime.minute == 0) ":$zero$zero" else ":${translateNumber(dateTime.minute).padStart(2, zero)}"
+            return "$day $month $year, ${getHour(dateTime.hour)}$minutes ${getAmPm(dateTime.hour)}"
         }
 
         fun getAmPm(hour: Int): String {

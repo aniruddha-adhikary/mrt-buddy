@@ -27,26 +27,32 @@ import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.balance
 import mrtbuddy.composeapp.generated.resources.fare
+import mrtbuddy.composeapp.generated.resources.historyTab
 import mrtbuddy.composeapp.generated.resources.more
 import net.adhikary.mrtbuddy.ui.components.AppsIcon
 import net.adhikary.mrtbuddy.ui.components.BalanceCard
 import net.adhikary.mrtbuddy.ui.components.CalculatorIcon
 import net.adhikary.mrtbuddy.ui.components.CardIcon
 import net.adhikary.mrtbuddy.ui.components.Footer
+import net.adhikary.mrtbuddy.ui.components.HistoryIcon
 import net.adhikary.mrtbuddy.ui.components.TransactionHistoryList
 import net.adhikary.mrtbuddy.ui.screens.FareCalculatorScreen
+import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreen
+import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListScreen
 import org.jetbrains.compose.resources.stringResource
 
 enum class Screen {
-    Home, Calculator, More
+    Home, Calculator, More, History, TransactionList
 }
 
 @Composable
 fun MainScreen(
-    uiState : MainScreenState
+    uiState: MainScreenState,
 ) {
     var currentScreen by remember { mutableStateOf(Screen.Home) }
+    var selectedCardIdm by remember { mutableStateOf<String?>(null) }
     val hasTransactions = uiState.transaction.isNotEmpty()
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -72,6 +78,14 @@ fun MainScreen(
                     label = { Text(stringResource(Res.string.balance)) },
                     selected = currentScreen == Screen.Home,
                     onClick = { currentScreen = Screen.Home },
+                    selectedContentColor = MaterialTheme.colors.primary,
+                    unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                )
+                BottomNavigationItem(
+                    icon = { HistoryIcon() },
+                    label = { Text(stringResource(Res.string.historyTab)) },
+                    selected = currentScreen == Screen.History || currentScreen == Screen.TransactionList,
+                    onClick = { currentScreen = Screen.History },
                     selectedContentColor = MaterialTheme.colors.primary,
                     unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
                 )
@@ -119,6 +133,25 @@ fun MainScreen(
             }
             Screen.More -> {
                 MoreScreen(Modifier.padding(paddingValues))
+            }
+            Screen.History -> {
+                HistoryScreen(
+                    onCardSelected = { cardIdm ->
+                        selectedCardIdm = cardIdm
+                        currentScreen = Screen.TransactionList
+                    }
+                )
+            }
+            Screen.TransactionList -> {
+                selectedCardIdm?.let { cardIdm ->
+                    TransactionListScreen(
+                        cardIdm = cardIdm,
+                        onBack = {
+                            currentScreen = Screen.History
+                        },
+                        paddingValues = paddingValues
+                    )
+                }
             }
         }
     }

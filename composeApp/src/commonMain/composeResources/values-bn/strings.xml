@@ -3,8 +3,9 @@
     <string name="balance">ব্যালেন্স</string>
     <string name="fare">ভাড়া</string>
     <string name="more">অন্যান্য</string>
+    <string name="historyTab">ইতিহাস</string>
     <string name="language">বাংলা</string>
-    <string name="rescan">পুনরায় স্ক্যান করুন</string>
+    <string name="rescan">পুনরায় স্ক্যান</string>
     <string name="latestBalance">সর্বশেষ ব্যালেন্স</string>
     <string name="lowBalance">পরবর্তী ভ্রমণের জন্য আপনার পর্যাপ্ত ব্যালেন্স নেই। টপ আপ করুন</string>
     <string name="tap">আপনার কার্ডটি ট্যাপ করুন</string>
@@ -15,6 +16,7 @@
     <string name="requiredNfc">আপনার এমআরটি পাস পড়ার জন্য এনএফসি প্রয়োজন, যা এই ডিভাইসটি সমর্থন করে না</string>
     <string name="nfcDisabled">এনএফসি বন্ধ করা</string>
     <string name="enableNfc">আপনার এমআরটি পাস পড়ার জন্য দয়া করে আপনার ডিভাইসের সেটিংসে এনএফসি চালু করুন</string>
+    <string name="tapRescanToStart">স্ক্যান শুরু করতে 'পুনরায় স্ক্যান' এ ট্যাপ করুন</string>
     <!-- transaction histories -->
     <string name="recentJourneys">সাম্প্রতিক ভ্রমণ</string>
     <string name="balanceUpdate">ব্যালেন্স আপডেট</string>
@@ -70,4 +72,28 @@
     <string name="helpAndSupportButton">সাহায্য</string>
     <string name="nonAffiliationDisclaimer">এটি একটি স্বাধীন প্রকল্প এবং এটি ঢাকা ম্যাস ট্রানজিট কোম্পানি লিমিটেড (ডিএমটিসিএল) দ্বারা আনুষ্ঠানিকভাবে অনুমোদিত বা সংযুক্ত নয়।</string>
     <string name="readOnlyDisclaimer">অ্যাপটি শুধুমাত্র কার্ডের তথ্য পড়তে সক্ষম, এবং কার্ডের ব্যালেন্স রিচার্জ, টপ-আপ বা পরিবর্তন করতে সক্ষম নয়।</string>
+
+    <!-- History and Transaction screens -->
+    <string name="transactions">লেনদেন</string>
+    <string name="history">ইতিহাস</string>
+    <string name="noCardsFound">কোন কার্ড পাওয়া যায়নি</string>
+    <string name="scanCardPrompt">শুরু করার জন্য ব্যালেন্স ট্যাবে একটি কার্ড স্ক্যান করুন।\n\nপরে এখানে ফিরে আসুন।</string>
+    <string name="noTransactionsFound">কোন লেনদেন পাওয়া যায়নি</string>
+    <string name="transactionsAppearPrompt">আপনি আপনার কার্ড কমপক্ষে দুইবার ব্যবহার করার পর লেনদেনগুলি এখানে দেখা যাবে।</string>
+    <string name="loading">লোড হচ্ছে...</string>
+    <string name="deleteCard">কার্ড মুছুন</string>
+    <string name="deleteCardConfirm">আপনি কি নিশ্চিত যে আপনি এই কার্ডটি মুছতে চান? এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।</string>
+    <string name="delete">মুছুন</string>
+    <string name="cancel">বাতিল</string>
+    <string name="renameCard">কার্ডের নাম পরিবর্তন করুন</string>
+    <string name="cardName">কার্ডের নাম</string>
+    <string name="rename">নাম পরিবর্তন করুন</string>
+    <string name="unnamedCard">নামহীন কার্ড</string>
+    <string name="cardId">কার্ড আইডি</string>
+    <string name="lastScan">সর্বশেষ স্ক্যান</string>
+
+    <!-- Settings screen -->
+    <string name="settings">সেটিংস</string>
+    <string name="autoSaveCardDetails">স্বয়ংক্রিয় কার্ড সংরক্ষণ</string>
+    <string name="autoSaveCardDetailsDescription">স্ক্যান করার সময় স্বয়ংক্রিয়ভাবে কার্ডের তথ্য সংরক্ষণ করুন</string>
 </resources>

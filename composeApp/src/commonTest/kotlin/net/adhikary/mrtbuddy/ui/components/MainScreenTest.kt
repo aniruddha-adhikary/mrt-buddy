@@ -7,6 +7,7 @@ import net.adhikary.mrtbuddy.ui.navigation.Screen
 import net.adhikary.mrtbuddy.ui.viewmodel.FareCalculatorViewModel
 import net.adhikary.mrtbuddy.model.CardState
 
+
 class MainScreenTest {
     private lateinit var viewModel: FareCalculatorViewModel
     private lateinit var navigationState: NavigationTestState

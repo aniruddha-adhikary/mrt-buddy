@@ -12,17 +12,17 @@ import android.nfc.NfcManager
 import android.nfc.Tag
 import android.nfc.tech.NfcF
 import android.util.Log
-import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import net.adhikary.mrtbuddy.model.CardReadResult
 import net.adhikary.mrtbuddy.model.CardState
-import net.adhikary.mrtbuddy.model.Transaction
+import net.adhikary.mrtbuddy.nfc.parser.ByteParser
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class NFCManager actual constructor() {
@@ -31,11 +31,17 @@ actual class NFCManager actual constructor() {
     private val nfcReader = NfcReader()
     private val scope = CoroutineScope(SupervisorJob())
 
-    private val _cardState = MutableStateFlow<CardState>(CardState.WaitingForTap)
-    private val _transactions = MutableStateFlow<List<Transaction>>(emptyList())
+    private val _cardState = MutableSharedFlow<CardState>(replay = 1)
+    private val _cardReadResults = MutableSharedFlow<CardReadResult?>(replay = 1)
 
-    actual val cardState: StateFlow<CardState> = _cardState
-    actual val transactions: StateFlow<List<Transaction>> = _transactions
+    actual val cardState: SharedFlow<CardState> = _cardState
+    actual val cardReadResults: SharedFlow<CardReadResult?> = _cardReadResults
+
+    init {
+        scope.launch {
+            _cardState.emit(CardState.WaitingForTap)
+        }
+    }
 
     private var pendingIntent: PendingIntent? = null
 
@@ -198,7 +204,7 @@ actual class NFCManager actual constructor() {
         } ?: run {
             scope.launch {
                 _cardState.emit(CardState.WaitingForTap)
-                _transactions.emit(emptyList())
+                _cardReadResults.emit(CardReadResult("", emptyList()))
             }
         }
     }
@@ -207,11 +213,12 @@ actual class NFCManager actual constructor() {
         val nfcF = NfcF.get(tag)
         try {
             nfcF.connect()
+            val idm = ByteParser().toHexString(nfcF.tag.id)
             val transactions = nfcReader.readTransactionHistory(nfcF)
             nfcF.close()
 
             scope.launch {
-                _transactions.emit(transactions)
+                _cardReadResults.emit(CardReadResult(idm, transactions))
                 val latestBalance = transactions.firstOrNull()?.balance
                 latestBalance?.let {
                     _cardState.emit(CardState.Balance(it))
@@ -223,7 +230,7 @@ actual class NFCManager actual constructor() {
         } catch (e: Exception) {
             scope.launch {
                 _cardState.emit(CardState.Error(e.message ?: "Unknown error occurred"))
-                _transactions.emit(emptyList())
+                _cardReadResults.emit(CardReadResult("", emptyList()))
             }
         }
     }

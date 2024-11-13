@@ -8,11 +8,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,10 +25,13 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.card
@@ -48,6 +46,7 @@ import mrtbuddy.composeapp.generated.resources.readingCard
 import mrtbuddy.composeapp.generated.resources.requiredNfc
 import mrtbuddy.composeapp.generated.resources.rescan
 import mrtbuddy.composeapp.generated.resources.tap
+import mrtbuddy.composeapp.generated.resources.tapRescanToStart
 import net.adhikary.mrtbuddy.getPlatform
 import net.adhikary.mrtbuddy.managers.RescanManager
 import net.adhikary.mrtbuddy.model.CardState
@@ -196,7 +195,9 @@ private fun WaitingContent() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(contentAlignment = Alignment.Center) {
-            PulsingCircle(iconSize = 48.dp)
+            if (getPlatform().name == "android") {
+                PulsingCircle(iconSize = 48.dp)
+            }
             Icon(
                 painter = painterResource(Res.drawable.card),
                 contentDescription = "Tap Card",
@@ -204,19 +205,29 @@ private fun WaitingContent() {
                 tint = MaterialTheme.colors.primary
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = stringResource(Res.string.tap),
             style = MaterialTheme.typography.h6,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = stringResource(Res.string.hold),
-            style = MaterialTheme.typography.body1,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
-        )
+        if (getPlatform().name != "android") {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(Res.string.tapRescanToStart),
+                style = MaterialTheme.typography.body1,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+            )
+        } else {
+            Text(
+                text = stringResource(Res.string.hold),
+                style = MaterialTheme.typography.body1,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+            )
+        }
     }
 }
 

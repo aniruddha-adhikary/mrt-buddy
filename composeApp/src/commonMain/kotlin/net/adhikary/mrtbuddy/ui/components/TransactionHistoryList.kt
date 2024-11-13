@@ -54,11 +54,11 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
                 val validTransactions = transactions.filter { it.amount != null }
 
                 items(validTransactions) { transactionWithAmount ->
-                    val isCommute = transactionWithAmount.transaction.fixedHeader.startsWith(
-                        "08 52 10 00"
-                    )
                     TransactionItem(
-                        type = if (isCommute) TransactionType.Commute else TransactionType.BalanceUpdate,
+                        type = if (transactionWithAmount.amount != null && transactionWithAmount.amount > 0) 
+                            TransactionType.BalanceUpdate 
+                        else 
+                            TransactionType.Commute,
                         date = transactionWithAmount.transaction.timestamp,
                         fromStation = transactionWithAmount.transaction.fromStation,
                         toStation = transactionWithAmount.transaction.toStation,
@@ -122,11 +122,9 @@ fun TransactionItem(
             modifier = Modifier.padding(start = 8.dp)
         ) {
             val amountColor = when {
-                type == TransactionType.BalanceUpdate && (amountValue ?: 0) > 0 ->
-                    if (isDarkTheme) DarkPositiveGreen else LightPositiveGreen
-                type == TransactionType.Commute || (amountValue ?: 0) < 0 ->
-                    if (isDarkTheme) DarkNegativeRed else LightNegativeRed
-                else -> MaterialTheme.colors.primary
+                amountValue == null -> MaterialTheme.colors.onSurface
+                amountValue > 0 -> if (isDarkTheme) DarkPositiveGreen else LightPositiveGreen
+                else -> if (isDarkTheme) DarkNegativeRed else LightNegativeRed
             }
             
             Text(

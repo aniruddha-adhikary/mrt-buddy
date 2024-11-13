@@ -1,0 +1,216 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "4e5b822d4b107202aeaa0de53e3311ed",
+    "entities": [
+      {
+        "tableName": "DemoLocal",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `device_platform` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "platform",
+            "columnName": "device_platform",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "cards",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idm` TEXT NOT NULL, `name` TEXT, `lastScanTime` INTEGER, PRIMARY KEY(`idm`))",
+        "fields": [
+          {
+            "fieldPath": "idm",
+            "columnName": "idm",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastScanTime",
+            "columnName": "lastScanTime",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "idm"
+          ]
+        }
+      },
+      {
+        "tableName": "scans",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`scanId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `cardIdm` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, FOREIGN KEY(`cardIdm`) REFERENCES `cards`(`idm`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "scanId",
+            "columnName": "scanId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cardIdm",
+            "columnName": "cardIdm",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "scanId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_scans_cardIdm",
+            "unique": false,
+            "columnNames": [
+              "cardIdm"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_scans_cardIdm` ON `${TABLE_NAME}` (`cardIdm`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "cards",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "cardIdm"
+            ],
+            "referencedColumns": [
+              "idm"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "transactions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cardIdm` TEXT NOT NULL, `scanId` INTEGER NOT NULL, `fromStation` TEXT NOT NULL, `toStation` TEXT NOT NULL, `balance` INTEGER NOT NULL, `dateTime` INTEGER NOT NULL, `fixedHeader` TEXT NOT NULL, `order` INTEGER NOT NULL, PRIMARY KEY(`cardIdm`, `fromStation`, `toStation`, `balance`, `dateTime`, `fixedHeader`), FOREIGN KEY(`scanId`) REFERENCES `scans`(`scanId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "cardIdm",
+            "columnName": "cardIdm",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scanId",
+            "columnName": "scanId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fromStation",
+            "columnName": "fromStation",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "toStation",
+            "columnName": "toStation",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "balance",
+            "columnName": "balance",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateTime",
+            "columnName": "dateTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fixedHeader",
+            "columnName": "fixedHeader",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "order",
+            "columnName": "order",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "cardIdm",
+            "fromStation",
+            "toStation",
+            "balance",
+            "dateTime",
+            "fixedHeader"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_transactions_scanId",
+            "unique": false,
+            "columnNames": [
+              "scanId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_transactions_scanId` ON `${TABLE_NAME}` (`scanId`)"
+          },
+          {
+            "name": "index_transactions_order",
+            "unique": false,
+            "columnNames": [
+              "order"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_transactions_order` ON `${TABLE_NAME}` (`order`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "scans",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "scanId"
+            ],
+            "referencedColumns": [
+              "scanId"
+            ]
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4e5b822d4b107202aeaa0de53e3311ed')"
+    ]
+  }
+}
