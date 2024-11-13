@@ -37,7 +37,7 @@ fun CardItem(
     ) {
         Column {
             // Colored stripe at the top
-            val isRapidPass = !card.idm.startsWith("01 27")
+            val isRapidPass = card.idm.startsWith("01 27")
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
