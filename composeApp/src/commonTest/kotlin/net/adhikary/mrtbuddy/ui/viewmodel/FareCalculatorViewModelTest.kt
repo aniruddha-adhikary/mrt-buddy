@@ -68,5 +68,16 @@ class FareCalculatorViewModelTest {
         viewModel.updateFromStation(station)
         viewModel.updateToStation(station)
         assertEquals(0, viewModel.calculatedFare) // Same station should have 0 fare
+        assertEquals(0, viewModel.discountedFare) // Discounted fare should also be 0
+    }
+
+    @Test
+    fun testSameStationWithBalance() {
+        val station = viewModel.stations.first()
+        viewModel.updateFromStation(station)
+        viewModel.updateToStation(station)
+        viewModel.updateCardState(CardState.Balance(1000))
+        assertEquals(0, viewModel.calculatedFare)
+        assertEquals(true, viewModel.hasEnoughBalance()) // Should always have enough balance for 0 fare
     }
 }
