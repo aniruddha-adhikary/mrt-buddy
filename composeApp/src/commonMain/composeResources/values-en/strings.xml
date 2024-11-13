@@ -16,6 +16,7 @@
     <string name="requiredNfc">This device doesn't support NFC, which is required to read your MRT Pass</string>
     <string name="nfcDisabled">NFC disabled</string>
     <string name="enableNfc">Please enable NFC in your device settings to read your MRT Pass</string>
+    <string name="tapRescanToStart">Tap 'Rescan' to start scanning</string>
     <!-- transaction histories -->
     <string name="recentJourneys">Recent Journeys</string>
     <string name="balanceUpdate">Balance Update</string>
