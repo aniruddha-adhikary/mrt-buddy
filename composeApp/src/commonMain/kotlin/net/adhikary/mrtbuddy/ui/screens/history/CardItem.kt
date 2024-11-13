@@ -22,10 +22,13 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.toLocalDateTime
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.cardId
+import mrtbuddy.composeapp.generated.resources.lastScan
 import mrtbuddy.composeapp.generated.resources.unnamedCard
 import net.adhikary.mrtbuddy.data.CardEntity
+import net.adhikary.mrtbuddy.nfc.service.TimestampService
 import net.adhikary.mrtbuddy.ui.theme.DarkRapidPass
 import net.adhikary.mrtbuddy.ui.theme.LightRapidPass
 import org.jetbrains.compose.resources.stringResource
@@ -116,6 +119,24 @@ fun CardItem(
                                 text = card.idm,
                                 style = MaterialTheme.typography.body1
                             )
+                            if (card.lastScanTime != null) {
+                                Text(
+                                    modifier = Modifier.padding(top = 12.dp),
+                                    text = "${stringResource(Res.string.lastScan)}: ${TimestampService.formatDateTime(
+                                        kotlinx.datetime.Instant.fromEpochMilliseconds(card.lastScanTime)
+                                            .toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault())
+                                    )}",
+                                    style = MaterialTheme.typography.caption,
+                                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                                )
+                            } else {
+                                Text(
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    text = "${stringResource(Res.string.lastScan)}: Never",
+                                    style = MaterialTheme.typography.caption,
+                                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                                )
+                            }
                         }
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,

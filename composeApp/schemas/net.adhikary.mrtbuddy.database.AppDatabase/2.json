@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "20d81dda0187d28ca80a0b74b0d1ba75",
+    "identityHash": "4e5b822d4b107202aeaa0de53e3311ed",
     "entities": [
       {
         "tableName": "DemoLocal",
@@ -29,7 +29,7 @@
       },
       {
         "tableName": "cards",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idm` TEXT NOT NULL, `name` TEXT, PRIMARY KEY(`idm`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idm` TEXT NOT NULL, `name` TEXT, `lastScanTime` INTEGER, PRIMARY KEY(`idm`))",
         "fields": [
           {
             "fieldPath": "idm",
@@ -41,6 +41,11 @@
             "fieldPath": "name",
             "columnName": "name",
             "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastScanTime",
+            "columnName": "lastScanTime",
+            "affinity": "INTEGER"
           }
         ],
         "primaryKey": {
@@ -205,7 +210,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '20d81dda0187d28ca80a0b74b0d1ba75')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4e5b822d4b107202aeaa0de53e3311ed')"
     ]
   }
 }

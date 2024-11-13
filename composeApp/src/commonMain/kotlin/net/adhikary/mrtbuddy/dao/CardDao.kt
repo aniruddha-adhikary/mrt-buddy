@@ -8,8 +8,11 @@ import net.adhikary.mrtbuddy.data.CardEntity
 
 @Dao
 interface CardDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCard(card: CardEntity)
+
+    @Query("UPDATE cards SET lastScanTime = :scanTime WHERE idm = :cardIdm")
+    suspend fun updateLastScanTime(cardIdm: String, scanTime: Long)
 
     @Query("SELECT * FROM cards WHERE idm = :idm LIMIT 1")
     suspend fun getCardByIdm(idm: String): CardEntity?

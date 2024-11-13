@@ -20,8 +20,10 @@ class TransactionRepository(
 ) {
 
     suspend fun saveCardReadResult(result: CardReadResult) {
-        val cardEntity = CardEntity(idm = result.idm, name = null)
+        val currentTime = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+        val cardEntity = CardEntity(idm = result.idm, name = null, lastScanTime = currentTime)
         cardDao.insertCard(cardEntity)
+        cardDao.updateLastScanTime(result.idm, currentTime)
 
         val scanEntity = ScanEntity(cardIdm = result.idm)
         val scanId = scanDao.insertScan(scanEntity)
