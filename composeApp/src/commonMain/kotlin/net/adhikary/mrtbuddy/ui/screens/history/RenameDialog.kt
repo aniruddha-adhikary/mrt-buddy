@@ -4,6 +4,8 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +33,10 @@ fun RenameDialog(
             TextField(
                 value = newName,
                 onValueChange = { newName = it },
-                label = { Text(stringResource(Res.string.cardName)) }
+                label = { Text(stringResource(Res.string.cardName)) },
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words
+                )
             )
         },
         confirmButton = {
