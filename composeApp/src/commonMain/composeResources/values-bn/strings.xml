@@ -90,4 +90,9 @@
     <string name="unnamedCard">নামহীন কার্ড</string>
     <string name="cardId">কার্ড আইডি</string>
     <string name="lastScan">সর্বশেষ স্ক্যান</string>
+    
+    <!-- Settings screen -->
+    <string name="settings">সেটিংস</string>
+    <string name="autoSaveCardDetails">স্বয়ংক্রিয় কার্ড সংরক্ষণ</string>
+    <string name="autoSaveCardDetailsDescription">স্ক্যান করার সময় স্বয়ংক্রিয়ভাবে কার্ডের তথ্য সংরক্ষণ করুন</string>
 </resources>

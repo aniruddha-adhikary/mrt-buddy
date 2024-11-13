@@ -1,4 +1,9 @@
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material.Switch
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import net.adhikary.mrtbuddy.repository.SettingsRepository
+import org.koin.compose.koinInject
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,7 +38,10 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun MoreScreen(modifier: Modifier = Modifier) {
+fun MoreScreen(
+    modifier: Modifier = Modifier,
+    settingsRepository: SettingsRepository = koinInject()
+) {
     val uriHandler = LocalUriHandler.current;
 
     Column(
@@ -45,6 +53,20 @@ fun MoreScreen(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
+            SectionHeader(text = stringResource(Res.string.settings))
+            val autoSaveEnabled by settingsRepository.autoSaveEnabled.collectAsState()
+            RoundedButton(
+                text = stringResource(Res.string.autoSaveCardDetails),
+                subtitle = stringResource(Res.string.autoSaveCardDetailsDescription),
+                onClick = { },
+                trailing = {
+                    Switch(
+                        checked = autoSaveEnabled,
+                        onCheckedChange = { settingsRepository.setAutoSave(it) }
+                    )
+                }
+            )
+
             SectionHeader(text = stringResource(Res.string.aboutHeader))
             RoundedButton(
                 text = stringResource(Res.string.privacyPolicy),
@@ -104,7 +126,8 @@ private fun RoundedButton(
     subtitle: String? = null,
     painter: Painter? = null,
     iconTint: Color = Color.Gray,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    trailing: @Composable (() -> Unit)? = null
 ) {
     Surface(
         modifier = Modifier
@@ -153,6 +176,7 @@ private fun RoundedButton(
                     }
                 }
             }
+            trailing?.invoke()
         }
     }
 }

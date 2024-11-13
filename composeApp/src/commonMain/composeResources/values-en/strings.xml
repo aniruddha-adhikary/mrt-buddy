@@ -90,4 +90,9 @@
     <string name="unnamedCard">Unnamed Card</string>
     <string name="cardId">Card ID</string>
     <string name="lastScan">Last Scan</string>
+    
+    <!-- Settings screen -->
+    <string name="settings">Settings</string>
+    <string name="autoSaveCardDetails">Auto-save card details</string>
+    <string name="autoSaveCardDetailsDescription">Automatically save card details when scanning</string>
 </resources>
