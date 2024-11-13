@@ -53,6 +53,7 @@ fun TransactionListScreen(
     paddingValues: PaddingValues
 ) {
     val viewModel: TransactionListViewModel = viewModel(
+        key = "TransactionListViewModel_$cardIdm",
         factory = TransactionListViewModelFactory(cardIdm, transactionRepository)
     )
 
