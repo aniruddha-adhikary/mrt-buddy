@@ -122,11 +122,9 @@ fun TransactionItem(
             modifier = Modifier.padding(start = 8.dp)
         ) {
             val amountColor = when {
-                type == TransactionType.BalanceUpdate && (amountValue ?: 0) > 0 ->
-                    if (isDarkTheme) DarkPositiveGreen else LightPositiveGreen
-                type == TransactionType.Commute || (amountValue ?: 0) < 0 ->
-                    if (isDarkTheme) DarkNegativeRed else LightNegativeRed
-                else -> MaterialTheme.colors.primary
+                amountValue == null -> MaterialTheme.colors.onSurface
+                amountValue > 0 -> if (isDarkTheme) DarkPositiveGreen else LightPositiveGreen
+                else -> if (isDarkTheme) DarkNegativeRed else LightNegativeRed
             }
             
             Text(

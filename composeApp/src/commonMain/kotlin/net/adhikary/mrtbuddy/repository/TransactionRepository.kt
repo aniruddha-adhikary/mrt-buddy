@@ -8,8 +8,10 @@ import net.adhikary.mrtbuddy.dao.TransactionDao
 import net.adhikary.mrtbuddy.data.CardEntity
 import net.adhikary.mrtbuddy.data.ScanEntity
 import net.adhikary.mrtbuddy.data.TransactionEntity
+import net.adhikary.mrtbuddy.data.TransactionEntityWithAmount
 import net.adhikary.mrtbuddy.model.CardReadResult
 import net.adhikary.mrtbuddy.model.Transaction
+import net.adhikary.mrtbuddy.model.TransactionWithAmount
 
 class TransactionRepository(
     private val cardDao: CardDao,
@@ -39,7 +41,13 @@ class TransactionRepository(
             )
         }
 
-        val transactionsToInsert = newTransactionEntities.filter { it.transactionId !in existingTransactionIds }
+        val lastOrder = transactionDao.getLastOrder() ?: 0
+        val transactionsToInsert = newTransactionEntities
+            .reversed()
+            .filter { it.transactionId !in existingTransactionIds }
+            .mapIndexed { index, entity -> 
+                entity.copy(order = lastOrder + index + 1)
+            }
         transactionDao.insertTransactions(transactionsToInsert)
     }
 
@@ -51,8 +59,18 @@ class TransactionRepository(
         return cardDao.getAllCards()
     }
 
-    suspend fun getTransactionsByCardIdm(cardIdm: String): List<TransactionEntity> {
-        return transactionDao.getTransactionsByCardIdm(cardIdm)
+    suspend fun getTransactionsByCardIdm(cardIdm: String): List<TransactionEntityWithAmount> {
+        val transactions = transactionDao.getTransactionsByCardIdm(cardIdm)
+
+        val sortedTransactions = transactions.sortedByDescending { it.order }
+        return sortedTransactions.mapIndexed { index, transaction ->
+            val amount = if (index + 1 < sortedTransactions.size) {
+                transaction.balance - sortedTransactions[index + 1].balance
+            } else {
+                null
+            }
+            TransactionEntityWithAmount(transactionEntity = transaction, amount = amount)
+        }.filter { transaction -> transaction.amount != null }
     }
 
 }

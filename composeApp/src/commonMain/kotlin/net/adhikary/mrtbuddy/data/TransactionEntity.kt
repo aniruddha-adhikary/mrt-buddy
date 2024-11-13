@@ -15,7 +15,10 @@ import androidx.room.Index
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index(value = ["scanId"])]
+    indices = [
+        Index(value = ["scanId"]),
+        Index(value = ["order"])
+    ]
 )
 data class TransactionEntity(
     val cardIdm: String,
@@ -24,5 +27,11 @@ data class TransactionEntity(
     val fromStation: String,
     val toStation: String,
     val balance: Int,
-    val dateTime: Long
+    val dateTime: Long,
+    val order: Int = 0
+)
+
+data class TransactionEntityWithAmount(
+    val transactionEntity: TransactionEntity,
+    val amount: Int?
 )

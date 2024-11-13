@@ -171,7 +171,8 @@ fun MainScreen(
                         transactionRepository = transactionRepository,
                         onBack = {
                             currentScreen = Screen.History
-                        }
+                        },
+                        paddingValues = paddingValues
                     )
                 }
             }

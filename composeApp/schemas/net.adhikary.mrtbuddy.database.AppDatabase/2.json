@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "56ffbda7a86354081e67e099485c7eaf",
+    "identityHash": "3ab24735ae9eebecc4a55fa7d7816fac",
     "entities": [
       {
         "tableName": "DemoLocal",
@@ -106,7 +106,7 @@
       },
       {
         "tableName": "transactions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cardIdm` TEXT NOT NULL, `transactionId` TEXT NOT NULL, `scanId` INTEGER NOT NULL, `fromStation` TEXT NOT NULL, `toStation` TEXT NOT NULL, `balance` INTEGER NOT NULL, `dateTime` INTEGER NOT NULL, PRIMARY KEY(`cardIdm`, `transactionId`, `dateTime`), FOREIGN KEY(`scanId`) REFERENCES `scans`(`scanId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cardIdm` TEXT NOT NULL, `transactionId` TEXT NOT NULL, `scanId` INTEGER NOT NULL, `fromStation` TEXT NOT NULL, `toStation` TEXT NOT NULL, `balance` INTEGER NOT NULL, `dateTime` INTEGER NOT NULL, `order` INTEGER NOT NULL, PRIMARY KEY(`cardIdm`, `transactionId`, `dateTime`), FOREIGN KEY(`scanId`) REFERENCES `scans`(`scanId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "cardIdm",
@@ -149,6 +149,12 @@
             "columnName": "dateTime",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "order",
+            "columnName": "order",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -168,6 +174,15 @@
             ],
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_transactions_scanId` ON `${TABLE_NAME}` (`scanId`)"
+          },
+          {
+            "name": "index_transactions_order",
+            "unique": false,
+            "columnNames": [
+              "order"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_transactions_order` ON `${TABLE_NAME}` (`order`)"
           }
         ],
         "foreignKeys": [
@@ -187,7 +202,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '56ffbda7a86354081e67e099485c7eaf')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3ab24735ae9eebecc4a55fa7d7816fac')"
     ]
   }
 }

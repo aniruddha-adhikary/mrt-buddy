@@ -16,4 +16,7 @@ interface TransactionDao {
 
     @Query("SELECT * FROM transactions WHERE cardIdm = :cardIdm ORDER BY dateTime DESC")
     suspend fun getTransactionsByCardIdm(cardIdm: String): List<TransactionEntity>
+
+    @Query("SELECT MAX(`order`) FROM transactions")
+    suspend fun getLastOrder(): Int?
 }
