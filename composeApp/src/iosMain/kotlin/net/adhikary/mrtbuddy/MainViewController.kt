@@ -8,10 +8,15 @@ import net.adhikary.mrtbuddy.di.platformModule
 import org.koin.core.context.startKoin
 
 fun MainViewController() = ComposeUIViewController {
-    // Initialize Koin
-    startKoin {
-        modules(appModule, platformModule)
+    try {
+        // Initialize Koin
+        startKoin {
+            modules(appModule, platformModule)
+        }
+    } catch (e: org.koin.core.error.KoinApplicationAlreadyStartedException) {
+        // Koin already started, ignore
     }
+    
     if (isDebug) {
         Napier.base(DebugAntilog())
     }
