@@ -7,6 +7,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -67,20 +68,38 @@ fun BalanceCard(
         shape = RoundedCornerShape(24.dp), // Increased corner radius
         backgroundColor = MaterialTheme.colors.surface
     ) {
-        Box(Modifier.fillMaxSize().padding(24.dp)) { // Increased padding
-            if (getPlatform().name != "android") {
-                Text(
-                    stringResource(Res.string.rescan),
+        Box(Modifier.fillMaxSize()) {
+            // Card name at the top with rounded background
+            if (!cardName.isNullOrBlank()) {
+                Box(
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .clickable { RescanManager.requestRescan() },
-                    style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.primary
-                )
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colors.primary)
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                ) {
+                    Text(
+                        text = cardName,
+                        style = MaterialTheme.typography.h6,
+                        color = MaterialTheme.colors.onPrimary,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                    if (getPlatform().name != "android") {
+                        Text(
+                            stringResource(Res.string.rescan),
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .clickable { RescanManager.requestRescan() },
+                            style = MaterialTheme.typography.body1,
+                            color = MaterialTheme.colors.onPrimary
+                        )
+                    }
+                }
             }
 
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -150,14 +169,6 @@ private fun BalanceContent(amount: Int, cardName: String? = null) {
         ),
         color = if (amount < 20) MaterialTheme.colors.onSurface else MaterialTheme.colors.onSurface
     )
-    if (!cardName.isNullOrBlank()) {
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(
-            text = cardName,
-            style = MaterialTheme.typography.h6,
-            color = MaterialTheme.colors.primary
-        )
-    }
     Spacer(modifier = Modifier.height(4.dp))
     if (amount < 20) {
         Spacer(modifier = Modifier.height(8.dp))
@@ -266,6 +277,15 @@ private fun ErrorContent(message: String) {
             textAlign = TextAlign.Center,
             color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
         )
+        if (getPlatform().name != "android") {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(Res.string.rescan),
+                modifier = Modifier.clickable { RescanManager.requestRescan() },
+                style = MaterialTheme.typography.body1,
+                color = MaterialTheme.colors.primary
+            )
+        }
     }
 }
 
