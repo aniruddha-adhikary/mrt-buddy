@@ -2,6 +2,7 @@ package net.adhikary.mrtbuddy.ui.screens.history
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -38,17 +39,16 @@ fun HistoryScreen(
         )
     }
 
-    Spacer(modifier = Modifier.height(16.dp))
 
     if (uiState.isLoading) {
         // Display a loading indicator
-        Text("Loading...")
+//        Text("Loading...")
     } else if (uiState.error != null) {
         // Display the error message
         Text("Error: ${uiState.error}")
     } else {
         // Display the list of cards
-        LazyColumn {
+        LazyColumn(modifier = Modifier.padding(top = 12.dp)) {
             items(uiState.cards) { card ->
                 CardItem(
                     card = card,

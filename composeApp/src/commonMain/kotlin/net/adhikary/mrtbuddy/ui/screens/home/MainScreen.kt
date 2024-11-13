@@ -146,9 +146,9 @@ fun MainScreen(
                 MoreScreen(Modifier.padding(paddingValues))
             }
             Screen.History -> {
-                val historyViewModel: HistoryScreenViewModel = viewModel(
-                    factory = HistoryScreenViewModelFactory(transactionRepository)
-                )
+                val historyViewModel = remember {
+                    HistoryScreenViewModelFactory(transactionRepository).create()
+                }
 
                 LaunchedEffect(Unit) {
                     historyViewModel.onAction(HistoryScreenAction.OnInit)
