@@ -51,7 +51,8 @@ val appModule = module {
     viewModel {
         MainScreenViewModel(
             transactionRepository = get(),
-            initialState = get()
+            initialState = get(),
+            settingsRepository = get()
         )
     }
 }

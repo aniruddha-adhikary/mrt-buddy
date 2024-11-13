@@ -34,6 +34,9 @@ import mrtbuddy.composeapp.generated.resources.nonAffiliationDisclaimer
 import mrtbuddy.composeapp.generated.resources.policy
 import mrtbuddy.composeapp.generated.resources.privacyPolicy
 import mrtbuddy.composeapp.generated.resources.readOnlyDisclaimer
+import mrtbuddy.composeapp.generated.resources.settings
+import mrtbuddy.composeapp.generated.resources.autoSaveCardDetails
+import mrtbuddy.composeapp.generated.resources.autoSaveCardDetailsDescription
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 

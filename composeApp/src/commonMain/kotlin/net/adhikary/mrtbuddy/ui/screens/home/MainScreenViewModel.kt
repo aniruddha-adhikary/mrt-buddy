@@ -15,15 +15,26 @@ import net.adhikary.mrtbuddy.model.CardReadResult
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.model.TransactionWithAmount
 import net.adhikary.mrtbuddy.repository.TransactionRepository
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import kotlinx.coroutines.flow.collect
+import net.adhikary.mrtbuddy.repository.SettingsRepository
 
 class MainScreenViewModel(
     private val transactionRepository: TransactionRepository,
-    private val initialState: MainScreenState
+    private val initialState: MainScreenState,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
+    private var autoSaveEnabled: Boolean = true
+
     private val _state: MutableStateFlow<MainScreenState> = MutableStateFlow(initialState)
+
+    init {
+        viewModelScope.launch {
+            settingsRepository.autoSaveEnabled.collect { isEnabled ->
+                autoSaveEnabled = isEnabled
+            }
+        }
+    }
 
     val state: StateFlow<MainScreenState> get() = _state.asStateFlow()
 
@@ -51,7 +62,9 @@ class MainScreenViewModel(
             }
 
             is MainScreenAction.UpdateCardReadResult -> {
-                saveCardReadResult(action.cardReadResult)
+                if (autoSaveEnabled) {
+                    saveCardReadResult(action.cardReadResult)
+                }
                 val transactionsWithAmount = transactionMapper(action.cardReadResult.transactions)
                 _state.update {
                     it.copy(
