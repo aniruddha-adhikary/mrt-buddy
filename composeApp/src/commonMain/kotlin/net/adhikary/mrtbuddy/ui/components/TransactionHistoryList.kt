@@ -54,11 +54,11 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
                 val validTransactions = transactions.filter { it.amount != null }
 
                 items(validTransactions) { transactionWithAmount ->
-                    val isCommute = transactionWithAmount.transaction.fixedHeader.startsWith(
-                        "08 52 10 00"
-                    )
                     TransactionItem(
-                        type = if (isCommute) TransactionType.Commute else TransactionType.BalanceUpdate,
+                        type = if (transactionWithAmount.amount != null && transactionWithAmount.amount > 0) 
+                            TransactionType.BalanceUpdate 
+                        else 
+                            TransactionType.Commute,
                         date = transactionWithAmount.transaction.timestamp,
                         fromStation = transactionWithAmount.transaction.fromStation,
                         toStation = transactionWithAmount.transaction.toStation,

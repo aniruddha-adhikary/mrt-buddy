@@ -139,12 +139,11 @@ fun TransactionListScreen(
 fun TransactionItem(trxEntity: TransactionEntityWithAmount) {
     val transaction = trxEntity.transactionEntity;
     val isDarkTheme = isSystemInDarkTheme()
-    val transactionType =
-        if (transaction.fromStation.isNotEmpty() && transaction.toStation.isNotEmpty()) {
-            TransactionType.Commute
-        } else {
-            TransactionType.BalanceUpdate
-        }
+    val transactionType = if (trxEntity.amount != null && trxEntity.amount > 0) {
+        TransactionType.BalanceUpdate
+    } else {
+        TransactionType.Commute
+    }
 
     val amountText = if (trxEntity.amount != null) { "৳ ${translateNumber(trxEntity.amount)}" } else { "N/A" }
     val tz = TimeZone.of("Asia/Dhaka")
