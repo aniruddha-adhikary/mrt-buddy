@@ -2,8 +2,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material.Switch
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import net.adhikary.mrtbuddy.repository.SettingsRepository
-import org.koin.compose.koinInject
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.flow.collectLatest
+import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenAction
+import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,15 +40,31 @@ import mrtbuddy.composeapp.generated.resources.readOnlyDisclaimer
 import mrtbuddy.composeapp.generated.resources.settings
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetails
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetailsDescription
+import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenEvent
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun MoreScreen(
     modifier: Modifier = Modifier,
-    settingsRepository: SettingsRepository = koinInject()
+    viewModel: MoreScreenViewModel = koinViewModel()
 ) {
-    val uriHandler = LocalUriHandler.current;
+    val uriHandler = LocalUriHandler.current
+    val uiState by viewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.onAction(MoreScreenAction.OnInit)
+    }
+
+    LaunchedEffect(viewModel.events) {
+        viewModel.events.collectLatest { event ->
+            when (event) {
+                is MoreScreenEvent.Error -> {
+                    // Handle error event (e.g., show a Toast or Snackbar)
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -57,15 +76,16 @@ fun MoreScreen(
     ) {
         Column {
             SectionHeader(text = stringResource(Res.string.settings))
-            val autoSaveEnabled by settingsRepository.autoSaveEnabled.collectAsState()
             RoundedButton(
                 text = stringResource(Res.string.autoSaveCardDetails),
                 subtitle = stringResource(Res.string.autoSaveCardDetailsDescription),
                 onClick = { },
                 trailing = {
                     Switch(
-                        checked = autoSaveEnabled,
-                        onCheckedChange = { settingsRepository.setAutoSave(it) }
+                        checked = uiState.autoSaveEnabled,
+                        onCheckedChange = { enabled ->
+                            viewModel.onAction(MoreScreenAction.SetAutoSave(enabled))
+                        }
                     )
                 }
             )
