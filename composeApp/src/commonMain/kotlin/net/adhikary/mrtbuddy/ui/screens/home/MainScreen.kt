@@ -128,10 +128,6 @@ fun MainScreen(
                             TransactionHistoryList(uiState.transactionWithAmount)
                         }
                     }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
-                    Footer()
                 }
             }
             Screen.Calculator -> {

@@ -40,6 +40,7 @@ import mrtbuddy.composeapp.generated.resources.readOnlyDisclaimer
 import mrtbuddy.composeapp.generated.resources.settings
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetails
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetailsDescription
+import mrtbuddy.composeapp.generated.resources.contributors
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenEvent
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -103,6 +104,13 @@ fun MoreScreen(
                 painter = painterResource(Res.drawable.help),
                 onClick = {
                     uriHandler.openUri("https://mrtbuddy.com/support")
+                }
+            )
+            RoundedButton(
+                text = "Contributors",
+                painter = painterResource(Res.drawable.contributors),
+                onClick = {
+                    uriHandler.openUri("https://mrtbuddy.com/contributors.html")
                 }
             )
         }
