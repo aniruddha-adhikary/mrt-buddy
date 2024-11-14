@@ -17,6 +17,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,10 +37,11 @@ import net.adhikary.mrtbuddy.ui.components.CardIcon
 import net.adhikary.mrtbuddy.ui.components.Footer
 import net.adhikary.mrtbuddy.ui.components.HistoryIcon
 import net.adhikary.mrtbuddy.ui.components.TransactionHistoryList
-import net.adhikary.mrtbuddy.ui.screens.FareCalculatorScreen
+import net.adhikary.mrtbuddy.ui.screens.farecalculator.FareCalculatorScreen
 import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreen
 import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListScreen
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 enum class Screen {
     Home, Calculator, More, History, TransactionList
@@ -47,8 +49,9 @@ enum class Screen {
 
 @Composable
 fun MainScreen(
-    uiState: MainScreenState,
+    viewModel: MainScreenViewModel = koinViewModel(),
 ) {
+    val uiState by viewModel.state.collectAsState()
     var currentScreen by remember { mutableStateOf(Screen.Home) }
     var selectedCardIdm by remember { mutableStateOf<String?>(null) }
     val hasTransactions = uiState.transaction.isNotEmpty()
@@ -132,7 +135,9 @@ fun MainScreen(
                 }
             }
             Screen.Calculator -> {
-                FareCalculatorScreen(cardState = uiState.cardState)
+                FareCalculatorScreen(
+                    cardState = uiState.cardState
+                )
             }
             Screen.More -> {
                 MoreScreen(Modifier.padding(paddingValues))

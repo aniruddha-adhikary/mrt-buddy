@@ -47,30 +47,33 @@ import net.adhikary.mrtbuddy.managers.RescanManager
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.nfc.service.StationService
 import net.adhikary.mrtbuddy.translateNumber
+import net.adhikary.mrtbuddy.ui.screens.farecalculator.FareCalculatorAction
+import net.adhikary.mrtbuddy.ui.screens.farecalculator.FareCalculatorState
+import net.adhikary.mrtbuddy.ui.screens.farecalculator.FareCalculatorViewModel
 import net.adhikary.mrtbuddy.ui.theme.DarkPositiveGreen
 import net.adhikary.mrtbuddy.ui.theme.LightPositiveGreen
-import net.adhikary.mrtbuddy.ui.viewmodel.FareCalculatorViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun StationSelectionSection(viewModel: FareCalculatorViewModel) {
+fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalculatorViewModel) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // From Station Dropdown
+        // From Station Dropdown
         ExposedDropdownMenuBox(
-            expanded = viewModel.fromExpanded,
-            onExpandedChange = { viewModel.toggleFromExpanded() }
+            expanded = uiState.fromExpanded,
+            onExpandedChange = { viewModel.onAction(FareCalculatorAction.ToggleFromExpanded) }
         ) {
             TextField(
-                value = StationService.translate(viewModel.fromStation?.name ?: "")
-                    .ifEmpty { stringResource(Res.string.selectOrigin) },
+                value = uiState.fromStation?.let { StationService.translate(it.name) }
+                    ?: stringResource(Res.string.selectOrigin),
                 onValueChange = {},
                 readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.fromExpanded) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = uiState.fromExpanded) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.1f),
@@ -81,12 +84,12 @@ fun StationSelectionSection(viewModel: FareCalculatorViewModel) {
             )
 
             ExposedDropdownMenu(
-                expanded = viewModel.fromExpanded,
-                onDismissRequest = { viewModel.dismissDropdowns() }
+                expanded = uiState.fromExpanded,
+                onDismissRequest = { viewModel.onAction(FareCalculatorAction.DismissDropdowns) }
             ) {
                 viewModel.stations.forEach { station ->
                     DropdownMenuItem(
-                        onClick = { viewModel.updateFromStation(station) }
+                        onClick = { viewModel.onAction(FareCalculatorAction.UpdateFromStation(station)) }
                     ) {
                         Text(text = StationService.translate(station.name))
                     }
@@ -96,15 +99,15 @@ fun StationSelectionSection(viewModel: FareCalculatorViewModel) {
 
         // To Station Dropdown
         ExposedDropdownMenuBox(
-            expanded = viewModel.toExpanded,
-            onExpandedChange = { viewModel.toggleToExpanded() }
+            expanded = uiState.toExpanded,
+            onExpandedChange = { viewModel.onAction(FareCalculatorAction.ToggleToExpanded) }
         ) {
             TextField(
-                value = StationService.translate(viewModel.toStation?.name ?: "")
-                    .ifEmpty { stringResource(Res.string.selectDestination) },
+                value = uiState.toStation?.let { StationService.translate(it.name) }
+                    ?: stringResource(Res.string.selectDestination),
                 onValueChange = {},
                 readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.toExpanded) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = uiState.toExpanded) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.1f),
@@ -115,12 +118,12 @@ fun StationSelectionSection(viewModel: FareCalculatorViewModel) {
             )
 
             ExposedDropdownMenu(
-                expanded = viewModel.toExpanded,
-                onDismissRequest = { viewModel.dismissDropdowns() }
+                expanded = uiState.toExpanded,
+                onDismissRequest = { viewModel.onAction(FareCalculatorAction.DismissDropdowns) }
             ) {
                 viewModel.stations.forEach { station ->
                     DropdownMenuItem(
-                        onClick = { viewModel.updateToStation(station) }
+                        onClick = { viewModel.onAction(FareCalculatorAction.UpdateToStation(station)) }
                     ) {
                         Text(text = StationService.translate(station.name))
                     }
@@ -131,7 +134,7 @@ fun StationSelectionSection(viewModel: FareCalculatorViewModel) {
 }
 
 @Composable
-fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
+fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -139,7 +142,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
         shape = RoundedCornerShape(24.dp),
         backgroundColor = MaterialTheme.colors.surface
     ) {
-        if (viewModel.fromStation == null || viewModel.toStation == null) {
+        if (viewModel.state.value.fromStation == null || viewModel.state.value.toStation == null) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.Center,
@@ -205,7 +208,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                         Text(
-                            text = "৳ ${translateNumber(viewModel.discountedFare)}",
+                            text = "৳ ${translateNumber(viewModel.state.value.discountedFare)}",
                             style = MaterialTheme.typography.h4,
                             color = MaterialTheme.colors.onSurface
                         )
@@ -213,11 +216,11 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                     }
 
                     Spacer(modifier = Modifier.weight(1f))
-                    when (cardState) {
+                    when (uiState.cardState) {
                         is CardState.Balance -> {
-                            val balance = cardState.amount
-                            if (balance >= viewModel.calculatedFare) {
-                                val roundTrips = if (viewModel.calculatedFare > 0) balance / (viewModel.calculatedFare * 2) else 0
+                            val balance = (uiState.cardState as CardState.Balance).amount
+                            if (balance >= uiState.calculatedFare) {
+                                val roundTrips = if (uiState.calculatedFare > 0) balance / (uiState.calculatedFare * 2) else 0
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.Center,
@@ -267,7 +270,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                             Text(
                                 text = "${stringResource(Res.string.singleTicket)} ৳ ${
                                     translateNumber(
-                                        viewModel.calculatedFare
+                                        uiState.calculatedFare
                                     )
                                 }",
                                 style = MaterialTheme.typography.caption,
