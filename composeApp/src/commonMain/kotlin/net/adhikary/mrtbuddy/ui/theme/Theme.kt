@@ -16,8 +16,10 @@ private val LightThemeColors = lightColors(
     onSecondary = LightOnSecondary,
     onBackground = LightOnBackground,
     onSurface = LightOnSurface,
-    onError = LightOnError
-)
+    onError = LightOnError,
+    primaryVariant = Alert_yellow_L
+
+    )
 
 private val DarkThemeColors = darkColors(
     primary = DarkPrimary,
@@ -29,7 +31,8 @@ private val DarkThemeColors = darkColors(
     onSecondary = DarkOnSecondary,
     onBackground = DarkOnBackground,
     onSurface = DarkOnSurface,
-    onError = DarkOnError
+    onError = DarkOnError,
+    primaryVariant = Alert_yellow_D
 )
 
 @Composable

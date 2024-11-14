@@ -174,10 +174,14 @@ private fun BalanceContent(amount: Int, cardName: String? = null) {
         style = MaterialTheme.typography.h4.copy(
             fontWeight = FontWeight.SemiBold
         ),
-        color = if (amount < 20) MaterialTheme.colors.onSurface else MaterialTheme.colors.onSurface
+        color = when {
+            amount <= 30 -> MaterialTheme.colors.error
+            amount <= 100 -> MaterialTheme.colors.primaryVariant
+            else -> MaterialTheme.colors.onSurface
+        }
     )
     Spacer(modifier = Modifier.height(4.dp))
-    if (amount < 20) {
+    if (amount <= 20) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.lowBalance),

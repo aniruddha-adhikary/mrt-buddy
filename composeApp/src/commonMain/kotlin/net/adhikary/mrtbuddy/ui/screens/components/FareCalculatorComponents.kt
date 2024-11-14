@@ -250,11 +250,7 @@ fun FareDisplayCard(viewModel: FareCalculatorViewModel, cardState: CardState) {
                                 }
                             } else {
                                 Text(
-                                    text = "${stringResource(Res.string.yourBalance)} (৳ $balance) ${
-                                        stringResource(
-                                            Res.string.tooLow
-                                        )
-                                    }",
+                                    text = "${stringResource(Res.string.yourBalance)} (৳ $balance)",
                                     style = MaterialTheme.typography.body2,
                                     color = MaterialTheme.colors.error.copy(alpha = 0.7f),
                                     textAlign = TextAlign.Center,
