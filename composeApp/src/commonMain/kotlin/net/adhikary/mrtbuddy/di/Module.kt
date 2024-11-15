@@ -5,10 +5,13 @@ import net.adhikary.mrtbuddy.settings.createSettings
 import net.adhikary.mrtbuddy.database.AppDatabase
 import net.adhikary.mrtbuddy.repository.SettingsRepository
 import net.adhikary.mrtbuddy.repository.TransactionRepository
+import net.adhikary.mrtbuddy.ui.screens.farecalculator.FareCalculatorViewModel
 import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreenState
 import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreenViewModel
+import net.adhikary.mrtbuddy.ui.screens.home.MainScreenAction
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenState
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenViewModel
+import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenViewModel
 import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -40,20 +43,32 @@ val appModule = module {
         )
     }
     
-    factory { 
+    factory {
+        FareCalculatorViewModel()
+    }
+
+    factory {
         HistoryScreenState()
+    }
+
+    viewModel {
+        MoreScreenViewModel(
+            settingsRepository = get()
+        )
     }
 
     factory {
         MainScreenState()
     }
 
-    viewModel {
+    viewModel { 
         MainScreenViewModel(
             transactionRepository = get(),
             initialState = get(),
             settingsRepository = get()
-        )
+        ).apply {
+            onAction(MainScreenAction.OnInit)
+        }
     }
 }
 

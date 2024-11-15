@@ -79,9 +79,7 @@ fun App() {
                     Modifier.systemBarsPadding()
                 ) {
                     Column {
-                        MainScreen(
-                            uiState = state,
-                        )
+                        MainScreen()
                     }
                 }
             }
