@@ -57,7 +57,7 @@
     <string name="withMRT">with MRT/Rapid Pass</string>
     <string name="singleTicket">Single Ticket</string>
     <string name="discount">Discount</string>
-    <string name="yourBalance">Your balance</string>
+    <string name="yourBalance">Your balance is</string>
     <string name="tooLow">is too low.</string>
     <string name="tapToCheckSufficientBalance">Tap your card to check if you have sufficient balance</string>
     <string name="rescanToCheckSufficientBalance">Rescan your card to check if you have sufficient balance</string>
