@@ -78,7 +78,7 @@ fun MoreScreen(
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
             .then(modifier),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.Top
     ) {
         Column {
             SectionHeader(text = stringResource(Res.string.settings))
