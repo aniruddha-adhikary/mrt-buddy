@@ -1,12 +1,4 @@
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.material.Switch
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.LaunchedEffect
-import kotlinx.coroutines.flow.collectLatest
-import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenAction
-import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenViewModel
-import org.koin.compose.viewmodel.koinViewModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,8 +12,12 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,22 +25,29 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.flow.collectLatest
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.aboutHeader
+import mrtbuddy.composeapp.generated.resources.autoSaveCardDetails
+import mrtbuddy.composeapp.generated.resources.autoSaveCardDetailsDescription
+import mrtbuddy.composeapp.generated.resources.contributors
 import mrtbuddy.composeapp.generated.resources.help
 import mrtbuddy.composeapp.generated.resources.helpAndSupportButton
+import mrtbuddy.composeapp.generated.resources.language
+import mrtbuddy.composeapp.generated.resources.license
 import mrtbuddy.composeapp.generated.resources.nonAffiliationDisclaimer
+import mrtbuddy.composeapp.generated.resources.openSourceLicenses
 import mrtbuddy.composeapp.generated.resources.policy
 import mrtbuddy.composeapp.generated.resources.privacyPolicy
 import mrtbuddy.composeapp.generated.resources.readOnlyDisclaimer
 import mrtbuddy.composeapp.generated.resources.settings
-import mrtbuddy.composeapp.generated.resources.autoSaveCardDetails
-import mrtbuddy.composeapp.generated.resources.autoSaveCardDetailsDescription
-import mrtbuddy.composeapp.generated.resources.contributors
-import mrtbuddy.composeapp.generated.resources.license
+import net.adhikary.mrtbuddy.Language
+import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenAction
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenEvent
+import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MoreScreen(
@@ -95,6 +98,24 @@ fun MoreScreen(
                     )
                 }
             )
+            
+            RoundedButton(
+                text = stringResource(Res.string.language),
+                painter = painterResource(Res.drawable.language),
+                onClick = {
+                    if (uiState.currentLanguage == Language.English.isoFormat) {
+                        viewModel.onAction(MoreScreenAction.SetLanguage(Language.Bangla.isoFormat))
+                    } else {
+                        viewModel.onAction(MoreScreenAction.SetLanguage(Language.English.isoFormat))
+                    }
+                },
+                trailing = {
+                    Text(
+                        text = if (uiState.currentLanguage == Language.English.isoFormat) "English" else "বাংলা",
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                }
+            )
 
             SectionHeader(text = stringResource(Res.string.aboutHeader))
             RoundedButton(
@@ -112,14 +133,14 @@ fun MoreScreen(
                 }
             )
             RoundedButton(
-                text = "Contributors",
+                text = stringResource(Res.string.contributors),
                 painter = painterResource(Res.drawable.contributors),
                 onClick = {
                     uriHandler.openUri("https://mrtbuddy.com/contributors.html")
                 }
             )
             RoundedButton(
-                text = "Open Source Licenses",
+                text = stringResource(Res.string.openSourceLicenses),
                 painter = painterResource(Res.drawable.license), // Ensure you have a 'license' drawable
                 onClick = {
                     viewModel.onAction(MoreScreenAction.OpenLicenses)
@@ -148,7 +169,7 @@ fun MoreScreen(
                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-        }
+            }
     }
 }
 

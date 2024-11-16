@@ -11,5 +11,6 @@ data class MainScreenState(
     val cardName: String? = null,
     val transaction: List<Transaction> = emptyList(),
     val transactionWithAmount: List<TransactionWithAmount> = emptyList(),
-    val error: String? = null
+    val error: String? = null,
+    val currentLanguage: String = "en"
 )

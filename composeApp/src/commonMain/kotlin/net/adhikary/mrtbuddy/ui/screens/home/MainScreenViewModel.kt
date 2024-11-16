@@ -16,6 +16,7 @@ import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.model.TransactionWithAmount
 import net.adhikary.mrtbuddy.repository.TransactionRepository
 import kotlinx.coroutines.flow.collect
+import net.adhikary.mrtbuddy.changeLang
 import net.adhikary.mrtbuddy.repository.SettingsRepository
 
 class MainScreenViewModel(
@@ -34,6 +35,11 @@ class MainScreenViewModel(
                 autoSaveEnabled = isEnabled
             }
         }
+        viewModelScope.launch {
+            settingsRepository.currentLanguage.collect { language ->
+                _state.update { it.copy(currentLanguage = language) }
+            }
+        }
     }
 
     val state: StateFlow<MainScreenState> get() = _state.asStateFlow()
@@ -46,10 +52,11 @@ class MainScreenViewModel(
 
 
             is MainScreenAction.OnInit -> {
-                // nfc manager has  a composable function that returns a NfcManager
-                // we will trigger a event to start the scanner
-
-
+                viewModelScope.launch {
+                    val savedLanguage = settingsRepository.currentLanguage.value
+                    changeLang(savedLanguage)
+                    _state.update { it.copy(currentLanguage = savedLanguage) }
+                }
             }
 
             is MainScreenAction.UpdateCardState -> {

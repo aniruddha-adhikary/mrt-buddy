@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
 import kotlinx.datetime.toLocalDateTime
 import mrtbuddy.composeapp.generated.resources.Res
+import mrtbuddy.composeapp.generated.resources.balance
 import mrtbuddy.composeapp.generated.resources.cardId
 import mrtbuddy.composeapp.generated.resources.lastScan
 import mrtbuddy.composeapp.generated.resources.unnamedCard
@@ -146,7 +147,7 @@ fun CardItem(
                                     Column {
                                         Text(
                                             modifier = Modifier.padding(bottom = 2.dp),
-                                            text = "Balance",
+                                            text = stringResource(Res.string.balance),
                                             style = MaterialTheme.typography.caption,
                                             color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
                                         )

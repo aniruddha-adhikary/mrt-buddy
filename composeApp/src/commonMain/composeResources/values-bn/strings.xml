@@ -4,7 +4,7 @@
     <string name="fare">ভাড়া</string>
     <string name="more">অন্যান্য</string>
     <string name="historyTab">ইতিহাস</string>
-    <string name="language">বাংলা</string>
+    <string name="language">ভাষা</string>
     <string name="rescan">পুনরায় স্ক্যান</string>
     <string name="latestBalance">সর্বশেষ ব্যালেন্স</string>
     <string name="lowBalance">পরবর্তী ভ্রমণের জন্য আপনার পর্যাপ্ত ব্যালেন্স নেই। টপ আপ করুন</string>
@@ -109,4 +109,6 @@
     <string name="monthsAgo">মাস আগে</string>
     <string name="yearAgo">বছর আগে</string>
     <string name="yearsAgo">বছর আগে</string>
+    <string name="contributors">অবদানকারীগণ</string>
+    <string name="openSourceLicenses">ওপেন সোর্স লাইসেন্স</string>
 </resources>

@@ -4,7 +4,7 @@
     <string name="fare">Fare</string>
     <string name="more">More</string>
     <string name="historyTab">History</string>
-    <string name="language">English</string>
+    <string name="language">Language</string>
     <string name="rescan">Rescan</string>
     <string name="latestBalance">Latest Balance</string>
     <string name="lowBalance">Balance too low for the next trip. Top up needed</string>
@@ -109,4 +109,6 @@
     <string name="monthsAgo">months ago</string>
     <string name="yearAgo">year ago</string>
     <string name="yearsAgo">years ago</string>
+    <string name="contributors">Contributors</string>
+    <string name="openSourceLicenses">Open Source Licenses</string>
 </resources>

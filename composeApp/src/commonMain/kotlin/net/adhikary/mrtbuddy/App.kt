@@ -69,11 +69,10 @@ fun App() {
     nfcManager.startScan()
 
     MRTBuddyTheme {
-        var lang by remember { mutableStateOf(Language.English.isoFormat) }
         val state: MainScreenState by mainVm.state.collectAsState()
 
         LocalizedApp(
-            language = lang
+            language = state.currentLanguage
         ) {
             Scaffold {
                 Box(

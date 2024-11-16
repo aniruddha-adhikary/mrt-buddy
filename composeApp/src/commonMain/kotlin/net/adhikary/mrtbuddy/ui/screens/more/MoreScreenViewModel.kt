@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import net.adhikary.mrtbuddy.changeLang
 import net.adhikary.mrtbuddy.repository.SettingsRepository
 
 class MoreScreenViewModel(
@@ -30,7 +31,11 @@ class MoreScreenViewModel(
                 viewModelScope.launch {
                     try {
                         val autoSaveEnabled = settingsRepository.autoSaveEnabled.value
-                        _state.value = _state.value.copy(autoSaveEnabled = autoSaveEnabled)
+                        val currentLanguage = settingsRepository.currentLanguage.value
+                        _state.value = _state.value.copy(
+                            autoSaveEnabled = autoSaveEnabled,
+                            currentLanguage = currentLanguage
+                        )
                     } catch (e: Exception) {
                         _state.value = _state.value.copy(error = e.message)
                         _events.send(MoreScreenEvent.Error(e.message ?: "Unknown error"))
@@ -51,6 +56,17 @@ class MoreScreenViewModel(
             is MoreScreenAction.OpenLicenses -> {
                 viewModelScope.launch {
                     _events.send(MoreScreenEvent.NavigateToLicenses)
+                }
+            }
+            is MoreScreenAction.SetLanguage -> {
+                viewModelScope.launch {
+                    try {
+                        changeLang(action.language)
+                        settingsRepository.setLanguage(action.language)
+                        _state.value = _state.value.copy(currentLanguage = action.language)
+                    } catch (e: Exception) {
+                        _events.send(MoreScreenEvent.Error(e.message ?: "Failed to change language"))
+                    }
                 }
             }
         }
