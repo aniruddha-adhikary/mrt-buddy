@@ -31,6 +31,7 @@ import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.cardId
 import mrtbuddy.composeapp.generated.resources.lastScan
 import mrtbuddy.composeapp.generated.resources.unnamedCard
+import mrtbuddy.composeapp.generated.resources.payments
 import mrtbuddy.composeapp.generated.resources.visibility
 import mrtbuddy.composeapp.generated.resources.visibility_off
 import net.adhikary.mrtbuddy.data.CardEntity
@@ -43,6 +44,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun CardItem(
     card: CardEntity,
+    balance: Int?,
     onCardSelected: () -> Unit,
     onRenameClick: () -> Unit,
     onDeleteClick: () -> Unit
@@ -76,12 +78,14 @@ fun CardItem(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = card.name ?: stringResource(Res.string.unnamedCard),
-                        style = MaterialTheme.typography.h6,
-                        color = MaterialTheme.colors.onPrimary,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
+                    Column {
+                        Text(
+                            text = card.name ?: stringResource(Res.string.unnamedCard),
+                            style = MaterialTheme.typography.h6,
+                            color = MaterialTheme.colors.onPrimary,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
                     Row {
                         Icon(
                             imageVector = Icons.Default.Edit,
@@ -117,6 +121,30 @@ fun CardItem(
                     ) {
                         Column {
                             var isIdVisible by remember { mutableStateOf(false) }
+                            // Balance Row
+                            if (balance != null) {
+                                Row(
+                                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                ) {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.payments),
+                                        contentDescription = "Balance",
+                                        modifier = Modifier
+                                            .padding(end = 8.dp)
+                                            .size(20.dp),
+                                        tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+                                    )
+                                    Column {
+                                        Text(
+                                            text = "৳ $balance",
+                                            style = MaterialTheme.typography.body1
+                                        )
+                                    }
+                                }
+                            }
+
+                            // Card ID Row
                             Row(
                                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
                             ) {

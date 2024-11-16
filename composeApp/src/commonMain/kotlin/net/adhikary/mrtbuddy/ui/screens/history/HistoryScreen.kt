@@ -109,21 +109,22 @@ fun HistoryScreen(
     } else {
         // Display the list of cards
         LazyColumn(modifier = Modifier.padding(top = 12.dp)) {
-            items(uiState.cards) { card ->
+            items(uiState.cards) { cardWithBalance ->
                 CardItem(
-                    card = card,
-                    onCardSelected = { onCardSelected(card.idm) }, // Pass card.idm when selected
+                    card = cardWithBalance.card,
+                    balance = cardWithBalance.balance,
+                    onCardSelected = { onCardSelected(cardWithBalance.card.idm) }, // Pass card.idm when selected
                     onRenameClick = {
-                        cardToRename = card.idm to card.name
+                        cardToRename = cardWithBalance.card.idm to cardWithBalance.card.name
                         showRenameDialog = true
                     },
                     onDeleteClick = {
-                        cardToDelete = card.idm
+                        cardToDelete = cardWithBalance.card.idm
                         showDeleteDialog = true
                     }
                 )
             }
         }
     }
+    
 }
-

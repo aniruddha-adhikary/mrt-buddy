@@ -31,7 +31,11 @@ class HistoryScreenViewModel(
                     _state.update { it.copy(isLoading = true) }
                     try {
                         val cards = transactionRepository.getAllCards()
-                        _state.update { it.copy(isLoading = false, cards = cards) }
+                        val cardsWithBalance = cards.map { card ->
+                            val balance = transactionRepository.getLatestBalanceByCardIdm(card.idm)
+                            CardWithBalance(card, balance)
+                        }
+                        _state.update { it.copy(isLoading = false, cards = cardsWithBalance) }
                     } catch (e: Exception) {
                         _state.update { it.copy(isLoading = false, error = e.message) }
                         _events.send(HistoryScreenEvent.Error(e.message ?: "Unknown Error"))
