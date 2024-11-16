@@ -108,7 +108,7 @@ fun HistoryScreen(
         }
     } else {
         // Display the list of cards
-        LazyColumn(modifier = Modifier.padding(top = 12.dp)) {
+        LazyColumn(modifier = Modifier.padding(top = 8.dp)) {
             items(uiState.cards) { cardWithBalance ->
                 CardItem(
                     card = cardWithBalance.card,

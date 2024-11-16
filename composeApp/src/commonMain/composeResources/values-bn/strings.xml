@@ -96,4 +96,17 @@
     <string name="settings">সেটিংস</string>
     <string name="autoSaveCardDetails">স্বয়ংক্রিয় কার্ড সংরক্ষণ</string>
     <string name="autoSaveCardDetailsDescription">স্ক্যান করার সময় স্বয়ংক্রিয়ভাবে কার্ডের তথ্য সংরক্ষণ করুন</string>
+
+    <!-- Time ago strings -->
+    <string name="justNow">এইমাত্র</string>
+    <string name="minuteAgo">মিনিট আগে</string>
+    <string name="minutesAgo">মিনিট আগে</string>
+    <string name="hourAgo">ঘণ্টা আগে</string>
+    <string name="hoursAgo">ঘণ্টা আগে</string>
+    <string name="dayAgo">দিন আগে</string>
+    <string name="daysAgo">দিন আগে</string>
+    <string name="monthAgo">মাস আগে</string>
+    <string name="monthsAgo">মাস আগে</string>
+    <string name="yearAgo">বছর আগে</string>
+    <string name="yearsAgo">বছর আগে</string>
 </resources>

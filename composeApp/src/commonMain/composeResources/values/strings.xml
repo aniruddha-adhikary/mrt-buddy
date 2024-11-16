@@ -96,4 +96,17 @@
     <string name="settings">Settings</string>
     <string name="autoSaveCardDetails">Auto-save card details</string>
     <string name="autoSaveCardDetailsDescription">Automatically save card details when scanning</string>
+
+    <!-- Time ago strings -->
+    <string name="justNow">Just now</string>
+    <string name="minuteAgo">minute ago</string>
+    <string name="minutesAgo">minutes ago</string>
+    <string name="hourAgo">hour ago</string>
+    <string name="hoursAgo">hours ago</string>
+    <string name="dayAgo">day ago</string>
+    <string name="daysAgo">days ago</string>
+    <string name="monthAgo">month ago</string>
+    <string name="monthsAgo">months ago</string>
+    <string name="yearAgo">year ago</string>
+    <string name="yearsAgo">years ago</string>
 </resources>
