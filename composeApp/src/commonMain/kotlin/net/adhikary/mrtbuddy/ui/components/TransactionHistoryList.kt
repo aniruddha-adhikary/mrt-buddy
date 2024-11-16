@@ -51,7 +51,7 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                val validTransactions = transactions.filter { it.amount != null }
+                val validTransactions = transactions.filter { it.transaction.timestamp.year >= 2015 }
 
                 items(validTransactions) { transactionWithAmount ->
                     TransactionItem(
