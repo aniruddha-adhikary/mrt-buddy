@@ -4,10 +4,8 @@ import MoreScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -34,22 +32,22 @@ import net.adhikary.mrtbuddy.ui.components.AppsIcon
 import net.adhikary.mrtbuddy.ui.components.BalanceCard
 import net.adhikary.mrtbuddy.ui.components.CalculatorIcon
 import net.adhikary.mrtbuddy.ui.components.CardIcon
-import net.adhikary.mrtbuddy.ui.components.Footer
 import net.adhikary.mrtbuddy.ui.components.HistoryIcon
 import net.adhikary.mrtbuddy.ui.components.TransactionHistoryList
 import net.adhikary.mrtbuddy.ui.screens.farecalculator.FareCalculatorScreen
 import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreen
+import net.adhikary.mrtbuddy.ui.screens.licenses.OpenSourceLicensesScreen
 import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListScreen
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 enum class Screen {
-    Home, Calculator, More, History, TransactionList
+    Home, Calculator, More, History, TransactionList, Licenses
 }
 
 @Composable
 fun MainScreen(
-    viewModel: MainScreenViewModel = koinViewModel(),
+    viewModel: MainScreenViewModel = koinViewModel()
 ) {
     val uiState by viewModel.state.collectAsState()
     var currentScreen by remember { mutableStateOf(Screen.Home) }
@@ -103,7 +101,7 @@ fun MainScreen(
                     unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
                 )
             }
-        }
+        } 
     ) { paddingValues ->
         when (currentScreen) {
             Screen.Home -> {
@@ -136,7 +134,12 @@ fun MainScreen(
                 )
             }
             Screen.More -> {
-                MoreScreen(Modifier.padding(paddingValues))
+                MoreScreen(
+                    onNavigateToLicenses = {
+                        currentScreen = Screen.Licenses
+                    },
+                    modifier = Modifier.padding(paddingValues)
+                )
             }
             Screen.History -> {
                 HistoryScreen(
@@ -156,6 +159,13 @@ fun MainScreen(
                         paddingValues = paddingValues
                     )
                 }
+            }
+            Screen.Licenses -> {
+                OpenSourceLicensesScreen(
+                    onBack = {
+                        currentScreen = Screen.More
+                    }
+                )
             }
         }
     }

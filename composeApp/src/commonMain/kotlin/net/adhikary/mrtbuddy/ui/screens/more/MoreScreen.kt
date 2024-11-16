@@ -41,12 +41,14 @@ import mrtbuddy.composeapp.generated.resources.settings
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetails
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetailsDescription
 import mrtbuddy.composeapp.generated.resources.contributors
+import mrtbuddy.composeapp.generated.resources.license
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenEvent
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun MoreScreen(
+    onNavigateToLicenses: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MoreScreenViewModel = koinViewModel()
 ) {
@@ -62,6 +64,9 @@ fun MoreScreen(
             when (event) {
                 is MoreScreenEvent.Error -> {
                     // Handle error event (e.g., show a Toast or Snackbar)
+                }
+                is MoreScreenEvent.NavigateToLicenses -> {
+                    onNavigateToLicenses()
                 }
             }
         }
@@ -111,6 +116,13 @@ fun MoreScreen(
                 painter = painterResource(Res.drawable.contributors),
                 onClick = {
                     uriHandler.openUri("https://mrtbuddy.com/contributors.html")
+                }
+            )
+            RoundedButton(
+                text = "Open Source Licenses",
+                painter = painterResource(Res.drawable.license), // Ensure you have a 'license' drawable
+                onClick = {
+                    viewModel.onAction(MoreScreenAction.OpenLicenses)
                 }
             )
         }
@@ -208,19 +220,6 @@ private fun RoundedButton(
                 }
             }
             trailing?.invoke()
-        }
-    }
-}
-
-// Preview
-@Composable
-fun SettingsScreenPreview() {
-    MaterialTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = Color(0xFF4B0082) // Deep purple background color
-        ) {
-            MoreScreen()
         }
     }
 }

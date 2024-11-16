@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
@@ -8,6 +9,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.jaredsburrowsLicense)
 }
 
 kotlin {
@@ -43,7 +45,7 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-          //  implementation(libs.androidx.lifecycle.viewmodel)
+            //  implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.datetime)
@@ -57,6 +59,8 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.koin.compose.viewmodel.navigation)
+
+            api(libs.compose.webview.multiplatform)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -131,4 +135,35 @@ room {
     schemaDirectory("$projectDir/schemas")
 }
 
+licenseReport {
+    unionParentPomLicenses = false
+}
 
+tasks.register("copyLicenseReportToAssets") {
+    val reportPath = file("build/reports/dependency-license/index.html")
+    val androidAssetsPath = file("src/androidMain/assets")
+    val iosAssetsPath = file("src/iosMain/resources") // Adjust this path if necessary for iOS assets
+
+    dependsOn("generateLicenseReport")
+
+    doLast {
+        if (!reportPath.exists()) {
+            throw GradleException("License report not found at $reportPath. Make sure it is generated before running this task.")
+        }
+
+        copy {
+            from(reportPath)
+            into(androidAssetsPath)
+            rename { "open-source-licenses.html" }
+        }
+        copy {
+            from(reportPath)
+            into(iosAssetsPath)
+            rename { "open-source-licenses.html" }
+        }
+    }
+}
+
+tasks.named("preBuild").configure {
+    dependsOn("copyLicenseReportToAssets")
+}

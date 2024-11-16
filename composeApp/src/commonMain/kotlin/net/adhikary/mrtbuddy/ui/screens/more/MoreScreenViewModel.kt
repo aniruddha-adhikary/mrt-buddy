@@ -37,6 +37,7 @@ class MoreScreenViewModel(
                     }
                 }
             }
+
             is MoreScreenAction.SetAutoSave -> {
                 viewModelScope.launch {
                     try {
@@ -45,6 +46,11 @@ class MoreScreenViewModel(
                     } catch (e: Exception) {
                         _events.send(MoreScreenEvent.Error(e.message ?: "Failed to update setting"))
                     }
+                }
+            }
+            is MoreScreenAction.OpenLicenses -> {
+                viewModelScope.launch {
+                    _events.send(MoreScreenEvent.NavigateToLicenses)
                 }
             }
         }

@@ -12,12 +12,14 @@ androidx-lifecycle = "2.8.3"
 androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
 compose-multiplatform = "1.7.0"
+composeWebviewMultiplatform = "1.9.20"
 junit = "4.13.2"
 koinCore = "4.0.0"
 kotlin = "2.0.21"
 kotlinxDatetime = "0.4.0"
 kotlinxCoroutine = "1.9.0"
 androidx-room = "2.7.0-alpha11"
+dependency-license-report = "2.9"
 ksp = "2.0.20-1.0.24"
 lifecycleViewmodelCompose = "2.8.2"
 multiplatformSettings = "1.2.0"
@@ -26,6 +28,7 @@ sqlite = "2.5.0-SNAPSHOT"
 napier = "2.7.1"
 
 [libraries]
+compose-webview-multiplatform = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "composeWebviewMultiplatform" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinCore" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koinCore" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koinCore" }
@@ -60,3 +63,4 @@ composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "k
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "androidx-room" }
+jaredsburrowsLicense = { id = "com.github.jk1.dependency-license-report", version.ref = "dependency-license-report" }
