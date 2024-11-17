@@ -3,14 +3,12 @@ package net.adhikary.mrtbuddy.ui.screens.home
 import MoreScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.MaterialTheme
@@ -124,24 +122,23 @@ fun MainScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             composable(route = Screen.Home.name) {
-                Column(
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .verticalScroll(rememberScrollState())
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
+                    item {
                         BalanceCard(
                             cardState = uiState.cardState,
                             cardName = uiState.cardName,
                         )
+                    }
 
-                        if (hasTransactions) {
+                    if (hasTransactions) {
+                        item {
                             TransactionHistoryList(uiState.transactionWithAmount)
                         }
                     }
