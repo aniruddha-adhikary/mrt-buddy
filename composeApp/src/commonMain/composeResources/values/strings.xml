@@ -61,6 +61,7 @@
     <string name="tooLow">is too low.</string>
     <string name="tapToCheckSufficientBalance">Tap your card to check if you have sufficient balance</string>
     <string name="rescanToCheckSufficientBalance">Rescan your card to check if you have sufficient balance</string>
+    <string name="selectStations">Select Stations</string>
     <string name="selectOrigin">Select Origin Station</string>
     <string name="selectDestination">Select Destination Station</string>
     <string name="roundTrips">x Round Trip(s)</string>
