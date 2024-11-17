@@ -150,7 +150,7 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
                                 scope.launch { _cardState.emit(CardState.Error("No transactions found on card")) }
                             } else {
                                 scope.launch {
-                                    _cardRewadResults.emit(CardReadResult(idm, entries))
+                                    _cardReadResults.emit(CardReadResult(idm, entries))
                                     val latestBalance = entries.firstOrNull()?.balance
 
                                     latestBalance?.let {
