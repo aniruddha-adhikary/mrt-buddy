@@ -20,24 +20,22 @@ import com.multiplatform.webview.web.rememberWebViewStateWithHTMLFile
 fun OpenSourceLicensesScreen(
     onBack: () -> Unit = {}
 ) {
-    MaterialTheme {
-        Column(Modifier.fillMaxSize()) {
-            TopAppBar(
-                title = { Text("Open Source Licenses") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
+    Column(Modifier.fillMaxSize()) {
+        TopAppBar(
+            title = { Text("Open Source Licenses") },
+            navigationIcon = {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back"
+                    )
                 }
-            )
-            val webViewState = rememberWebViewStateWithHTMLFile("open-source-licenses.html")
-            WebView(
-                state = webViewState,
-                modifier = Modifier.fillMaxSize().background(Color.White)
-            )
-        }
+            }
+        )
+        val webViewState = rememberWebViewStateWithHTMLFile("open-source-licenses.html")
+        WebView(
+            state = webViewState,
+            modifier = Modifier.fillMaxSize().background(Color.White)
+        )
     }
 }

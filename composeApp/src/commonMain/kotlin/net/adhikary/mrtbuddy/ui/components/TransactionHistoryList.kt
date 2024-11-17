@@ -2,6 +2,8 @@ package net.adhikary.mrtbuddy.ui.components
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -45,14 +47,14 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
             )
 
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 val validTransactions = transactions.filter { it.transaction.timestamp.year >= 2015 }
 
-                validTransactions.forEach { transactionWithAmount ->
+                items(validTransactions) { transactionWithAmount ->
                     TransactionItem(
                         type = if (transactionWithAmount.amount != null && transactionWithAmount.amount > 0) 
                             TransactionType.BalanceUpdate 

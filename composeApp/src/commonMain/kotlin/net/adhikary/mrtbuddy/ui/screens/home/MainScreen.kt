@@ -3,6 +3,7 @@ package net.adhikary.mrtbuddy.ui.screens.home
 import MoreScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -122,7 +123,7 @@ fun MainScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             composable(route = Screen.Home.name) {
-                LazyColumn(
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
@@ -130,17 +131,13 @@ fun MainScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    item {
-                        BalanceCard(
-                            cardState = uiState.cardState,
-                            cardName = uiState.cardName,
-                        )
-                    }
+                    BalanceCard(
+                        cardState = uiState.cardState,
+                        cardName = uiState.cardName,
+                    )
 
                     if (hasTransactions) {
-                        item {
-                            TransactionHistoryList(uiState.transactionWithAmount)
-                        }
+                        TransactionHistoryList(uiState.transactionWithAmount)
                     }
                 }
             }
