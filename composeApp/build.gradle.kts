@@ -140,25 +140,45 @@ licenseReport {
     unionParentPomLicenses = false
 }
 
-tasks.register("copyLicenseReportToAssets") {
-    val reportPath = file("build/reports/dependency-license/index.html")
-    val androidAssetsPath = file("src/androidMain/assets")
-    val iosAssetsPath = file("src/iosMain/resources") // Adjust this path if necessary for iOS assets
-
+tasks.register("processLicenseReport") {
     dependsOn("generateLicenseReport")
-
+    
     doLast {
+        val reportPath = file("build/reports/dependency-license/index.html")
+        val processedPath = file("build/reports/dependency-license/processed-index.html")
+        
         if (!reportPath.exists()) {
-            throw GradleException("License report not found at $reportPath. Make sure it is generated before running this task.")
+            throw GradleException("License report not found at $reportPath")
+        }
+        
+        val content = reportPath.readText()
+        val processedContent = content.replace(
+            Regex("<p id=\"timestamp\">.*?</p>", RegexOption.DOT_MATCHES_ALL),
+            ""
+        )
+        processedPath.writeText(processedContent)
+    }
+}
+
+tasks.register("copyLicenseReportToAssets") {
+    dependsOn("processLicenseReport")
+    
+    doLast {
+        val processedPath = file("build/reports/dependency-license/processed-index.html")
+        val androidAssetsPath = file("src/androidMain/assets")
+        val iosAssetsPath = file("src/iosMain/resources")
+
+        if (!processedPath.exists()) {
+            throw GradleException("Processed license report not found at $processedPath")
         }
 
         copy {
-            from(reportPath)
+            from(processedPath)
             into(androidAssetsPath)
             rename { "open-source-licenses.html" }
         }
         copy {
-            from(reportPath)
+            from(processedPath)
             into(iosAssetsPath)
             rename { "open-source-licenses.html" }
         }
