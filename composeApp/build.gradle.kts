@@ -54,6 +54,7 @@ kotlin {
             implementation(libs.sqlite.bundled)
             implementation(libs.napier)
             implementation(libs.multiplatform.settings)
+            implementation(libs.navigation.compose)
 
             api(libs.koin.core)
             implementation(libs.koin.compose)
