@@ -182,7 +182,8 @@ fun MainScreen(
                 OpenSourceLicensesScreen(
                     onBack = {
                         navController.navigateUp()
-                    }
+                    },
+                    paddingValues = paddingValues
                 )
             }
         }

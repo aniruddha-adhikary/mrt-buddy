@@ -22,6 +22,7 @@ androidx-room = "2.7.0-alpha11"
 dependency-license-report = "2.9"
 ksp = "2.0.20-1.0.24"
 lifecycleViewmodelCompose = "2.8.2"
+multiplatformMarkdownRenderer = "0.27.0"
 multiplatformSettings = "1.2.0"
 multiplatformSettingsVersion = "1.2.0"
 navigationCompose = "2.8.0-alpha10"
@@ -52,6 +53,7 @@ kotlinx-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", 
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
 lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+multiplatform-markdown-renderer = { module = "com.mikepenz:multiplatform-markdown-renderer", version.ref = "multiplatformMarkdownRenderer" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettingsVersion" }
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }

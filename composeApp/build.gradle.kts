@@ -1,3 +1,4 @@
+import com.github.jk1.license.render.InventoryMarkdownReportRenderer
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -62,6 +63,7 @@ kotlin {
             implementation(libs.koin.compose.viewmodel.navigation)
 
             api(libs.compose.webview.multiplatform)
+            implementation(libs.multiplatform.markdown.renderer)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -138,14 +140,20 @@ room {
 
 licenseReport {
     unionParentPomLicenses = false
+    renderers = arrayOf(
+        InventoryMarkdownReportRenderer(
+            "open-source-licenses.md",
+            "Open Source Libraries"
+        )
+    )
 }
 
 tasks.register("processLicenseReport") {
     dependsOn("generateLicenseReport")
     
     doLast {
-        val reportPath = file("build/reports/dependency-license/index.html")
-        val processedPath = file("build/reports/dependency-license/processed-index.html")
+        val reportPath = file("build/reports/dependency-license/open-source-licenses.md")
+        val processedPath = file("build/reports/dependency-license/processed-open-source-licenses.md")
         
         if (!reportPath.exists()) {
             throw GradleException("License report not found at $reportPath")
@@ -153,7 +161,7 @@ tasks.register("processLicenseReport") {
         
         val content = reportPath.readText()
         val processedContent = content.replace(
-            Regex("<p id=\"timestamp\">.*?</p>", RegexOption.DOT_MATCHES_ALL),
+            Regex("_\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} [A-Z]+_"),
             ""
         )
         processedPath.writeText(processedContent)
@@ -164,9 +172,8 @@ tasks.register("copyLicenseReportToAssets") {
     dependsOn("processLicenseReport")
     
     doLast {
-        val processedPath = file("build/reports/dependency-license/processed-index.html")
-        val androidAssetsPath = file("src/androidMain/assets")
-        val iosAssetsPath = file("src/iosMain/resources")
+        val processedPath = file("build/reports/dependency-license/processed-open-source-licenses.md")
+        val commonAssetsPath = file("src/commonMain/composeResources/files")
 
         if (!processedPath.exists()) {
             throw GradleException("Processed license report not found at $processedPath")
@@ -174,13 +181,8 @@ tasks.register("copyLicenseReportToAssets") {
 
         copy {
             from(processedPath)
-            into(androidAssetsPath)
-            rename { "open-source-licenses.html" }
-        }
-        copy {
-            from(processedPath)
-            into(iosAssetsPath)
-            rename { "open-source-licenses.html" }
+            into(commonAssetsPath)
+            rename { "open-source-licenses.md" }
         }
     }
 }
