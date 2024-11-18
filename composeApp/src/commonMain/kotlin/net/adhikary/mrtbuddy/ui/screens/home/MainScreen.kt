@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -86,7 +87,16 @@ fun MainScreen(
                     icon = { CalculatorIcon() },
                     label = { Text(stringResource(Res.string.fare)) },
                     selected = currentScreen == Screen.Calculator,
-                    onClick = { navController.navigate(Screen.Calculator.name) },
+                    onClick = {
+                        navController.navigate(Screen.Calculator.name) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
                     selectedContentColor = MaterialTheme.colors.primary,
                     unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
                 )
@@ -94,7 +104,16 @@ fun MainScreen(
                     icon = { CardIcon() },
                     label = { Text(stringResource(Res.string.balance)) },
                     selected = currentScreen == Screen.Home,
-                    onClick = { navController.navigate(Screen.Home.name) },
+                    onClick = {
+                        navController.navigate(Screen.Home.name) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
                     selectedContentColor = MaterialTheme.colors.primary,
                     unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
                 )
@@ -102,7 +121,16 @@ fun MainScreen(
                     icon = { HistoryIcon() },
                     label = { Text(stringResource(Res.string.historyTab)) },
                     selected = currentScreen == Screen.History || currentScreen == Screen.TransactionList,
-                    onClick = { navController.navigate(Screen.History.name) },
+                    onClick = {
+                        navController.navigate(Screen.History.name) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
                     selectedContentColor = MaterialTheme.colors.primary,
                     unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
                 )
@@ -110,7 +138,16 @@ fun MainScreen(
                     icon = { AppsIcon() },
                     label = { Text(stringResource(Res.string.more)) },
                     selected = currentScreen == Screen.More,
-                    onClick = { navController.navigate(Screen.More.name) },
+                    onClick = {
+                        navController.navigate(Screen.More.name) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
                     selectedContentColor = MaterialTheme.colors.primary,
                     unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
                 )
