@@ -32,10 +32,12 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import mrtbuddy.composeapp.generated.resources.Res
+import mrtbuddy.composeapp.generated.resources.balance
 import mrtbuddy.composeapp.generated.resources.balanceUpdate
 import mrtbuddy.composeapp.generated.resources.noTransactionsFound
 import mrtbuddy.composeapp.generated.resources.transactions
 import mrtbuddy.composeapp.generated.resources.transactionsAppearPrompt
+import mrtbuddy.composeapp.generated.resources.unnamedCard
 import net.adhikary.mrtbuddy.data.TransactionEntityWithAmount
 import net.adhikary.mrtbuddy.model.TransactionType
 import net.adhikary.mrtbuddy.nfc.service.StationService
@@ -73,7 +75,11 @@ fun TransactionListScreen(
                 .padding(paddingValues),
         ) {
             TopAppBar(
-                title = { Text(stringResource(Res.string.transactions)) },
+                title = {
+                    val cardName = uiState.cardName?.takeIf { it.isNotBlank() } ?: stringResource(Res.string.unnamedCard)
+                    val balanceText = uiState.balance?.let { " (৳ ${translateNumber(it)})" } ?: ""
+                    Text("$cardName$balanceText")
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
