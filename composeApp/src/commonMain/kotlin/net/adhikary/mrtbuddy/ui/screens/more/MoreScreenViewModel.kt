@@ -32,9 +32,12 @@ class MoreScreenViewModel(
                     try {
                         val autoSaveEnabled = settingsRepository.autoSaveEnabled.value
                         val currentLanguage = settingsRepository.currentLanguage.value
+                        val darkModeEnabled = settingsRepository.darkModeEnabled.value
                         _state.value = _state.value.copy(
                             autoSaveEnabled = autoSaveEnabled,
-                            currentLanguage = currentLanguage
+                            currentLanguage = currentLanguage,
+                            darkModeEnabled = darkModeEnabled
+
                         )
                     } catch (e: Exception) {
                         _state.value = _state.value.copy(error = e.message)
@@ -68,6 +71,18 @@ class MoreScreenViewModel(
                         _events.send(MoreScreenEvent.Error(e.message ?: "Failed to change language"))
                     }
                 }
+            }
+
+            is MoreScreenAction.SetDarkMode -> {
+                viewModelScope.launch {
+                    try {
+                        settingsRepository.setDarkMode(action.enabled)
+                        _state.value = _state.value.copy(darkModeEnabled = action.enabled)
+                    } catch (e: Exception) {
+                        _events.send(MoreScreenEvent.Error(e.message ?: "Failed to enable dark mode"))
+                    }
+                }
+
             }
         }
     }

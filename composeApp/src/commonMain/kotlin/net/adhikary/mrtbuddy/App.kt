@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.flow.collectLatest
@@ -33,6 +35,12 @@ fun App() {
     val mainVm = koinViewModel<MainScreenViewModel>()
     val scope = rememberCoroutineScope()
     val nfcManager = getNFCManager()
+
+
+    var darkModeState by rememberSaveable{
+        mutableStateOf(mainVm.state.value.darkModeEnabled)
+    }
+
 
 
     mainVm.events.observeAsActions { event ->
@@ -67,9 +75,12 @@ fun App() {
 
 
     nfcManager.startScan()
+    MRTBuddyTheme(
+        darkTheme = darkModeState
+    ) {
 
-    MRTBuddyTheme {
         val state: MainScreenState by mainVm.state.collectAsState()
+        darkModeState = state.darkModeEnabled
 
         LocalizedApp(
             language = state.currentLanguage

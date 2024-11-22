@@ -116,6 +116,19 @@ fun MoreScreen(
                     )
                 }
             )
+            RoundedButton(
+                text =  "Dark Mode", // stringResource(Res.string.autoSaveCardDetails),
+                subtitle = "Enable or Disable Dark Mode", // stringResource(Res.string.autoSaveCardDetailsDescription),
+                onClick = { },
+                trailing = {
+                    Switch(
+                        checked = uiState.darkModeEnabled,
+                        onCheckedChange = { enabled ->
+                            viewModel.onAction(MoreScreenAction.SetDarkMode(enabled))
+                        }
+                    )
+                }
+            )
 
             SectionHeader(text = stringResource(Res.string.aboutHeader))
             RoundedButton(
