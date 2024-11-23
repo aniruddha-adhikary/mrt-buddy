@@ -71,14 +71,11 @@ export default function FAQ() {
               <div className="space-y-6">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2 dark:text-gray-50">
-                    Why isn't the app available on the Google Play Store?
+                    Is the app available on the official app stores?
                   </h3>
                   <p className="text-gray-700 dark:text-gray-50">
-                    The app is currently undergoing Google's review process.
-                    We've submitted it to the Play Store and are working to
-                    ensure it meets all of Google's quality and security
-                    standards. We'll make it available as soon as the review
-                    process is complete.
+                    Yes! We finally got the approval from Google. 
+                    You can now download MRT Buddy from the <a href="https://play.google.com/store/apps/details?id=net.adhikary.mrtbuddy" className="text-blue-500 underline">PlayStore</a> and the <a href="https://apps.apple.com/us/app/mrt-buddy/id6737849667" className="text-blue-500 underline">AppStore</a>.
                   </p>
                 </div>
               </div>
