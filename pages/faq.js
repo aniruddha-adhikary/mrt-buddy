@@ -20,7 +20,7 @@ export default function FAQ() {
           </h1>
 
           <p className="text-sm text-gray-600 mb-8 dark:text-gray-50">
-            Last updated: 4th November, 2024
+            Last updated: 24th November, 2024
           </p>
 
           <section className="space-y-8">
