@@ -46,7 +46,7 @@ class FareCalculatorViewModel : ViewModel() {
             is FareCalculatorAction.UpdateCardState -> {
                 _state.value = _state.value.copy(cardState = action.cardState)
             }
-            FareCalculatorAction.ToggleFromExpanded -> {`
+            FareCalculatorAction.ToggleFromExpanded -> {
                 _state.value = _state.value.copy(
                     fromExpanded = !_state.value.fromExpanded,
                     toExpanded = false
