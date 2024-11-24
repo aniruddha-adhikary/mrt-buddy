@@ -36,6 +36,8 @@ import mrtbuddy.composeapp.generated.resources.rescan
 import mrtbuddy.composeapp.generated.resources.roundTrips
 import mrtbuddy.composeapp.generated.resources.selectDestination
 import mrtbuddy.composeapp.generated.resources.selectOrigin
+import mrtbuddy.composeapp.generated.resources.selectStation
+import mrtbuddy.composeapp.generated.resources.selectStations
 import mrtbuddy.composeapp.generated.resources.singleTicket
 import mrtbuddy.composeapp.generated.resources.tapToCheckSufficientBalance
 import mrtbuddy.composeapp.generated.resources.tooLow
@@ -161,7 +163,7 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = stringResource(Res.string.selectOrigin),
+                        text = stringResource(Res.string.selectStations),
                         style = MaterialTheme.typography.h6,
                         textAlign = TextAlign.Center
                     )

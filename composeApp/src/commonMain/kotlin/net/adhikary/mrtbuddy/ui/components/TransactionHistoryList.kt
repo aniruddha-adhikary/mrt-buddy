@@ -29,11 +29,13 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
     Card(
-        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier.padding(24.dp),
+            modifier = Modifier
+                .padding(24.dp)
+                .fillMaxWidth(),
         ) {
             Text(
                 text =  stringResource(Res.string.recentJourneys),
@@ -47,11 +49,10 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
 
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                val validTransactions = transactions.filter { it.amount != null }
+                val validTransactions = transactions.filter { it.transaction.timestamp.year >= 2015 }
 
                 items(validTransactions) { transactionWithAmount ->
                     TransactionItem(

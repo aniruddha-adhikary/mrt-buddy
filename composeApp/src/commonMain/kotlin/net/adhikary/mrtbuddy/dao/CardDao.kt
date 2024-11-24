@@ -16,6 +16,7 @@ interface CardDao {
 
     @Query("SELECT * FROM cards WHERE idm = :idm LIMIT 1")
     suspend fun getCardByIdm(idm: String): CardEntity?
+
     @Query("SELECT * FROM cards")
     suspend fun getAllCards(): List<CardEntity>
 

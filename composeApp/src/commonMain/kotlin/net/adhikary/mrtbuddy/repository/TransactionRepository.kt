@@ -24,6 +24,7 @@ class TransactionRepository(
         val currentTime = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
         val cardEntity = CardEntity(idm = result.idm, name = null, lastScanTime = currentTime)
         cardDao.insertCard(cardEntity)
+        cardDao.updateLastScanTime(result.idm, currentTime)
 
         val scanEntity = ScanEntity(cardIdm = result.idm)
         val scanId = scanDao.insertScan(scanEntity)
@@ -51,7 +52,6 @@ class TransactionRepository(
         transactionDao.insertTransactions(transactionsToInsert)
     }
 
-
     suspend fun getCardByIdm(idm: String): CardEntity? {
         return cardDao.getCardByIdm(idm)
     }
@@ -74,6 +74,10 @@ class TransactionRepository(
         }.filter { transaction -> transaction.amount != null }
     }
 
+    suspend fun getLatestBalanceByCardIdm(cardIdm: String): Int? {
+        return transactionDao.getLatestTransactionByCardIdm(cardIdm)?.balance
+    }
+
     suspend fun renameCard(cardIdm: String, newName: String) {
         cardDao.updateCardName(cardIdm, newName)
     }
@@ -83,5 +87,4 @@ class TransactionRepository(
         scanDao.deleteScansByCardIdm(cardIdm)
         transactionDao.deleteTransactionsByCardIdm(cardIdm)
     }
-
 }

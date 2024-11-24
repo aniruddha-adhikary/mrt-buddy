@@ -14,6 +14,9 @@ interface TransactionDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertTransactions(transactions: List<TransactionEntity>)
 
+    @Query("SELECT * FROM transactions WHERE cardIdm = :cardIdm ORDER BY `order` DESC LIMIT 1")
+    suspend fun getLatestTransactionByCardIdm(cardIdm: String): TransactionEntity?
+
     @Query("SELECT * FROM transactions WHERE cardIdm = :cardIdm ORDER BY `order` DESC")
     suspend fun getTransactionsByCardIdm(cardIdm: String): List<TransactionEntity>
 

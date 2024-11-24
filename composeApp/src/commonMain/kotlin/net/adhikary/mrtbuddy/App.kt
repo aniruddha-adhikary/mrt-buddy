@@ -20,6 +20,7 @@ import net.adhikary.mrtbuddy.ui.screens.home.MainScreen
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenAction
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenEvent
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenState
+import net.adhikary.mrtbuddy.ui.screens.home.MainScreen
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenViewModel
 import net.adhikary.mrtbuddy.ui.theme.MRTBuddyTheme
 import net.adhikary.mrtbuddy.utils.observeAsActions
@@ -68,11 +69,10 @@ fun App() {
     nfcManager.startScan()
 
     MRTBuddyTheme {
-        var lang by remember { mutableStateOf(Language.English.isoFormat) }
         val state: MainScreenState by mainVm.state.collectAsState()
 
         LocalizedApp(
-            language = lang
+            language = state.currentLanguage
         ) {
             Scaffold {
                 Box(

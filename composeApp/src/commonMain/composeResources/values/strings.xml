@@ -4,7 +4,7 @@
     <string name="fare">Fare</string>
     <string name="more">More</string>
     <string name="historyTab">History</string>
-    <string name="language">English</string>
+    <string name="language">Language</string>
     <string name="rescan">Rescan</string>
     <string name="latestBalance">Latest Balance</string>
     <string name="lowBalance">Balance too low for the next trip. Top up needed</string>
@@ -61,6 +61,7 @@
     <string name="tooLow">is too low.</string>
     <string name="tapToCheckSufficientBalance">Tap your card to check if you have sufficient balance</string>
     <string name="rescanToCheckSufficientBalance">Rescan your card to check if you have sufficient balance</string>
+    <string name="selectStations">Select Stations</string>
     <string name="selectOrigin">Select Origin Station</string>
     <string name="selectDestination">Select Destination Station</string>
     <string name="roundTrips">x Round Trip(s)</string>
@@ -96,4 +97,19 @@
     <string name="settings">Settings</string>
     <string name="autoSaveCardDetails">Auto-save card details</string>
     <string name="autoSaveCardDetailsDescription">Automatically save card details when scanning</string>
+
+    <!-- Time ago strings -->
+    <string name="justNow">Just now</string>
+    <string name="minuteAgo">minute ago</string>
+    <string name="minutesAgo">minutes ago</string>
+    <string name="hourAgo">hour ago</string>
+    <string name="hoursAgo">hours ago</string>
+    <string name="dayAgo">day ago</string>
+    <string name="daysAgo">days ago</string>
+    <string name="monthAgo">month ago</string>
+    <string name="monthsAgo">months ago</string>
+    <string name="yearAgo">year ago</string>
+    <string name="yearsAgo">years ago</string>
+    <string name="contributors">Contributors</string>
+    <string name="openSourceLicenses">Open Source Licenses</string>
 </resources>
