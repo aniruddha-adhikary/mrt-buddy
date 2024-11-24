@@ -22,7 +22,7 @@ MRT Buddy is an unofficial community-driven Android app designed to check the ba
 
 ### Key Features
 
-* Reads the last 10 transactions from the RapidPass / MRT Card, which is a FeliCa Card.
+* View and store the balance and last 19 transactions directly on your device from the RapidPass / MRT Card, which is a FeliCa Card.
 * No API connectivity required.
 * Limited to 10 transactions; for more, an official solution from DMTCL is necessary.
 
