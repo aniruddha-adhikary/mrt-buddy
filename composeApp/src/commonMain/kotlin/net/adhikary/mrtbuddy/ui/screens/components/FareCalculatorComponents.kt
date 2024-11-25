@@ -36,11 +36,9 @@ import mrtbuddy.composeapp.generated.resources.rescan
 import mrtbuddy.composeapp.generated.resources.roundTrips
 import mrtbuddy.composeapp.generated.resources.selectDestination
 import mrtbuddy.composeapp.generated.resources.selectOrigin
-import mrtbuddy.composeapp.generated.resources.selectStation
 import mrtbuddy.composeapp.generated.resources.selectStations
 import mrtbuddy.composeapp.generated.resources.singleTicket
 import mrtbuddy.composeapp.generated.resources.tapToCheckSufficientBalance
-import mrtbuddy.composeapp.generated.resources.tooLow
 import mrtbuddy.composeapp.generated.resources.two_way_arrows
 import mrtbuddy.composeapp.generated.resources.withMRT
 import mrtbuddy.composeapp.generated.resources.yourBalance

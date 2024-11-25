@@ -1,6 +1,6 @@
 package net.adhikary.mrtbuddy.nfc.parser
 
-class ByteParser {
+object ByteParser {
     private val hexChars = "0123456789ABCDEF"
 
     fun toHexString(bytes: ByteArray): String =

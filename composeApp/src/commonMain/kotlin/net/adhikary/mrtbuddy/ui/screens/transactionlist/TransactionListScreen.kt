@@ -29,13 +29,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import mrtbuddy.composeapp.generated.resources.Res
-import mrtbuddy.composeapp.generated.resources.balance
 import mrtbuddy.composeapp.generated.resources.balanceUpdate
 import mrtbuddy.composeapp.generated.resources.noTransactionsFound
-import mrtbuddy.composeapp.generated.resources.transactions
 import mrtbuddy.composeapp.generated.resources.transactionsAppearPrompt
 import mrtbuddy.composeapp.generated.resources.unnamedCard
 import net.adhikary.mrtbuddy.data.TransactionEntityWithAmount
@@ -156,7 +153,7 @@ fun TransactionItem(trxEntity: TransactionEntityWithAmount) {
     } else {
         "N/A"
     }
-    val tz = TimeZone.of("Asia/Dhaka")
+    val tz = TimestampService.getDefaultTimezone()
     val dateTimeFormatted = TimestampService.formatDateTime(
         Instant.fromEpochMilliseconds(transaction.dateTime).toLocalDateTime(tz)
     )

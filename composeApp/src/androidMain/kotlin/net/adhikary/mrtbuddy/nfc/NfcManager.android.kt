@@ -222,7 +222,7 @@ actual class NFCManager actual constructor() {
         val nfcF = NfcF.get(tag)
         try {
             nfcF.connect()
-            val idm = ByteParser().toHexString(nfcF.tag.id)
+            val idm = ByteParser.toHexString(nfcF.tag.id)
             val transactions = nfcReader.readTransactionHistory(nfcF)
             nfcF.close()
 
