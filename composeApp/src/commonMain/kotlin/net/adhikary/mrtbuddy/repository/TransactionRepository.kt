@@ -1,6 +1,5 @@
 package net.adhikary.mrtbuddy.repository
 
-import io.github.aakira.napier.Napier
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import net.adhikary.mrtbuddy.dao.CardDao
@@ -11,8 +10,6 @@ import net.adhikary.mrtbuddy.data.ScanEntity
 import net.adhikary.mrtbuddy.data.TransactionEntity
 import net.adhikary.mrtbuddy.data.TransactionEntityWithAmount
 import net.adhikary.mrtbuddy.model.CardReadResult
-import net.adhikary.mrtbuddy.model.Transaction
-import net.adhikary.mrtbuddy.model.TransactionWithAmount
 
 class TransactionRepository(
     private val cardDao: CardDao,

@@ -1,12 +1,9 @@
 package net.adhikary.mrtbuddy.repository
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.russhwolf.settings.Settings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.Language
 
 class SettingsRepository(private val settings: Settings) {

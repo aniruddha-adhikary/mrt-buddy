@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.data.model.FareCalculator
 
 class FareCalculatorViewModel : ViewModel() {
-    private val fareCalculator = FareCalculator.getInstance()
     private val MRT_PASS_DISCOUNT = 0.10f // 10% discount for MRT/Rapid Pass
 
     private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -68,7 +67,7 @@ class FareCalculatorViewModel : ViewModel() {
         val fromStation = _state.value.fromStation
         val toStation = _state.value.toStation
         if (fromStation != null && toStation != null) {
-            val fare = fareCalculator.calculateFare(fromStation, toStation)
+            val fare = FareCalculator.calculateFare(fromStation, toStation)
             val discountedFare = (fare * (1 - MRT_PASS_DISCOUNT)).toInt()
             _state.value = _state.value.copy(
                 calculatedFare = fare,
@@ -82,6 +81,5 @@ class FareCalculatorViewModel : ViewModel() {
         }
     }
 
-    val stations = fareCalculator.getAllStations()
-
+    val stations = FareCalculator.getAllStations()
 }

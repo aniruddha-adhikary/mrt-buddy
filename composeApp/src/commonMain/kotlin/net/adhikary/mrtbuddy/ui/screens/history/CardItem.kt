@@ -25,24 +25,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.aakira.napier.Napier
-import kotlinx.datetime.toLocalDateTime
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.balance
 import mrtbuddy.composeapp.generated.resources.cardId
 import mrtbuddy.composeapp.generated.resources.lastScan
-import mrtbuddy.composeapp.generated.resources.unnamedCard
 import mrtbuddy.composeapp.generated.resources.payments
+import mrtbuddy.composeapp.generated.resources.unnamedCard
 import mrtbuddy.composeapp.generated.resources.visibility
 import mrtbuddy.composeapp.generated.resources.visibility_off
 import net.adhikary.mrtbuddy.data.CardEntity
-import net.adhikary.mrtbuddy.nfc.service.TimestampService
-import net.adhikary.mrtbuddy.utils.TimeUtils
 import net.adhikary.mrtbuddy.ui.theme.DarkRapidPass
 import net.adhikary.mrtbuddy.ui.theme.LightRapidPass
+import net.adhikary.mrtbuddy.utils.TimeUtils
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
