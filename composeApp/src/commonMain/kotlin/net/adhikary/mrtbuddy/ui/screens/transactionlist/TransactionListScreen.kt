@@ -32,10 +32,8 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import mrtbuddy.composeapp.generated.resources.Res
-import mrtbuddy.composeapp.generated.resources.balance
 import mrtbuddy.composeapp.generated.resources.balanceUpdate
 import mrtbuddy.composeapp.generated.resources.noTransactionsFound
-import mrtbuddy.composeapp.generated.resources.transactions
 import mrtbuddy.composeapp.generated.resources.transactionsAppearPrompt
 import mrtbuddy.composeapp.generated.resources.unnamedCard
 import net.adhikary.mrtbuddy.data.TransactionEntityWithAmount
@@ -53,6 +51,7 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun TransactionListScreen(
+    modifier: Modifier = Modifier,
     cardIdm: String,
     onBack: () -> Unit,
     paddingValues: PaddingValues
@@ -72,7 +71,8 @@ fun TransactionListScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
+                .padding(paddingValues)
+                .then(modifier),
         ) {
             TopAppBar(
                 title = {

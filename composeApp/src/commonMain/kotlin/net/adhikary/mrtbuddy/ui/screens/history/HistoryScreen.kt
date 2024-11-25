@@ -30,6 +30,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun HistoryScreen(
+    modifier: Modifier = Modifier,
     onCardSelected: (String) -> Unit,
     viewModel: HistoryScreenViewModel = koinViewModel(),
 ) {
@@ -86,7 +87,7 @@ fun HistoryScreen(
         Text("Error: ${uiState.error}")
     } else if (uiState.cards.isEmpty()) {
         androidx.compose.foundation.layout.Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().then(modifier),
             contentAlignment = Alignment.Center
         ) {
             androidx.compose.foundation.layout.Column(
@@ -108,7 +109,7 @@ fun HistoryScreen(
         }
     } else {
         // Display the list of cards
-        LazyColumn(modifier = Modifier.padding(top = 8.dp)) {
+        LazyColumn(modifier = Modifier.padding(top = 8.dp).then(modifier)) {
             items(uiState.cards) { cardWithBalance ->
                 CardItem(
                     card = cardWithBalance.card,

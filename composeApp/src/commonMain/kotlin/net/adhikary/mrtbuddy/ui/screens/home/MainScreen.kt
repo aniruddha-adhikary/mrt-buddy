@@ -6,10 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.MaterialTheme
@@ -24,8 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -76,12 +75,12 @@ fun MainScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background)
-            .windowInsetsPadding(WindowInsets.safeDrawing),
+            .background(MaterialTheme.colors.background),
         bottomBar = {
             BottomNavigation(
                 backgroundColor = MaterialTheme.colors.surface,
-                contentColor = MaterialTheme.colors.onSurface
+                contentColor = MaterialTheme.colors.onSurface,
+                windowInsets = WindowInsets.navigationBars
             ) {
                 BottomNavigationItem(
                     icon = { CalculatorIcon() },
@@ -164,7 +163,8 @@ fun MainScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
-                        .padding(16.dp),
+                        .padding(16.dp)
+                        .statusBarsPadding(),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -181,7 +181,8 @@ fun MainScreen(
 
             composable(route = Screen.Calculator.name) {
                 FareCalculatorScreen(
-                    cardState = uiState.cardState
+                    cardState = uiState.cardState,
+                    modifier = Modifier.statusBarsPadding()
                 )
             }
 
@@ -190,7 +191,9 @@ fun MainScreen(
                     onNavigateToLicenses = {
                         navController.navigate(Screen.Licenses.name)
                     },
-                    modifier = Modifier.padding(paddingValues)
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .statusBarsPadding()
                 )
             }
 
@@ -199,7 +202,8 @@ fun MainScreen(
                     onCardSelected = { cardIdm ->
                         selectedCardIdm = cardIdm
                         navController.navigate(Screen.TransactionList.name)
-                    }
+                    },
+                    modifier = Modifier.statusBarsPadding()
                 )
             }
 
@@ -210,7 +214,8 @@ fun MainScreen(
                         onBack = {
                             navController.navigateUp()
                         },
-                        paddingValues = paddingValues
+                        paddingValues = paddingValues,
+                        modifier = Modifier.statusBarsPadding()
                     )
                 }
             }
