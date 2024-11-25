@@ -16,7 +16,7 @@ val LightOnSurface = Color(0xFF000000)
 val LightOnError = Color(0xFFFFFFFF)
 val LightPositiveGreen = Color(0xFF4CAF50)
 val LightNegativeRed = Color(0xFFB00020)
-val Alert_yellow_L = Color(0xFFFFEB3B)
+val Alert_yellow_L = Color(0xFFFFBF00)
 
 // Dark Theme Colors
 val DarkPrimary = Color(0xFF4CAF50)

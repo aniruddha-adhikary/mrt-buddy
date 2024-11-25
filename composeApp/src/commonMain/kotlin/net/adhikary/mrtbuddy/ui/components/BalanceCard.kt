@@ -175,8 +175,8 @@ private fun BalanceContent(amount: Int, cardName: String? = null) {
             fontWeight = FontWeight.SemiBold
         ),
         color = when {
-            amount <= 30 -> MaterialTheme.colors.error
-            amount <= 100 -> MaterialTheme.colors.primaryVariant
+            amount <= 50 -> MaterialTheme.colors.error
+            amount <= 70 -> if (MaterialTheme.colors.isLight) MaterialTheme.colors.secondaryVariant else MaterialTheme.colors.primaryVariant
             else -> MaterialTheme.colors.onSurface
         }
     )

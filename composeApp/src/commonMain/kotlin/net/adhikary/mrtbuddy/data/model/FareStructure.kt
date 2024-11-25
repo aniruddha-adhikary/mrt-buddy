@@ -11,7 +11,7 @@ data class Station(
 /**
  * Manages the fare calculation between stations
  */
-class FareCalculator {
+object FareCalculator {
     private val stations = listOf(
         Station("Uttara North", 0),
         Station("Uttara Center", 1),
@@ -129,15 +129,4 @@ class FareCalculator {
 
     fun getStation(id: Int): Station? =
         stations.getOrNull(id)
-
-    companion object {
-        private var instance: FareCalculator? = null
-
-        fun getInstance(): FareCalculator {
-            if (instance == null) {
-                instance = FareCalculator()
-            }
-            return instance!!
-        }
-    }
 }

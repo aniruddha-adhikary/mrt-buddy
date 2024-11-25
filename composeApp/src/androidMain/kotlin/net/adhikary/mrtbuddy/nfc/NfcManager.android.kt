@@ -11,6 +11,7 @@ import android.nfc.NfcAdapter
 import android.nfc.NfcManager
 import android.nfc.Tag
 import android.nfc.tech.NfcF
+import android.os.Build
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -133,10 +134,18 @@ actual class NFCManager actual constructor() {
             }
 
             // Register NFC state receiver only if supported
-            context.registerReceiver(
-                nfcStateReceiver,
-                IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED)
-            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                context.registerReceiver(
+                    nfcStateReceiver,
+                    IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED),
+                    Context.RECEIVER_NOT_EXPORTED
+                )
+            } else {
+                context.registerReceiver(
+                    nfcStateReceiver,
+                    IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED),
+                )
+            }
 
             // Update initial state
             scope.launch {

@@ -2,7 +2,10 @@ package net.adhikary.mrtbuddy.nfc.service
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.intl.Locale
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import mrtbuddy.composeapp.generated.resources.*
 import net.adhikary.mrtbuddy.translateNumber
 import org.jetbrains.compose.resources.stringResource
@@ -56,7 +59,6 @@ class TimestampService {
         }
     }
 
-
     fun decodeTimestamp(value: Int): LocalDateTime {
         val hour = (value shr 3) and 0x1F
         val day = (value shr 8) and 0x1F
@@ -64,7 +66,7 @@ class TimestampService {
         val year = (value shr 17) and 0x1F
 
         // Calculate the actual year
-        val fullYear = 2000 + year
+        val fullYear = getBaseYear() + year
 
         // Validate month and day
         val validMonth = if (month in 1..12) month else 1
@@ -80,5 +82,11 @@ class TimestampService {
             second = 0,
             nanosecond = 0
         )
+    }
+
+    private fun getBaseYear(): Int {
+        val timeZone = TimeZone.of("Asia/Dhaka")
+        val currentYear = Clock.System.now().toLocalDateTime(timeZone).year
+        return currentYear - (currentYear % 100)
     }
 }
