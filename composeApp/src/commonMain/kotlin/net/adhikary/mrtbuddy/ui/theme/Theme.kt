@@ -17,9 +17,8 @@ private val LightThemeColors = lightColors(
     onBackground = LightOnBackground,
     onSurface = LightOnSurface,
     onError = LightOnError,
-    primaryVariant = Alert_yellow_L
-
-    )
+    secondaryVariant = Alert_yellow_L
+)
 
 private val DarkThemeColors = darkColors(
     primary = DarkPrimary,
