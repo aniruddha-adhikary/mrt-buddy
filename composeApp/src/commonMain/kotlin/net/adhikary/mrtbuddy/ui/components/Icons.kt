@@ -1,6 +1,6 @@
 package net.adhikary.mrtbuddy.ui.components
 
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.apps

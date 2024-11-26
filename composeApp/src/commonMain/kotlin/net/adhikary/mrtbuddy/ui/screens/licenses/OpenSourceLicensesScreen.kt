@@ -8,14 +8,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.MaterialTheme.colors
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,53 +33,56 @@ import mrtbuddy.composeapp.generated.resources.Res
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 
-@OptIn(ExperimentalResourceApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
 fun OpenSourceLicensesScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
     paddingValues: PaddingValues
 ) {
-    Column(Modifier.fillMaxSize().padding(paddingValues).then(modifier)) {
+    Column(modifier.fillMaxSize()) {
         TopAppBar(
             title = { Text("Open Source Licenses") },
             navigationIcon = {
                 IconButton(onClick = onBack) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back"
                     )
                 }
             },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            ),
             windowInsets = WindowInsets.statusBars
         )
         var content by remember { mutableStateOf("") }
 
         val mdColors = DefaultMarkdownColors(
-            text = colors.onSurface,
-            codeText = colors.onSurface,
-            inlineCodeText = colors.onSurface,
-            linkText = colors.primary,
-            codeBackground = colors.surface.copy(alpha = 0.1f),
-            inlineCodeBackground = colors.surface.copy(alpha = 0.1f),
-            dividerColor = colors.onSurface.copy(alpha = 0.12f)
+            text = MaterialTheme.colorScheme.onSurface,
+            codeText = MaterialTheme.colorScheme.onSurface,
+            inlineCodeText = MaterialTheme.colorScheme.onSurface,
+            linkText = MaterialTheme.colorScheme.primary,
+            codeBackground = MaterialTheme.colorScheme.surface.copy(alpha = 0.1f),
+            inlineCodeBackground = MaterialTheme.colorScheme.surface.copy(alpha = 0.1f),
+            dividerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
         )
         val mdTypography = DefaultMarkdownTypography(
-            text = MaterialTheme.typography.body2,
-            code = MaterialTheme.typography.body2.copy(fontFamily = MaterialTheme.typography.body2.fontFamily),
-            inlineCode = MaterialTheme.typography.body2.copy(fontFamily = MaterialTheme.typography.body2.fontFamily),
-            h1 = MaterialTheme.typography.h6,
-            h2 = MaterialTheme.typography.subtitle1,
-            h3 = MaterialTheme.typography.subtitle2,
-            h4 = MaterialTheme.typography.subtitle2,
-            h5 = MaterialTheme.typography.subtitle2,
-            h6 = MaterialTheme.typography.subtitle2,
-            quote = MaterialTheme.typography.body2.copy(fontStyle = FontStyle.Italic),
-            paragraph = MaterialTheme.typography.body2,
-            ordered = MaterialTheme.typography.body2,
-            bullet = MaterialTheme.typography.body2,
-            list = MaterialTheme.typography.body2,
-            link = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.primary)
+            text = MaterialTheme.typography.bodyMedium,
+            code = MaterialTheme.typography.bodyMedium.copy(fontFamily = MaterialTheme.typography.bodyMedium.fontFamily),
+            inlineCode = MaterialTheme.typography.bodyMedium.copy(fontFamily = MaterialTheme.typography.bodyMedium.fontFamily),
+            h1 = MaterialTheme.typography.titleLarge,
+            h2 = MaterialTheme.typography.titleSmall,
+            h3 = MaterialTheme.typography.titleSmall,
+            h4 = MaterialTheme.typography.titleSmall,
+            h5 = MaterialTheme.typography.titleSmall,
+            h6 = MaterialTheme.typography.titleSmall,
+            quote = MaterialTheme.typography.bodyMedium.copy(fontStyle = FontStyle.Italic),
+            paragraph = MaterialTheme.typography.bodyMedium,
+            ordered = MaterialTheme.typography.bodyMedium,
+            bullet = MaterialTheme.typography.bodyMedium,
+            list = MaterialTheme.typography.bodyMedium,
+            link = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.primary)
         )
 
         LaunchedEffect(Unit) {
@@ -87,7 +91,10 @@ fun OpenSourceLicensesScreen(
 
         Markdown(
             content = content,
-            modifier = Modifier.verticalScroll(rememberScrollState()).padding(16.dp),
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
+                .padding(bottom = paddingValues.calculateBottomPadding()),
             colors = mdColors,
             typography = mdTypography
         )

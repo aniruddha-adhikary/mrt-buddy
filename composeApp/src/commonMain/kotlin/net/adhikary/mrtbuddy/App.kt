@@ -1,5 +1,6 @@
 package net.adhikary.mrtbuddy
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,7 +21,10 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
-fun App() {
+fun App(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    dynamicColor: Boolean
+) {
     val mainVm = koinViewModel<MainScreenViewModel>()
     val scope = rememberCoroutineScope()
     val nfcManager = getNFCManager()
@@ -59,7 +63,10 @@ fun App() {
 
     nfcManager.startScan()
 
-    MRTBuddyTheme {
+    MRTBuddyTheme(
+        darkTheme = darkTheme,
+        dynamicColor = dynamicColor
+    ) {
         val state: MainScreenState by mainVm.state.collectAsState()
 
         LocalizedApp(
