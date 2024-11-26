@@ -20,6 +20,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FareCalculatorScreen(
+    modifier: Modifier = Modifier,
     viewModel: FareCalculatorViewModel = koinViewModel(),
     cardState: CardState
 ) {
@@ -49,7 +50,8 @@ fun FareCalculatorScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {

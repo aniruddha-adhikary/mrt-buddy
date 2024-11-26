@@ -2,8 +2,10 @@ package net.adhikary.mrtbuddy.ui.screens.licenses
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
@@ -22,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.unit.dp
 import com.mikepenz.markdown.compose.Markdown
 import com.mikepenz.markdown.model.DefaultMarkdownColors
 import com.mikepenz.markdown.model.DefaultMarkdownTypography
@@ -32,10 +35,11 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun OpenSourceLicensesScreen(
+    modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
     paddingValues: PaddingValues
 ) {
-    Column(Modifier.fillMaxSize().padding(paddingValues)) {
+    Column(Modifier.fillMaxSize().padding(paddingValues).then(modifier)) {
         TopAppBar(
             title = { Text("Open Source Licenses") },
             navigationIcon = {
@@ -45,10 +49,10 @@ fun OpenSourceLicensesScreen(
                         contentDescription = "Back"
                     )
                 }
-            }
+            },
+            windowInsets = WindowInsets.statusBars
         )
         var content by remember { mutableStateOf("") }
-
 
         val mdColors = DefaultMarkdownColors(
             text = colors.onSurface,
@@ -83,7 +87,7 @@ fun OpenSourceLicensesScreen(
 
         Markdown(
             content = content,
-            modifier = Modifier.verticalScroll(rememberScrollState()),
+            modifier = Modifier.verticalScroll(rememberScrollState()).padding(16.dp),
             colors = mdColors,
             typography = mdTypography
         )

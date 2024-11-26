@@ -50,6 +50,7 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun TransactionListScreen(
+    modifier: Modifier = Modifier,
     cardIdm: String,
     onBack: () -> Unit,
     paddingValues: PaddingValues
@@ -69,7 +70,8 @@ fun TransactionListScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
+                .padding(paddingValues)
+                .then(modifier),
         ) {
             TopAppBar(
                 title = {
