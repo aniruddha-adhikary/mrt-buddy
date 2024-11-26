@@ -43,48 +43,46 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
         shape = RoundedCornerShape(24.dp)
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .padding(24.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(
-                text =  stringResource(Res.string.recentJourneys),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold
-            )
-            HorizontalDivider(
-                modifier = Modifier.padding(top = 12.dp, bottom = 16.dp),
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-            )
+            item {
+                Text(
+                    text = stringResource(Res.string.recentJourneys),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(top = 12.dp, bottom = 16.dp),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                )
+            }
+            
+            val validTransactions = transactions.filter { it.transaction.timestamp.year >= 2015 }
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                val validTransactions = transactions.filter { it.transaction.timestamp.year >= 2015 }
+            items(validTransactions) { transactionWithAmount ->
+                TransactionItem(
+                    type = if (transactionWithAmount.amount != null && transactionWithAmount.amount > 0)
+                        TransactionType.BalanceUpdate
+                    else
+                        TransactionType.Commute,
+                    date = transactionWithAmount.transaction.timestamp,
+                    fromStation = transactionWithAmount.transaction.fromStation,
+                    toStation = transactionWithAmount.transaction.toStation,
+                    balance = "৳ ${transactionWithAmount.transaction.balance}",
+                    amount = transactionWithAmount.amount?.let { "৳ ${translateNumber(it)}" }
+                        ?: "N/A",
+                    amountValue = transactionWithAmount.amount
+                )
 
-                items(validTransactions) { transactionWithAmount ->
-                    TransactionItem(
-                        type = if (transactionWithAmount.amount != null && transactionWithAmount.amount > 0) 
-                            TransactionType.BalanceUpdate 
-                        else 
-                            TransactionType.Commute,
-                        date = transactionWithAmount.transaction.timestamp,
-                        fromStation = transactionWithAmount.transaction.fromStation,
-                        toStation = transactionWithAmount.transaction.toStation,
-                        balance = "৳ ${transactionWithAmount.transaction.balance}",
-                        amount = transactionWithAmount.amount?.let { "৳ ${translateNumber(it)}" } ?: "N/A",
-                        amountValue = transactionWithAmount.amount
+                if (transactionWithAmount != validTransactions.last()) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(top = 12.dp),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
                     )
-
-                    if (transactionWithAmount != validTransactions.last()) {
-                        HorizontalDivider(
-                            modifier = Modifier.padding(top = 12.dp),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-                        )
-                    }
                 }
             }
         }
@@ -117,7 +115,7 @@ fun TransactionItem(
             Text(
                 text = if (type == TransactionType.Commute)
                     "${StationService.translate(fromStation)} → ${StationService.translate(toStation)}"
-                    else stringResource(Res.string.balanceUpdate),
+                else stringResource(Res.string.balanceUpdate),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -138,7 +136,7 @@ fun TransactionItem(
                 amountValue > 0 -> if (isDarkTheme) DarkPositiveGreen else LightPositiveGreen
                 else -> if (isDarkTheme) DarkNegativeRed else LightNegativeRed
             }
-            
+
             Text(
                 text = amount,
                 style = MaterialTheme.typography.titleLarge,
