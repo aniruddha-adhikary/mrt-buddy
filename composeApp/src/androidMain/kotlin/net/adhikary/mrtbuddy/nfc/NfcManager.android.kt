@@ -138,7 +138,7 @@ actual class NFCManager actual constructor() {
                 context.registerReceiver(
                     nfcStateReceiver,
                     IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED),
-                    Context.RECEIVER_NOT_EXPORTED
+                    Context.RECEIVER_EXPORTED
                 )
             } else {
                 context.registerReceiver(
