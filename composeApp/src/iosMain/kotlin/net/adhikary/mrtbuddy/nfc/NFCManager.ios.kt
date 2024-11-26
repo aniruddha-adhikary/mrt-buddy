@@ -14,8 +14,6 @@ import net.adhikary.mrtbuddy.model.CardReadResult
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.nfc.parser.ByteParser
 import net.adhikary.mrtbuddy.nfc.parser.TransactionParser
-import net.adhikary.mrtbuddy.nfc.service.StationService
-import net.adhikary.mrtbuddy.nfc.service.TimestampService
 import platform.CoreNFC.NFCFeliCaTagProtocol
 import platform.CoreNFC.NFCPollingISO18092
 import platform.CoreNFC.NFCTagReaderSession
@@ -34,7 +32,7 @@ fun ByteArray.toNSData(): NSData = this.usePinned { pinned ->
 
 private fun NSData.toHexString(): String {
     val bytes = this.toByteArray()
-    return ByteParser().toHexString(bytes);
+    return ByteParser.toHexString(bytes);
 }
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
@@ -51,11 +49,6 @@ fun NSData.toByteArray(): ByteArray {
 actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
     private var session: NFCTagReaderSession? = null
     private val scope = CoroutineScope(SupervisorJob())
-
-    private val byteParser = ByteParser()
-    private val timestampService = TimestampService()
-    private val stationService = StationService()
-    private val transactionParser = TransactionParser(byteParser, timestampService, stationService)
 
     private val _cardState = MutableSharedFlow<CardState>(replay = 1)
     actual val cardState: SharedFlow<CardState> = _cardState
@@ -144,7 +137,7 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
                             val allData = ((dataList ?: emptyList<Any>()) + (dataList2
                                 ?: emptyList<Any>())).map { (it as NSData).toByteArray() }
                             val entries =
-                                allData.map { transactionParser.parseTransactionBlock(it) }
+                                allData.map { TransactionParser.parseTransactionBlock(it) }
 
                             if (entries.isEmpty()) {
                                 scope.launch { _cardState.emit(CardState.Error("No transactions found on card")) }

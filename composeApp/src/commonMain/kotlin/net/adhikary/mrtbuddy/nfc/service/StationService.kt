@@ -21,7 +21,7 @@ import mrtbuddy.composeapp.generated.resources.uttaraNorth
 import mrtbuddy.composeapp.generated.resources.uttaraSouth
 import org.jetbrains.compose.resources.stringResource
 
-class StationService {
+object StationService {
     private val stationMap = mapOf(
         10 to "Motijheel",
         20 to "Bangladesh Secretariat",
@@ -44,31 +44,29 @@ class StationService {
     fun getStationName(code: Int): String =
         stationMap.getOrElse(code) { "Unknown Station ($code)" }
 
-    companion object {
-        @Composable
-        fun translate(stationName: String): String {
-            return when (stationName) {
-                "Kamalapur" -> stringResource(Res.string.kamalapur)
-                "Motijheel" -> stringResource(Res.string.motijheel)
-                "Bangladesh Secretariat" -> stringResource(Res.string.bangladeshSecretariat)
-                "Dhaka University" -> stringResource(Res.string.dhakaUniversity)
-                "Shahbagh" -> stringResource(Res.string.shahbagh)
-                "Karwan Bazar" -> stringResource(Res.string.karwanBazar)
-                "Farmgate" -> stringResource(Res.string.farmgate)
-                "Bijoy Sarani" -> stringResource(Res.string.bijoySarani)
-                "Agargaon" -> stringResource(Res.string.agargaon)
-                "Shewrapara" -> stringResource(Res.string.shewrapara)
-                "Kazipara" -> stringResource(Res.string.kazipara)
-                "Mirpur 10" -> stringResource(Res.string.mirpur10)
-                "Mirpur-10" -> stringResource(Res.string.mirpur10)
-                "Mirpur 11" -> stringResource(Res.string.mirpur11)
-                "Mirpur-11" -> stringResource(Res.string.mirpur11)
-                "Pallabi" -> stringResource(Res.string.pallabi)
-                "Uttara South" -> stringResource(Res.string.uttaraSouth)
-                "Uttara Center" -> stringResource(Res.string.uttaraCenter)
-                "Uttara North" -> stringResource(Res.string.uttaraNorth)
-                else -> "" // Default to English if no match is found
-            }
+    @Composable
+    fun translate(stationName: String): String {
+        return when (stationName) {
+            "Kamalapur" -> stringResource(Res.string.kamalapur)
+            "Motijheel" -> stringResource(Res.string.motijheel)
+            "Bangladesh Secretariat" -> stringResource(Res.string.bangladeshSecretariat)
+            "Dhaka University" -> stringResource(Res.string.dhakaUniversity)
+            "Shahbagh" -> stringResource(Res.string.shahbagh)
+            "Karwan Bazar" -> stringResource(Res.string.karwanBazar)
+            "Farmgate" -> stringResource(Res.string.farmgate)
+            "Bijoy Sarani" -> stringResource(Res.string.bijoySarani)
+            "Agargaon" -> stringResource(Res.string.agargaon)
+            "Shewrapara" -> stringResource(Res.string.shewrapara)
+            "Kazipara" -> stringResource(Res.string.kazipara)
+            "Mirpur 10" -> stringResource(Res.string.mirpur10)
+            "Mirpur-10" -> stringResource(Res.string.mirpur10)
+            "Mirpur 11" -> stringResource(Res.string.mirpur11)
+            "Mirpur-11" -> stringResource(Res.string.mirpur11)
+            "Pallabi" -> stringResource(Res.string.pallabi)
+            "Uttara South" -> stringResource(Res.string.uttaraSouth)
+            "Uttara Center" -> stringResource(Res.string.uttaraCenter)
+            "Uttara North" -> stringResource(Res.string.uttaraNorth)
+            else -> "" // Default to English if no match is found
         }
     }
 }
