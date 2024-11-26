@@ -28,6 +28,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
@@ -205,14 +206,16 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                         }
                         Text(
                             text = stringResource(Res.string.withMRT),
-                            style = MaterialTheme.typography.titleLarge
+                            style = MaterialTheme.typography.titleSmall
                         )
                         if (getPlatform().name == "android") {
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                         Text(
                             text = "৳ ${translateNumber(viewModel.state.value.discountedFare)}",
-                            style = MaterialTheme.typography.titleLarge,
+                            style = MaterialTheme.typography.displaySmall.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(4.dp))
@@ -272,7 +275,7 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                                         uiState.calculatedFare
                                     )
                                 }",
-                                style = MaterialTheme.typography.titleLarge,
+                                style = MaterialTheme.typography.titleSmall,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.fillMaxWidth()
                             )
