@@ -18,6 +18,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -60,6 +61,7 @@ fun CardItem(
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .height(240.dp)
             .clickable { onCardSelected() },
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
         shape = RoundedCornerShape(24.dp)
     ) {
         Column {
@@ -88,7 +90,7 @@ fun CardItem(
                         Text(
                             text = card.name ?: stringResource(Res.string.unnamedCard),
                             style = MaterialTheme.typography.titleLarge,
-                            color = (if (isDarkTheme) Color.Black else Color.White).copy(alpha = 0.8f),
+                            color = (if (isDarkTheme) Color.Black else Color.White).copy(alpha = 0.9f),
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                         )
                     }
@@ -96,7 +98,7 @@ fun CardItem(
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = "Rename card",
-                            tint = (if (isDarkTheme) Color.Black else Color.White).copy(alpha = 0.8f),
+                            tint = (if (isDarkTheme) Color.Black else Color.White).copy(alpha = 0.9f),
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .size(24.dp)
@@ -105,7 +107,7 @@ fun CardItem(
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete card",
-                            tint = (if (isDarkTheme) Color.Black else Color.White).copy(alpha = 0.8f),
+                            tint = (if (isDarkTheme) Color.Black else Color.White).copy(alpha = 0.9f),
                             modifier = Modifier
                                 .padding(end = 16.dp)
                                 .size(24.dp)
