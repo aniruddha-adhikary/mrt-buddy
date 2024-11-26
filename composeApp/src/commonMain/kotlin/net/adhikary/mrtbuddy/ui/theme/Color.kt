@@ -4,9 +4,12 @@ import androidx.compose.ui.graphics.Color
 
 // Light Theme Colors
 val LightRapidPass = Color(0xFF2196F3)  // Blue color for Rapid Pass
+val LightMRTPass = Color(0xFF408E2D)  // Green color for MRT Pass
 val LightPositiveGreen = Color(0xFF4CAF50)
 val LightNegativeRed = Color(0xFFB00020)
 val Alert_yellow_L = Color(0xFFFFBF00)
+
+// Light Theme Material Colors
 val primaryLight = Color(0xFF4C662B)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFCDEDA3)
@@ -45,9 +48,12 @@ val surfaceContainerHighestLight = Color(0xFFE2E3D8)
 
 // Dark Theme Colors
 val DarkRapidPass = Color(0xFF42A5F5)  // Slightly lighter blue for dark theme
+val DarkMRTPass = Color(0xFF4CAF50)  // Slightly lighter green for dark theme
 val DarkPositiveGreen = Color(0xFF81C784)
 val DarkNegativeRed = Color(0xFFCF6679)
 val Alert_yellow_D = Color(0xFFFFEB3B)
+
+// Dark Theme Material Colors
 val primaryDark = Color(0xFFB1D18A)
 val onPrimaryDark = Color(0xFF1F3701)
 val primaryContainerDark = Color(0xFF354E16)

@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.balance
@@ -37,7 +38,9 @@ import mrtbuddy.composeapp.generated.resources.unnamedCard
 import mrtbuddy.composeapp.generated.resources.visibility
 import mrtbuddy.composeapp.generated.resources.visibility_off
 import net.adhikary.mrtbuddy.data.CardEntity
+import net.adhikary.mrtbuddy.ui.theme.DarkMRTPass
 import net.adhikary.mrtbuddy.ui.theme.DarkRapidPass
+import net.adhikary.mrtbuddy.ui.theme.LightMRTPass
 import net.adhikary.mrtbuddy.ui.theme.LightRapidPass
 import net.adhikary.mrtbuddy.utils.TimeUtils
 import org.jetbrains.compose.resources.painterResource
@@ -62,15 +65,16 @@ fun CardItem(
         Column {
             // Colored stripe at the top
             val isRapidPass = card.idm.startsWith("01 27")
+            val isDarkTheme = isSystemInDarkTheme()
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
                     .background(
                         if (isRapidPass) {
-                            if (isSystemInDarkTheme()) DarkRapidPass else LightRapidPass
+                            if (isDarkTheme) DarkRapidPass else LightRapidPass
                         } else {
-                            MaterialTheme.colorScheme.primary
+                            if (isDarkTheme) DarkMRTPass else LightMRTPass
                         }
                     ),
                 contentAlignment = androidx.compose.ui.Alignment.CenterStart
@@ -84,7 +88,7 @@ fun CardItem(
                         Text(
                             text = card.name ?: stringResource(Res.string.unnamedCard),
                             style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onPrimary,
+                            color = (if (isDarkTheme) Color.Black else Color.White).copy(alpha = 0.8f),
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                         )
                     }
@@ -92,7 +96,7 @@ fun CardItem(
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = "Rename card",
-                            tint = MaterialTheme.colorScheme.onPrimary,
+                            tint = (if (isDarkTheme) Color.Black else Color.White).copy(alpha = 0.8f),
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .size(24.dp)
@@ -101,7 +105,7 @@ fun CardItem(
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete card",
-                            tint = MaterialTheme.colorScheme.onPrimary,
+                            tint = (if (isDarkTheme) Color.Black else Color.White).copy(alpha = 0.8f),
                             modifier = Modifier
                                 .padding(end = 16.dp)
                                 .size(24.dp)
