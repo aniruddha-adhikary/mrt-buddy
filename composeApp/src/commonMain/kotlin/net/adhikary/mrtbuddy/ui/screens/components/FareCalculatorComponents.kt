@@ -13,20 +13,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ExposedDropdownMenuBox
-import androidx.compose.material.ExposedDropdownMenuDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
@@ -56,7 +59,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalculatorViewModel) {
     Column(
@@ -74,11 +77,16 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = uiState.fromExpanded) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
+                    .fillMaxWidth(),
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
-                    backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.1f),
-                    focusedIndicatorColor = MaterialTheme.colors.primary.copy(alpha = 0f),
-                    unfocusedIndicatorColor = MaterialTheme.colors.primary.copy(alpha = 0f)
+                    focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    errorContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0f),
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0f)
                 ),
                 shape = RoundedCornerShape(12.dp)
             )
@@ -89,10 +97,9 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
             ) {
                 viewModel.stations.forEach { station ->
                     DropdownMenuItem(
+                        text = { Text(text = StationService.translate(station.name)) },
                         onClick = { viewModel.onAction(FareCalculatorAction.UpdateFromStation(station)) }
-                    ) {
-                        Text(text = StationService.translate(station.name))
-                    }
+                    )
                 }
             }
         }
@@ -108,11 +115,16 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = uiState.toExpanded) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
+                    .fillMaxWidth(),
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
-                    backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.1f),
-                    focusedIndicatorColor = MaterialTheme.colors.primary.copy(alpha = 0f),
-                    unfocusedIndicatorColor = MaterialTheme.colors.primary.copy(alpha = 0f)
+                    focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    errorContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0f),
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0f)
                 ),
                 shape = RoundedCornerShape(12.dp)
             )
@@ -123,10 +135,9 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
             ) {
                 viewModel.stations.forEach { station ->
                     DropdownMenuItem(
+                        text = { Text(text = StationService.translate(station.name)) },
                         onClick = { viewModel.onAction(FareCalculatorAction.UpdateToStation(station)) }
-                    ) {
-                        Text(text = StationService.translate(station.name))
-                    }
+                    )
                 }
             }
         }
@@ -138,42 +149,37 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(220.dp),
-        shape = RoundedCornerShape(24.dp),
-        backgroundColor = MaterialTheme.colors.surface
+            .height(240.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
+        shape = RoundedCornerShape(24.dp)
     ) {
         if (viewModel.state.value.fromStation == null || viewModel.state.value.toStation == null) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.fillMaxSize().padding(16.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = "Select stations",
-                        modifier = Modifier.height(48.dp),
-                        tint = MaterialTheme.colors.primary
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = stringResource(Res.string.selectStations),
-                        style = MaterialTheme.typography.h6,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = stringResource(Res.string.chooseOrgDest),
-                        style = MaterialTheme.typography.body1,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = "Select stations",
+                    modifier = Modifier.height(48.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(Res.string.selectStations),
+                    style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(Res.string.chooseOrgDest),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
             }
         } else {
             Box(Modifier.fillMaxSize().padding(24.dp)) {
@@ -183,8 +189,8 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                         modifier = Modifier
                             .align(Alignment.TopEnd)
                             .clickable { RescanManager.requestRescan() },
-                        style = MaterialTheme.typography.body1,
-                        color = MaterialTheme.colors.primary
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
                 Column(
@@ -202,15 +208,17 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                         }
                         Text(
                             text = stringResource(Res.string.withMRT),
-                            style = MaterialTheme.typography.caption
+                            style = MaterialTheme.typography.titleSmall
                         )
                         if (getPlatform().name == "android") {
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                         Text(
                             text = "৳ ${translateNumber(viewModel.state.value.discountedFare)}",
-                            style = MaterialTheme.typography.h4,
-                            color = MaterialTheme.colors.onSurface
+                            style = MaterialTheme.typography.displaySmall.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                     }
@@ -218,7 +226,7 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                     Spacer(modifier = Modifier.weight(1f))
                     when (uiState.cardState) {
                         is CardState.Balance -> {
-                            val balance = (uiState.cardState as CardState.Balance).amount
+                            val balance = uiState.cardState.amount
                             if (balance >= uiState.calculatedFare) {
                                 val roundTrips = if (uiState.calculatedFare > 0) balance / (uiState.discountedFare * 2) else 0
                                 Column(
@@ -228,7 +236,7 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                                 ) {
                                     Text(
                                         text = "${stringResource(Res.string.balanceAmount)} ৳ ${translateNumber(balance)}",
-                                        style = MaterialTheme.typography.body1,
+                                        style = MaterialTheme.typography.bodyMedium,
                                         color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
                                     )
                                     if (roundTrips > 0) {
@@ -245,7 +253,7 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                                             Spacer(modifier = Modifier.width(4.dp))
                                             Text(
                                                 text = "${translateNumber(roundTrips)} ${stringResource(Res.string.roundTrips)}",
-                                                style = MaterialTheme.typography.body1,
+                                                style = MaterialTheme.typography.bodyMedium,
                                                 color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
                                             )
                                         }
@@ -254,8 +262,8 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                             } else {
                                 Text(
                                     text = "${stringResource(Res.string.yourBalance)} (৳ $balance)",
-                                    style = MaterialTheme.typography.body2,
-                                    color = MaterialTheme.colors.error.copy(alpha = 0.7f),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 )
@@ -269,15 +277,15 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                                         uiState.calculatedFare
                                     )
                                 }",
-                                style = MaterialTheme.typography.caption,
+                                style = MaterialTheme.typography.titleSmall,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.fillMaxWidth()
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = stringResource(Res.string.tapToCheckSufficientBalance),
-                                style = MaterialTheme.typography.body2,
-                                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.fillMaxWidth()
                             )

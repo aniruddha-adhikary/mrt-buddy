@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,12 +20,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -52,6 +54,8 @@ import net.adhikary.mrtbuddy.getPlatform
 import net.adhikary.mrtbuddy.managers.RescanManager
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.translateNumber
+import net.adhikary.mrtbuddy.ui.theme.Alert_yellow_D
+import net.adhikary.mrtbuddy.ui.theme.Alert_yellow_L
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -64,9 +68,9 @@ fun BalanceCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(220.dp),
-        shape = RoundedCornerShape(24.dp), // Increased corner radius
-        backgroundColor = MaterialTheme.colors.surface
+            .height(240.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
+        shape = RoundedCornerShape(24.dp) // Increased corner radius
     ) {
         Box(Modifier.fillMaxSize()) {
             // Card name at the top with rounded background only in Balance state
@@ -74,18 +78,18 @@ fun BalanceCard(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colors.primary)
+                        .background(MaterialTheme.colorScheme.primary)
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
                     Text(
                         text = cardName,
-                        style = MaterialTheme.typography.h6,
-                        color = MaterialTheme.colors.onPrimary,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
             }
-            
+
             if (getPlatform().name != "android") {
                 Box(
                     modifier = Modifier
@@ -96,9 +100,9 @@ fun BalanceCard(
                         stringResource(Res.string.rescan),
                         modifier = Modifier
                             .clickable { RescanManager.requestRescan() },
-                        style = MaterialTheme.typography.body1,
-                        color = if (!cardName.isNullOrBlank()) MaterialTheme.colors.onPrimary 
-                               else MaterialTheme.colors.onSurface
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = if (!cardName.isNullOrBlank()) MaterialTheme.colorScheme.onPrimary
+                               else MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -148,7 +152,7 @@ private fun PulsingCircle(iconSize: Dp) {
     )
 
     // Retrieve the color outside the Canvas lambda
-    val circleColor = MaterialTheme.colors.primary.copy(alpha = pulseAlpha)
+    val circleColor = MaterialTheme.colorScheme.primary.copy(alpha = pulseAlpha)
 
     Canvas(
         modifier = Modifier.size(iconSize * 2)
@@ -165,19 +169,19 @@ private fun PulsingCircle(iconSize: Dp) {
 private fun BalanceContent(amount: Int, cardName: String? = null) {
     Text(
         text = stringResource(Res.string.latestBalance),
-        style = MaterialTheme.typography.h6,
-        color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
     )
     Spacer(modifier = Modifier.height(12.dp))
     Text(
         text = "৳ ${translateNumber(amount)}",
-        style = MaterialTheme.typography.h4.copy(
+        style = MaterialTheme.typography.displaySmall.copy(
             fontWeight = FontWeight.SemiBold
         ),
         color = when {
-            amount <= 50 -> MaterialTheme.colors.error
-            amount <= 70 -> if (MaterialTheme.colors.isLight) MaterialTheme.colors.secondaryVariant else MaterialTheme.colors.primaryVariant
-            else -> MaterialTheme.colors.onSurface
+            amount <= 50 -> MaterialTheme.colorScheme.error
+            amount <= 70 -> if (isSystemInDarkTheme()) Alert_yellow_D else Alert_yellow_L
+            else -> MaterialTheme.colorScheme.onSurface
         }
     )
     Spacer(modifier = Modifier.height(4.dp))
@@ -185,8 +189,8 @@ private fun BalanceContent(amount: Int, cardName: String? = null) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.lowBalance),
-            style = MaterialTheme.typography.body2,
-            color = MaterialTheme.colors.onSurface,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center
         )
     }
@@ -202,20 +206,20 @@ private fun ReadingContent() {
             imageVector = Icons.Default.Info,
             contentDescription = "Reading",
             modifier = Modifier.height(48.dp),
-            tint = MaterialTheme.colors.primary
+            tint = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.readingCard),
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.keepCardSteady),
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
     }
 }
@@ -234,13 +238,13 @@ private fun WaitingContent() {
                 painter = painterResource(Res.drawable.card),
                 contentDescription = "Tap Card",
                 modifier = Modifier.height(48.dp),
-                tint = MaterialTheme.colors.primary
+                tint = MaterialTheme.colorScheme.primary
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = stringResource(Res.string.tap),
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -248,16 +252,16 @@ private fun WaitingContent() {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = stringResource(Res.string.tapRescanToStart),
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
         } else {
             Text(
                 text = stringResource(Res.string.hold),
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
         }
     }
@@ -273,28 +277,28 @@ private fun ErrorContent(message: String) {
             imageVector = Icons.Default.Info,
             contentDescription = "Error",
             modifier = Modifier.height(48.dp),
-            tint = MaterialTheme.colors.error
+            tint = MaterialTheme.colorScheme.error
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Error",
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = message,
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
         if (getPlatform().name != "android") {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = stringResource(Res.string.rescan),
                 modifier = Modifier.clickable { RescanManager.requestRescan() },
-                style = MaterialTheme.typography.body1,
-                color = MaterialTheme.colors.primary
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -310,20 +314,20 @@ private fun NoNfcSupportContent() {
             imageVector = Icons.Default.Info,
             contentDescription = "No NFC",
             modifier = Modifier.height(48.dp),
-            tint = MaterialTheme.colors.error
+            tint = MaterialTheme.colorScheme.error
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.noNfcSupport),
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.requiredNfc),
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
     }
 }
@@ -338,20 +342,20 @@ private fun NfcDisabledContent() {
             imageVector = Icons.Default.Info,
             contentDescription = "NFC Disabled",
             modifier = Modifier.height(48.dp),
-            tint = MaterialTheme.colors.error
+            tint = MaterialTheme.colorScheme.error
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.nfcDisabled),
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.enableNfc),
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
     }
 }

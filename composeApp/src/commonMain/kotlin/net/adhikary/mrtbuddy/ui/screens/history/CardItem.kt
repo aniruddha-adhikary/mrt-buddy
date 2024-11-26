@@ -2,6 +2,7 @@ package net.adhikary.mrtbuddy.ui.screens.history
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,20 +13,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.balance
@@ -36,7 +39,9 @@ import mrtbuddy.composeapp.generated.resources.unnamedCard
 import mrtbuddy.composeapp.generated.resources.visibility
 import mrtbuddy.composeapp.generated.resources.visibility_off
 import net.adhikary.mrtbuddy.data.CardEntity
+import net.adhikary.mrtbuddy.ui.theme.DarkMRTPass
 import net.adhikary.mrtbuddy.ui.theme.DarkRapidPass
+import net.adhikary.mrtbuddy.ui.theme.LightMRTPass
 import net.adhikary.mrtbuddy.ui.theme.LightRapidPass
 import net.adhikary.mrtbuddy.utils.TimeUtils
 import org.jetbrains.compose.resources.painterResource
@@ -54,23 +59,24 @@ fun CardItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .height(220.dp)
+            .height(240.dp)
             .clickable { onCardSelected() },
-        elevation = 4.dp,
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
         shape = RoundedCornerShape(24.dp)
     ) {
         Column {
             // Colored stripe at the top
             val isRapidPass = card.idm.startsWith("01 27")
+            val isDarkTheme = isSystemInDarkTheme()
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
                     .background(
                         if (isRapidPass) {
-                            if (MaterialTheme.colors.isLight) LightRapidPass else DarkRapidPass
+                            if (isDarkTheme) DarkRapidPass else LightRapidPass
                         } else {
-                            MaterialTheme.colors.primary
+                            if (isDarkTheme) DarkMRTPass else LightMRTPass
                         }
                     ),
                 contentAlignment = androidx.compose.ui.Alignment.CenterStart
@@ -83,8 +89,8 @@ fun CardItem(
                     Column {
                         Text(
                             text = card.name ?: stringResource(Res.string.unnamedCard),
-                            style = MaterialTheme.typography.h6,
-                            color = MaterialTheme.colors.onPrimary,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = (if (isDarkTheme) Color.Black else Color.White).copy(alpha = 0.9f),
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                         )
                     }
@@ -92,7 +98,7 @@ fun CardItem(
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = "Rename card",
-                            tint = MaterialTheme.colors.onPrimary,
+                            tint = (if (isDarkTheme) Color.Black else Color.White).copy(alpha = 0.9f),
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .size(24.dp)
@@ -101,7 +107,7 @@ fun CardItem(
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete card",
-                            tint = MaterialTheme.colors.onPrimary,
+                            tint = (if (isDarkTheme) Color.Black else Color.White).copy(alpha = 0.9f),
                             modifier = Modifier
                                 .padding(end = 16.dp)
                                 .size(24.dp)
@@ -138,18 +144,18 @@ fun CardItem(
                                         modifier = Modifier
                                             .padding(end = 8.dp)
                                             .size(20.dp),
-                                        tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+                                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )
                                     Column {
                                         Text(
                                             modifier = Modifier.padding(bottom = 2.dp),
                                             text = stringResource(Res.string.balance),
-                                            style = MaterialTheme.typography.caption,
-                                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                                         )
                                         Text(
                                             text = "৳ $balance",
-                                            style = MaterialTheme.typography.body1
+                                            style = MaterialTheme.typography.bodyLarge
                                         )
                                     }
                                 }
@@ -169,14 +175,14 @@ fun CardItem(
                                         .padding(end = 8.dp)
                                         .size(20.dp)
                                         .clickable { isIdVisible = !isIdVisible },
-                                    tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+                                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                 )
                                 Column {
                                     Text(
                                         modifier = Modifier.padding(bottom = 2.dp),
                                         text = stringResource(Res.string.cardId),
-                                        style = MaterialTheme.typography.caption,
-                                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                                     )
                                     Text(
                                         text = if (isIdVisible) card.idm else card.idm.replace(
@@ -184,17 +190,17 @@ fun CardItem(
                                                 "."
                                             ), "*"
                                         ),
-                                        style = MaterialTheme.typography.body1
+                                        style = MaterialTheme.typography.bodyLarge
                                     )
                                 }
                             }
                             val lastScanColor = if (card.lastScanTime != null) {
                                 val currentTime = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
                                 val hoursDifference = (currentTime - card.lastScanTime) / (1000 * 60 * 60)
-                                if (hoursDifference >= 72) MaterialTheme.colors.error
-                                else MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                                if (hoursDifference >= 72) MaterialTheme.colorScheme.error
+                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                             } else {
-                                MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                             }
                             Text(
                                 text = if (card.lastScanTime != null) {
@@ -202,7 +208,7 @@ fun CardItem(
                                 } else {
                                     "${stringResource(Res.string.lastScan)}: Never"
                                 },
-                                style = MaterialTheme.typography.caption,
+                                style = MaterialTheme.typography.bodySmall,
                                 color = lastScanColor
                             )
                         }
@@ -210,9 +216,9 @@ fun CardItem(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = "View transactions",
                             tint = if (isRapidPass) {
-                                if (MaterialTheme.colors.isLight) LightRapidPass else DarkRapidPass
+                                if (isSystemInDarkTheme()) DarkRapidPass else LightRapidPass
                             } else {
-                                MaterialTheme.colors.primary
+                                MaterialTheme.colorScheme.primary
                             },
                             modifier = Modifier.size(24.dp)
                         )

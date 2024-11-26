@@ -7,21 +7,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -48,6 +51,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionListScreen(
     modifier: Modifier = Modifier,
@@ -68,10 +72,7 @@ fun TransactionListScreen(
         Text("Error: ${uiState.error}")
     } else {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .then(modifier),
+            modifier = Modifier.fillMaxSize(),
         ) {
             TopAppBar(
                 title = {
@@ -82,22 +83,24 @@ fun TransactionListScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
                 },
-                backgroundColor = MaterialTheme.colors.surface,
-                elevation = 0.dp
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                ),
+                windowInsets = WindowInsets.statusBars
             )
 
-            Column(
-                modifier = Modifier.padding(24.dp)
-            ) {
-
+            Column {
                 if (uiState.transactions.isEmpty()) {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(24.dp)
+                            .padding(bottom = paddingValues.calculateBottomPadding()),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(
@@ -105,13 +108,13 @@ fun TransactionListScreen(
                         ) {
                             Text(
                                 text = stringResource(Res.string.noTransactionsFound),
-                                style = MaterialTheme.typography.h6,
+                                style = MaterialTheme.typography.titleLarge,
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
                             Text(
                                 text = stringResource(Res.string.transactionsAppearPrompt),
-                                style = MaterialTheme.typography.body1,
-                                color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                 modifier = Modifier.padding(horizontal = 32.dp),
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             )
@@ -119,17 +122,21 @@ fun TransactionListScreen(
                     }
                 } else {
                     LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(),
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(
+                            top = 24.dp,
+                            start = 24.dp,
+                            end = 24.dp,
+                            bottom = 24.dp + paddingValues.calculateBottomPadding()
+                        ),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         items(uiState.transactions) { transaction ->
                             TransactionItem(transaction)
                             if (transaction != uiState.transactions.last()) {
-                                Divider(
+                                HorizontalDivider(
                                     modifier = Modifier.padding(top = 12.dp),
-                                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
                                 )
                             }
                         }
@@ -180,14 +187,14 @@ fun TransactionItem(trxEntity: TransactionEntityWithAmount) {
                         )
                     }"
                 else stringResource(Res.string.balanceUpdate),
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onSurface
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = dateTimeFormatted,
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
         }
         Column(
@@ -196,14 +203,14 @@ fun TransactionItem(trxEntity: TransactionEntityWithAmount) {
             modifier = Modifier.padding(start = 8.dp)
         ) {
             val amountColor = when {
-                trxEntity.amount == null -> MaterialTheme.colors.onSurface
+                trxEntity.amount == null -> MaterialTheme.colorScheme.onSurface
                 trxEntity.amount > 0 -> if (isDarkTheme) DarkPositiveGreen else LightPositiveGreen
                 else -> if (isDarkTheme) DarkNegativeRed else LightNegativeRed
             }
 
             Text(
                 text = amountText,
-                style = MaterialTheme.typography.h5,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = amountColor
             )

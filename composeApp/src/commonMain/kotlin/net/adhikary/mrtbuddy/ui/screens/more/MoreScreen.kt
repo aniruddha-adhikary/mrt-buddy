@@ -8,12 +8,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -78,9 +77,9 @@ fun MoreScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .then(modifier)
             .verticalScroll(rememberScrollState())
-            .padding(16.dp)
-            .then(modifier),
+            .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
         Column {
@@ -152,24 +151,27 @@ fun MoreScreen(
             Text(
                 text = stringResource(Res.string.nonAffiliationDisclaimer),
                 fontSize = 12.sp,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                lineHeight = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 modifier = Modifier.padding(vertical = 8.dp)
             )
 
             Text(
                 text = stringResource(Res.string.readOnlyDisclaimer),
                 fontSize = 12.sp,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                lineHeight = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 modifier = Modifier.padding(vertical = 8.dp)
             )
 
             Text(
                 text = "Copyright © 2024 Aniruddha Adhikary.",
                 fontSize = 12.sp,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                lineHeight = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            }
+        }
     }
 }
 
@@ -178,18 +180,17 @@ private fun SectionHeader(text: String) {
     Text(
         text = text,
         fontSize = 14.sp,
-        color = Color.Gray,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
         modifier = Modifier.padding(vertical = 8.dp)
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun RoundedButton(
     text: String,
     subtitle: String? = null,
     painter: Painter? = null,
-    iconTint: Color = Color.Gray,
+    iconTint: Color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
     onClick: () -> Unit,
     trailing: @Composable (() -> Unit)? = null
 ) {
@@ -198,8 +199,8 @@ private fun RoundedButton(
             .fillMaxWidth()
             .padding(vertical = 4.dp),
         shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colors.primary.copy(alpha = 0.1f),
-        contentColor = MaterialTheme.colors.onSurface,
+        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+        contentColor = MaterialTheme.colorScheme.onSurface,
         onClick = onClick
     ) {
         Row(
@@ -207,7 +208,7 @@ private fun RoundedButton(
                 .padding(16.dp)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = if (subtitle == null) Alignment.CenterVertically else Alignment.Top
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
                 horizontalArrangement = Arrangement.Start,
@@ -228,13 +229,14 @@ private fun RoundedButton(
                     Text(
                         text = text,
                         fontSize = 16.sp,
-                        color = MaterialTheme.colors.onSurface
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     if (subtitle != null) {
                         Text(
                             text = subtitle,
                             fontSize = 14.sp,
-                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                            lineHeight = 18.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                             modifier = Modifier.padding(top = 4.dp)
                         )
                     }

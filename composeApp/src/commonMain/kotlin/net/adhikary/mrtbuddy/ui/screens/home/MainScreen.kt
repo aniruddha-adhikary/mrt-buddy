@@ -8,14 +8,11 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -77,14 +74,12 @@ fun MainScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background),
+            .background(MaterialTheme.colorScheme.background),
         bottomBar = {
-            BottomNavigation(
-                backgroundColor = MaterialTheme.colors.surface,
-                contentColor = MaterialTheme.colors.onSurface,
+            NavigationBar(
                 windowInsets = WindowInsets.navigationBars
             ) {
-                BottomNavigationItem(
+                NavigationBarItem(
                     icon = { CalculatorIcon() },
                     label = { Text(stringResource(Res.string.fare)) },
                     selected = currentScreen == Screen.Calculator,
@@ -97,11 +92,9 @@ fun MainScreen(
                             launchSingleTop = true
                             restoreState = true
                         }
-                    },
-                    selectedContentColor = MaterialTheme.colors.primary,
-                    unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                    }
                 )
-                BottomNavigationItem(
+                NavigationBarItem(
                     icon = { CardIcon() },
                     label = { Text(stringResource(Res.string.balance)) },
                     selected = currentScreen == Screen.Home,
@@ -114,11 +107,9 @@ fun MainScreen(
                             launchSingleTop = true
                             restoreState = true
                         }
-                    },
-                    selectedContentColor = MaterialTheme.colors.primary,
-                    unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                    }
                 )
-                BottomNavigationItem(
+                NavigationBarItem(
                     icon = { HistoryIcon() },
                     label = { Text(stringResource(Res.string.historyTab)) },
                     selected = currentScreen == Screen.History || currentScreen == Screen.TransactionList,
@@ -131,11 +122,9 @@ fun MainScreen(
                             launchSingleTop = true
                             restoreState = true
                         }
-                    },
-                    selectedContentColor = MaterialTheme.colors.primary,
-                    unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                    }
                 )
-                BottomNavigationItem(
+                NavigationBarItem(
                     icon = { AppsIcon() },
                     label = { Text(stringResource(Res.string.more)) },
                     selected = currentScreen == Screen.More,
@@ -148,9 +137,7 @@ fun MainScreen(
                             launchSingleTop = true
                             restoreState = true
                         }
-                    },
-                    selectedContentColor = MaterialTheme.colors.primary,
-                    unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                    }
                 )
             }
         }
@@ -165,8 +152,7 @@ fun MainScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
-                        .padding(16.dp)
-                        .statusBarsPadding(),
+                        .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -184,7 +170,7 @@ fun MainScreen(
             composable(route = Screen.Calculator.name) {
                 FareCalculatorScreen(
                     cardState = uiState.cardState,
-                    modifier = Modifier.statusBarsPadding()
+                    modifier = Modifier.padding(paddingValues)
                 )
             }
 
@@ -193,9 +179,7 @@ fun MainScreen(
                     onNavigateToLicenses = {
                         navController.navigate(Screen.Licenses.name)
                     },
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .statusBarsPadding()
+                    modifier = Modifier.padding(paddingValues)
                 )
             }
 
@@ -205,7 +189,7 @@ fun MainScreen(
                         selectedCardIdm = cardIdm
                         navController.navigate(Screen.TransactionList.name)
                     },
-                    modifier = Modifier.statusBarsPadding()
+                    modifier = Modifier.padding(paddingValues)
                 )
             }
 
@@ -216,8 +200,7 @@ fun MainScreen(
                         onBack = {
                             navController.navigateUp()
                         },
-                        paddingValues = paddingValues,
-                        modifier = Modifier.statusBarsPadding()
+                        paddingValues = paddingValues
                     )
                 }
             }
