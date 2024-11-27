@@ -12,6 +12,7 @@ import net.adhikary.mrtbuddy.ui.screens.home.MainScreenAction
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenState
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenViewModel
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenViewModel
+import net.adhikary.mrtbuddy.ui.screens.stationmap.StationMapViewModel
 import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -69,6 +70,10 @@ val appModule = module {
         ).apply {
             onAction(MainScreenAction.OnInit)
         }
+    }
+
+    factory {
+        StationMapViewModel()
     }
 }
 

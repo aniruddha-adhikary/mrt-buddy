@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.2"
+agp = "8.6.1"
 android-compileSdk = "34"
 android-minSdk = "24"
 android-targetSdk = "34"
@@ -28,6 +28,8 @@ multiplatformSettingsVersion = "1.2.0"
 navigationCompose = "2.8.0-alpha10"
 sqlite = "2.5.0-SNAPSHOT"
 napier = "2.7.1"
+mapcomposeMp = "0.9.3"
+ktor = "3.0.1"
 
 [libraries]
 compose-webview-multiplatform = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "composeWebviewMultiplatform" }
@@ -58,6 +60,10 @@ multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", vers
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
+mapcompose-mp = { module = "ovh.plrapps:mapcompose-mp", version.ref = "mapcomposeMp" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

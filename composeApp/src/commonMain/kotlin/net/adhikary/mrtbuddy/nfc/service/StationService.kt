@@ -6,6 +6,7 @@ import mrtbuddy.composeapp.generated.resources.agargaon
 import mrtbuddy.composeapp.generated.resources.bangladeshSecretariat
 import mrtbuddy.composeapp.generated.resources.bijoySarani
 import mrtbuddy.composeapp.generated.resources.dhakaUniversity
+import mrtbuddy.composeapp.generated.resources.diabari
 import mrtbuddy.composeapp.generated.resources.farmgate
 import mrtbuddy.composeapp.generated.resources.kamalapur
 import mrtbuddy.composeapp.generated.resources.karwanBazar
@@ -66,6 +67,8 @@ object StationService {
             "Uttara South" -> stringResource(Res.string.uttaraSouth)
             "Uttara Center" -> stringResource(Res.string.uttaraCenter)
             "Uttara North" -> stringResource(Res.string.uttaraNorth)
+            "Diabari" -> stringResource(Res.string.diabari)
+            "Dhaka Metro Rail Depot, Diabari" -> stringResource(Res.string.diabari)
             else -> "" // Default to English if no match is found
         }
     }
