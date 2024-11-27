@@ -159,6 +159,7 @@ fun MainScreen(
                     BalanceCard(
                         cardState = uiState.cardState,
                         cardName = uiState.cardName,
+                        cardIdm = uiState.cardIdm,
                     )
 
                     if (hasTransactions) {

@@ -56,12 +56,18 @@ import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.translateNumber
 import net.adhikary.mrtbuddy.ui.theme.Alert_yellow_D
 import net.adhikary.mrtbuddy.ui.theme.Alert_yellow_L
+import net.adhikary.mrtbuddy.ui.theme.DarkMRTPass
+import net.adhikary.mrtbuddy.ui.theme.DarkRapidPass
+import net.adhikary.mrtbuddy.ui.theme.LightMRTPass
+import net.adhikary.mrtbuddy.ui.theme.LightRapidPass
+import net.adhikary.mrtbuddy.utils.isRapidPassIdm
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun BalanceCard(
     cardState: CardState,
+    cardIdm: String? = null,
     cardName: String? = null,
     modifier: Modifier = Modifier
 ) {
@@ -75,11 +81,19 @@ fun BalanceCard(
         Box(Modifier.fillMaxSize()) {
             // Card name at the top with rounded background only in Balance state
             if (!cardName.isNullOrBlank() && cardState is CardState.Balance) {
+                val isRapidPass = cardIdm?.let { isRapidPassIdm(it) } ?: false
+                val isDarkTheme = isSystemInDarkTheme()
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .background(
+                            if (isRapidPass) {
+                                if (isDarkTheme) DarkRapidPass else LightRapidPass
+                            } else {
+                                if (isDarkTheme) DarkMRTPass else LightMRTPass
+                            }
+                        )
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                 ) {
                     Text(
                         text = cardName,

@@ -44,6 +44,7 @@ import net.adhikary.mrtbuddy.ui.theme.DarkRapidPass
 import net.adhikary.mrtbuddy.ui.theme.LightMRTPass
 import net.adhikary.mrtbuddy.ui.theme.LightRapidPass
 import net.adhikary.mrtbuddy.utils.TimeUtils
+import net.adhikary.mrtbuddy.utils.isRapidPassIdm
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -66,14 +67,13 @@ fun CardItem(
     ) {
         Column {
             // Colored stripe at the top
-            val isRapidPass = card.idm.startsWith("01 27")
             val isDarkTheme = isSystemInDarkTheme()
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
                     .background(
-                        if (isRapidPass) {
+                        if (isRapidPassIdm(card.idm)) {
                             if (isDarkTheme) DarkRapidPass else LightRapidPass
                         } else {
                             if (isDarkTheme) DarkMRTPass else LightMRTPass
@@ -215,7 +215,7 @@ fun CardItem(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = "View transactions",
-                            tint = if (isRapidPass) {
+                            tint = if (isRapidPassIdm(card.idm)) {
                                 if (isSystemInDarkTheme()) DarkRapidPass else LightRapidPass
                             } else {
                                 MaterialTheme.colorScheme.primary
