@@ -38,6 +38,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.koin.android)
+            implementation(libs.ktor.client.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -64,6 +65,12 @@ kotlin {
 
             api(libs.compose.webview.multiplatform)
             implementation(libs.multiplatform.markdown.renderer)
+
+            implementation(libs.mapcompose.mp)
+            implementation(libs.ktor.client.core)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

@@ -37,6 +37,7 @@
     <string name="uttaraSouth">উত্তরা দক্ষিণ</string>
     <string name="uttaraCenter">উত্তরা কেন্দ্র</string>
     <string name="uttaraNorth">উত্তরা উত্তর</string>
+    <string name="diabari">ঢাকা মেট্রোরেল ডিপো, দিয়াবাড়ী</string>
 
     <string name="jan">জানুয়ারি</string>
     <string name="feb">ফেব্রুয়ারি</string>
@@ -97,6 +98,11 @@
     <string name="settings">সেটিংস</string>
     <string name="autoSaveCardDetails">স্বয়ংক্রিয় কার্ড সংরক্ষণ</string>
     <string name="autoSaveCardDetailsDescription">স্ক্যান করার সময় স্বয়ংক্রিয়ভাবে কার্ডের তথ্য সংরক্ষণ করুন</string>
+
+    <!-- Others screen -->
+    <string name="others">অন্যান্য</string>
+    <string name="station">স্টেশন</string>
+    <string name="stationMap">মেট্রো স্টেশন ম্যাপ</string>
 
     <!-- Time ago strings -->
     <string name="justNow">এইমাত্র</string>
