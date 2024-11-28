@@ -36,10 +36,13 @@ import mrtbuddy.composeapp.generated.resources.language
 import mrtbuddy.composeapp.generated.resources.license
 import mrtbuddy.composeapp.generated.resources.nonAffiliationDisclaimer
 import mrtbuddy.composeapp.generated.resources.openSourceLicenses
+import mrtbuddy.composeapp.generated.resources.others
 import mrtbuddy.composeapp.generated.resources.policy
 import mrtbuddy.composeapp.generated.resources.privacyPolicy
 import mrtbuddy.composeapp.generated.resources.readOnlyDisclaimer
 import mrtbuddy.composeapp.generated.resources.settings
+import mrtbuddy.composeapp.generated.resources.stationMap
+import mrtbuddy.composeapp.generated.resources.station_map
 import net.adhikary.mrtbuddy.Language
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenAction
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenEvent
@@ -50,6 +53,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MoreScreen(
+    onNavigateToStationMap: () -> Unit,
     onNavigateToLicenses: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MoreScreenViewModel = koinViewModel()
@@ -66,6 +70,9 @@ fun MoreScreen(
             when (event) {
                 is MoreScreenEvent.Error -> {
                     // Handle error event (e.g., show a Toast or Snackbar)
+                }
+                is MoreScreenEvent.NavigateTooStationMap -> {
+                    onNavigateToStationMap()
                 }
                 is MoreScreenEvent.NavigateToLicenses -> {
                     onNavigateToLicenses()
@@ -113,6 +120,15 @@ fun MoreScreen(
                         text = if (uiState.currentLanguage == Language.English.isoFormat) "English" else "বাংলা",
                         modifier = Modifier.padding(end = 8.dp)
                     )
+                }
+            )
+
+            SectionHeader(text = stringResource(Res.string.others))
+            RoundedButton(
+                text = stringResource(Res.string.stationMap),
+                painter = painterResource(Res.drawable.station_map),
+                onClick = {
+                    viewModel.onAction(MoreScreenAction.StationMap)
                 }
             )
 
