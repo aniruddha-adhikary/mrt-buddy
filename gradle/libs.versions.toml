@@ -28,6 +28,8 @@ multiplatformSettingsVersion = "1.2.0"
 navigationCompose = "2.8.0-alpha10"
 sqlite = "2.5.0-SNAPSHOT"
 napier = "2.7.1"
+coilCompose = "3.0.4"
+zoomimageComposeCoil3 = "1.1.0-rc01"
 
 [libraries]
 compose-webview-multiplatform = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "composeWebviewMultiplatform" }
@@ -58,6 +60,8 @@ multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", vers
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+zoomimage-compose-coil3 = { module = "io.github.panpf.zoomimage:zoomimage-compose-coil3", version.ref = "zoomimageComposeCoil3" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
