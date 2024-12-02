@@ -82,9 +82,14 @@ class MoreScreenViewModel(
                         settingsRepository.setDarkMode(action.enabled)
                         _state.value = _state.value.copy(darkModeEnabled = action.enabled)
                     } catch (e: Exception) {
-                        _events.send(MoreScreenEvent.Error(e.message ?: "Failed to enable dark mode"))
+                        _events.send(
+                            MoreScreenEvent.Error(
+                                e.message ?: "Failed to enable dark mode"
+                            )
+                        )
                     }
                 }
+            }
 
 
             is MoreScreenAction.StationMap -> {
