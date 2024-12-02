@@ -41,7 +41,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(compose.runtime)
-            implementation(compose.foundation)
+
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
@@ -130,6 +130,7 @@ android {
 
 
 dependencies {
+    implementation(libs.androidx.foundation.layout.android)
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
     add("kspIosX64", libs.androidx.room.compiler)
