@@ -106,6 +106,21 @@ fun MoreScreen(
                     )
                 }
             )
+
+            RoundedButton(
+                text =  stringResource(Res.string.enableDarkMode),
+                subtitle = stringResource(Res.string.enableDarkModeDescription),
+                onClick = { },
+                trailing = {
+                    Switch(
+                        checked = uiState.darkModeEnabled,
+                        onCheckedChange = { enabled ->
+                            viewModel.onAction(MoreScreenAction.SetDarkMode(enabled))
+
+                        }
+                    )
+                }
+            )
             
             RoundedButton(
                 text = stringResource(Res.string.language),
@@ -124,20 +139,7 @@ fun MoreScreen(
                     )
                 }
             )
-            RoundedButton(
-                text =  stringResource(Res.string.enableDarkMode),
-                subtitle = stringResource(Res.string.enableDarkModeDescription),
-                onClick = { },
-                trailing = {
-                    Switch(
-                        checked = uiState.darkModeEnabled,
-                        onCheckedChange = { enabled ->
-                            viewModel.onAction(MoreScreenAction.SetDarkMode(enabled))
 
-                        }
-                    )
-                }
-            )
 
             SectionHeader(text = stringResource(Res.string.others))
             RoundedButton(

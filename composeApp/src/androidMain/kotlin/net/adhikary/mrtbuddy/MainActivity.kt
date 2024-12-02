@@ -20,16 +20,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
-                scrim = Color.TRANSPARENT,
-                darkScrim = Color.TRANSPARENT
-            ),
-//            navigationBarStyle = SystemBarStyle.light(
-//                scrim = Color.TRANSPARENT,
-//                darkScrim = Color.TRANSPARENT
-//            )
-        )
+        enableEdgeToEdge()
 
         // TODO will be removed once code structure and dependancy injection is intruduced
 
@@ -40,6 +31,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 @Preview
 @Composable
