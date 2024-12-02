@@ -12,6 +12,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import io.github.aakira.napier.Napier
 
 class MainActivity : ComponentActivity() {
@@ -27,14 +29,28 @@ class MainActivity : ComponentActivity() {
         Napier.d("App Running.....")
 
         setContent {
-            App(dynamicColor = true)
+
+            App(
+                statusBarStyle = { mode ->
+                    setStatusBarStyle(this, mode)
+                },
+                dynamicColor = true
+            )
         }
     }
+}
+
+private fun setStatusBarStyle(activity: ComponentActivity, isDarkMode: Boolean) {
+    val window = activity.window
+    WindowCompat.setDecorFitsSystemWindows(window, false)
+
+    val insetsController = WindowInsetsControllerCompat(window, window.decorView)
+    insetsController.isAppearanceLightStatusBars = !isDarkMode // true for light content, false for dark
 }
 
 
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App(dynamicColor = true)
+    App(statusBarStyle = {}, dynamicColor = true)
 }

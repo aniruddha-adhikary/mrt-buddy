@@ -29,7 +29,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 @Preview
 fun App(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    statusBarStyle: (Boolean) -> Unit,
     dynamicColor: Boolean
 ) {
     val mainVm = koinViewModel<MainScreenViewModel>()
@@ -85,9 +85,9 @@ fun App(
         darkTheme = darkModeState,
         dynamicColor = dynamicColor
     ) {
-
         val state: MainScreenState by mainVm.state.collectAsState()
         darkModeState = state.darkModeEnabled
+        statusBarStyle(darkModeState)
 
         LocalizedApp(
             language = state.currentLanguage
