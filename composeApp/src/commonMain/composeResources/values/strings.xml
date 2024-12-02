@@ -37,6 +37,7 @@
     <string name="uttaraSouth">Uttara South</string>
     <string name="uttaraCenter">Uttara Center</string>
     <string name="uttaraNorth">Uttara North</string>
+    <string name="diabari">Dhaka Metro Rail Depot, Diabari</string>
 
     <string name="jan">Jan</string>
     <string name="feb">Feb</string>
@@ -99,6 +100,11 @@
     <string name="autoSaveCardDetailsDescription">Automatically save card details when scanning</string>
     <string name="enableDarkMode">Dark Mode</string>
     <string name="enableDarkModeDescription">Enable or disable dark mode</string>
+
+    <!-- Others screen -->
+    <string name="others">Others</string>
+    <string name="station">Station</string>
+    <string name="stationMap">Metro Station Map</string>
 
     <!-- Time ago strings -->
     <string name="justNow">Just now</string>

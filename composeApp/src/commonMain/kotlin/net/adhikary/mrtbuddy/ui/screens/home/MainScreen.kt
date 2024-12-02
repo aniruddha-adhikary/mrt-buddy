@@ -6,15 +6,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,8 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -36,6 +34,7 @@ import mrtbuddy.composeapp.generated.resources.fare
 import mrtbuddy.composeapp.generated.resources.historyTab
 import mrtbuddy.composeapp.generated.resources.more
 import mrtbuddy.composeapp.generated.resources.openSourceLicenses
+import mrtbuddy.composeapp.generated.resources.stationMap
 import mrtbuddy.composeapp.generated.resources.transactions
 import net.adhikary.mrtbuddy.ui.components.AppsIcon
 import net.adhikary.mrtbuddy.ui.components.BalanceCard
@@ -46,6 +45,7 @@ import net.adhikary.mrtbuddy.ui.components.TransactionHistoryList
 import net.adhikary.mrtbuddy.ui.screens.farecalculator.FareCalculatorScreen
 import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreen
 import net.adhikary.mrtbuddy.ui.screens.licenses.OpenSourceLicensesScreen
+import net.adhikary.mrtbuddy.ui.screens.stationmap.StationMapScreen
 import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListScreen
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -57,6 +57,7 @@ enum class Screen(val title: StringResource) {
     More(title = Res.string.more),
     History(title = Res.string.historyTab),
     TransactionList(title = Res.string.transactions),
+    StationMap(title = Res.string.stationMap),
     Licenses(title = Res.string.openSourceLicenses)
 }
 
@@ -76,81 +77,73 @@ fun MainScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background)
-            .windowInsetsPadding(WindowInsets.safeDrawing),
+            .background(MaterialTheme.colorScheme.background),
         bottomBar = {
-            BottomNavigation(
-                backgroundColor = MaterialTheme.colors.surface,
-                contentColor = MaterialTheme.colors.onSurface
-            ) {
-                BottomNavigationItem(
-                    icon = { CalculatorIcon() },
-                    label = { Text(stringResource(Res.string.fare)) },
-                    selected = currentScreen == Screen.Calculator,
-                    onClick = {
-                        navController.navigate(Screen.Calculator.name) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                                inclusive = false
+            if (currentScreen != Screen.StationMap) {
+                NavigationBar(
+                    windowInsets = WindowInsets.navigationBars
+                ) {
+                    NavigationBarItem(
+                        icon = { CalculatorIcon() },
+                        label = { Text(stringResource(Res.string.fare)) },
+                        selected = currentScreen == Screen.Calculator,
+                        onClick = {
+                            navController.navigate(Screen.Calculator.name) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                    inclusive = false
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
-                    },
-                    selectedContentColor = MaterialTheme.colors.primary,
-                    unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
-                )
-                BottomNavigationItem(
-                    icon = { CardIcon() },
-                    label = { Text(stringResource(Res.string.balance)) },
-                    selected = currentScreen == Screen.Home,
-                    onClick = {
-                        navController.navigate(Screen.Home.name) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                                inclusive = false
+                    )
+                    NavigationBarItem(
+                        icon = { CardIcon() },
+                        label = { Text(stringResource(Res.string.balance)) },
+                        selected = currentScreen == Screen.Home,
+                        onClick = {
+                            navController.navigate(Screen.Home.name) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                    inclusive = false
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
-                    },
-                    selectedContentColor = MaterialTheme.colors.primary,
-                    unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
-                )
-                BottomNavigationItem(
-                    icon = { HistoryIcon() },
-                    label = { Text(stringResource(Res.string.historyTab)) },
-                    selected = currentScreen == Screen.History || currentScreen == Screen.TransactionList,
-                    onClick = {
-                        navController.navigate(Screen.History.name) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                                inclusive = false
+                    )
+                    NavigationBarItem(
+                        icon = { HistoryIcon() },
+                        label = { Text(stringResource(Res.string.historyTab)) },
+                        selected = currentScreen == Screen.History || currentScreen == Screen.TransactionList,
+                        onClick = {
+                            navController.navigate(Screen.History.name) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                    inclusive = false
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
-                    },
-                    selectedContentColor = MaterialTheme.colors.primary,
-                    unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
-                )
-                BottomNavigationItem(
-                    icon = { AppsIcon() },
-                    label = { Text(stringResource(Res.string.more)) },
-                    selected = currentScreen == Screen.More,
-                    onClick = {
-                        navController.navigate(Screen.More.name) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                                inclusive = false
+                    )
+                    NavigationBarItem(
+                        icon = { AppsIcon() },
+                        label = { Text(stringResource(Res.string.more)) },
+                        selected = currentScreen == Screen.More,
+                        onClick = {
+                            navController.navigate(Screen.More.name) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                    inclusive = false
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
-                    },
-                    selectedContentColor = MaterialTheme.colors.primary,
-                    unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
-                )
+                    )
+                }
             }
         }
     ) { paddingValues ->
@@ -171,6 +164,7 @@ fun MainScreen(
                     BalanceCard(
                         cardState = uiState.cardState,
                         cardName = uiState.cardName,
+                        cardIdm = uiState.cardIdm,
                     )
 
                     if (hasTransactions) {
@@ -181,12 +175,16 @@ fun MainScreen(
 
             composable(route = Screen.Calculator.name) {
                 FareCalculatorScreen(
-                    cardState = uiState.cardState
+                    cardState = uiState.cardState,
+                    modifier = Modifier.padding(paddingValues)
                 )
             }
 
             composable(route = Screen.More.name) {
                 MoreScreen(
+                    onNavigateToStationMap = {
+                        navController.navigate(Screen.StationMap.name)
+                    },
                     onNavigateToLicenses = {
                         navController.navigate(Screen.Licenses.name)
                     },
@@ -199,7 +197,8 @@ fun MainScreen(
                     onCardSelected = { cardIdm ->
                         selectedCardIdm = cardIdm
                         navController.navigate(Screen.TransactionList.name)
-                    }
+                    },
+                    modifier = Modifier.padding(paddingValues)
                 )
             }
 
@@ -213,6 +212,14 @@ fun MainScreen(
                         paddingValues = paddingValues
                     )
                 }
+            }
+
+            composable(route = Screen.StationMap.name) {
+                StationMapScreen(
+                    onBack = {
+                        navController.navigateUp()
+                    },
+                )
             }
 
             composable(route = Screen.Licenses.name) {

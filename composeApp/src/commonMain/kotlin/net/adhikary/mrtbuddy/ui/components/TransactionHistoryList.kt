@@ -1,11 +1,21 @@
 package net.adhikary.mrtbuddy.ui.components
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,50 +40,49 @@ import org.jetbrains.compose.resources.stringResource
 fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
     Card(
         modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
         shape = RoundedCornerShape(24.dp)
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .padding(24.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(
-                text =  stringResource(Res.string.recentJourneys),
-                style = MaterialTheme.typography.h6,
-                fontWeight = FontWeight.SemiBold
-            )
-            Divider(
-                modifier = Modifier.padding(top = 12.dp, bottom = 16.dp),
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
-            )
+            item {
+                Text(
+                    text = stringResource(Res.string.recentJourneys),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(top = 12.dp, bottom = 16.dp),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                )
+            }
+            
+            val validTransactions = transactions.filter { it.transaction.timestamp.year >= 2015 }
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                val validTransactions = transactions.filter { it.transaction.timestamp.year >= 2015 }
+            items(validTransactions) { transactionWithAmount ->
+                TransactionItem(
+                    type = if (transactionWithAmount.amount != null && transactionWithAmount.amount > 0)
+                        TransactionType.BalanceUpdate
+                    else
+                        TransactionType.Commute,
+                    date = transactionWithAmount.transaction.timestamp,
+                    fromStation = transactionWithAmount.transaction.fromStation,
+                    toStation = transactionWithAmount.transaction.toStation,
+                    balance = "৳ ${transactionWithAmount.transaction.balance}",
+                    amount = transactionWithAmount.amount?.let { "৳ ${translateNumber(it)}" }
+                        ?: "N/A",
+                    amountValue = transactionWithAmount.amount
+                )
 
-                items(validTransactions) { transactionWithAmount ->
-                    TransactionItem(
-                        type = if (transactionWithAmount.amount != null && transactionWithAmount.amount > 0) 
-                            TransactionType.BalanceUpdate 
-                        else 
-                            TransactionType.Commute,
-                        date = transactionWithAmount.transaction.timestamp,
-                        fromStation = transactionWithAmount.transaction.fromStation,
-                        toStation = transactionWithAmount.transaction.toStation,
-                        balance = "৳ ${transactionWithAmount.transaction.balance}",
-                        amount = transactionWithAmount.amount?.let { "৳ ${translateNumber(it)}" } ?: "N/A",
-                        amountValue = transactionWithAmount.amount
+                if (transactionWithAmount != validTransactions.last()) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(top = 12.dp),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
                     )
-
-                    if (transactionWithAmount != validTransactions.last()) {
-                        Divider(
-                            modifier = Modifier.padding(top = 12.dp),
-                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
-                        )
-                    }
                 }
             }
         }
@@ -106,15 +115,15 @@ fun TransactionItem(
             Text(
                 text = if (type == TransactionType.Commute)
                     "${StationService.translate(fromStation)} → ${StationService.translate(toStation)}"
-                    else stringResource(Res.string.balanceUpdate),
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onSurface
+                else stringResource(Res.string.balanceUpdate),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = TimestampService.formatDateTime(date),
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
         }
         Column(
@@ -123,14 +132,14 @@ fun TransactionItem(
             modifier = Modifier.padding(start = 8.dp)
         ) {
             val amountColor = when {
-                amountValue == null -> MaterialTheme.colors.onSurface
+                amountValue == null -> MaterialTheme.colorScheme.onSurface
                 amountValue > 0 -> if (isDarkTheme) DarkPositiveGreen else LightPositiveGreen
                 else -> if (isDarkTheme) DarkNegativeRed else LightNegativeRed
             }
-            
+
             Text(
                 text = amount,
-                style = MaterialTheme.typography.h5,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = amountColor
             )

@@ -1,6 +1,5 @@
 package net.adhikary.mrtbuddy.repository
 
-import io.github.aakira.napier.Napier
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import net.adhikary.mrtbuddy.dao.CardDao
@@ -11,8 +10,7 @@ import net.adhikary.mrtbuddy.data.ScanEntity
 import net.adhikary.mrtbuddy.data.TransactionEntity
 import net.adhikary.mrtbuddy.data.TransactionEntityWithAmount
 import net.adhikary.mrtbuddy.model.CardReadResult
-import net.adhikary.mrtbuddy.model.Transaction
-import net.adhikary.mrtbuddy.model.TransactionWithAmount
+import net.adhikary.mrtbuddy.nfc.service.TimestampService
 
 class TransactionRepository(
     private val cardDao: CardDao,
@@ -30,7 +28,10 @@ class TransactionRepository(
         val scanId = scanDao.insertScan(scanEntity)
 
         val newTransactionEntities = result.transactions.map { txn ->
-            val dateTime = txn.timestamp.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+            val dateTime = txn.timestamp
+                .toInstant(TimestampService.getDefaultTimezone())
+                .toEpochMilliseconds()
+
             TransactionEntity(
                 cardIdm = result.idm,
                 scanId = scanId,

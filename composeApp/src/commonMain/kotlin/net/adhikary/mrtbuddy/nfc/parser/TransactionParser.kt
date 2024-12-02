@@ -5,11 +5,7 @@ import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.nfc.service.StationService
 import net.adhikary.mrtbuddy.nfc.service.TimestampService
 
-class TransactionParser(
-    private val byteParser: ByteParser,
-    private val timestampService: TimestampService,
-    private val stationService: StationService
-) {
+object TransactionParser {
     private fun isValidTransaction(transaction: Transaction): Boolean {
         val cutoffDate = LocalDateTime(2020, 1, 1, 0, 0)
         return transaction.timestamp > cutoffDate;
@@ -18,7 +14,7 @@ class TransactionParser(
     fun parseTransactionResponse(response: ByteArray): List<Transaction> {
         val transactions = mutableListOf<Transaction>()
 
-//        Log.d("NFC", "Response: ${byteParser.toHexString(response)}")
+//        Log.d("NFC", "Response: ${ByteParser.toHexString(response)}")
 
         if (response.size < 13) {
 //            Log.e("NFC", "Response too short")
@@ -60,22 +56,22 @@ class TransactionParser(
         }
 
         val fixedHeader = block.copyOfRange(0, 4)
-        val fixedHeaderStr = byteParser.toHexString(fixedHeader)
+        val fixedHeaderStr = ByteParser.toHexString(fixedHeader)
 
-        val timestampValue = byteParser.extractInt24BigEndian(block, 4)
+        val timestampValue = ByteParser.extractInt24BigEndian(block, 4)
         val transactionTypeBytes = block.copyOfRange(6, 8)
-        val transactionType = byteParser.toHexString(transactionTypeBytes)
+        val transactionType = ByteParser.toHexString(transactionTypeBytes)
 
-        val fromStationCode = byteParser.extractByte(block, 8)
-        val toStationCode = byteParser.extractByte(block, 10)
-        val balance = byteParser.extractInt24(block, 11)
+        val fromStationCode = ByteParser.extractByte(block, 8)
+        val toStationCode = ByteParser.extractByte(block, 10)
+        val balance = ByteParser.extractInt24(block, 11)
 
         val trailingBytes = block.copyOfRange(14, 16)
-        val trailing = byteParser.toHexString(trailingBytes)
+        val trailing = ByteParser.toHexString(trailingBytes)
 
-        val timestamp = timestampService.decodeTimestamp(timestampValue)
-        val fromStation = stationService.getStationName(fromStationCode)
-        val toStation = stationService.getStationName(toStationCode)
+        val timestamp = TimestampService.decodeTimestamp(timestampValue)
+        val fromStation = StationService.getStationName(fromStationCode)
+        val toStation = StationService.getStationName(toStationCode)
 
         return Transaction(
             fixedHeader = fixedHeaderStr,

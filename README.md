@@ -8,8 +8,8 @@
     <a href="https://apps.apple.com/us/app/mrt-buddy/id6737849667">
         <img src="https://i.postimg.cc/7ZkzYWg2/Download-on-the-App-Store-Badge-svg.png" width="200" />
     </a>
-    <a href="https://github.com/aniruddha-adhikary/mrt-buddy/releases/latest/download/app-release.apk">
-        <img src="https://i.postimg.cc/j2fGv53C/Download-APK-1.png" width="200" height="60" />
+    <a href="https://play.google.com/store/apps/details?id=net.adhikary.mrtbuddy">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/2560px-Google_Play_Store_badge_EN.svg.png" width="200" height="60" />
     </a>
 </div>
 
@@ -22,7 +22,7 @@ MRT Buddy is an unofficial community-driven Android app designed to check the ba
 
 ### Key Features
 
-* Reads the last 10 transactions from the RapidPass / MRT Card, which is a FeliCa Card.
+* View and store the balance and last 19 transactions directly on your device from the RapidPass / MRT Card, which is a FeliCa Card.
 * No API connectivity required.
 * Limited to 10 transactions; for more, an official solution from DMTCL is necessary.
 

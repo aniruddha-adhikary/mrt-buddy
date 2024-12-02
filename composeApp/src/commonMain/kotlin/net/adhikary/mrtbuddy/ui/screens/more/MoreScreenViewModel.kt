@@ -56,11 +56,13 @@ class MoreScreenViewModel(
                     }
                 }
             }
+
             is MoreScreenAction.OpenLicenses -> {
                 viewModelScope.launch {
                     _events.send(MoreScreenEvent.NavigateToLicenses)
                 }
             }
+
             is MoreScreenAction.SetLanguage -> {
                 viewModelScope.launch {
                     try {
@@ -73,6 +75,7 @@ class MoreScreenViewModel(
                 }
             }
 
+
             is MoreScreenAction.SetDarkMode -> {
                 viewModelScope.launch {
                     try {
@@ -81,6 +84,12 @@ class MoreScreenViewModel(
                     } catch (e: Exception) {
                         _events.send(MoreScreenEvent.Error(e.message ?: "Failed to enable dark mode"))
                     }
+                }
+
+
+            is MoreScreenAction.StationMap -> {
+                viewModelScope.launch {
+                    _events.send(MoreScreenEvent.NavigateTooStationMap)
                 }
 
             }
