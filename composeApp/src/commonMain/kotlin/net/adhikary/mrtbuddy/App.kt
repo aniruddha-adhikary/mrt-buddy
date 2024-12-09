@@ -2,9 +2,16 @@ package net.adhikary.mrtbuddy
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.managers.RescanManager
@@ -22,12 +29,18 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 @Preview
 fun App(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    statusBarStyle: @Composable (Boolean) -> Unit,
     dynamicColor: Boolean
 ) {
     val mainVm = koinViewModel<MainScreenViewModel>()
     val scope = rememberCoroutineScope()
     val nfcManager = getNFCManager()
+
+
+    var darkModeState by rememberSaveable{
+        mutableStateOf(mainVm.state.value.darkModeEnabled)
+    }
+
 
 
     mainVm.events.observeAsActions { event ->
@@ -62,12 +75,19 @@ fun App(
 
 
     nfcManager.startScan()
+//     MRTBuddyTheme(
+//         darkTheme = darkModeState
+//     ) {
+
+
 
     MRTBuddyTheme(
-        darkTheme = darkTheme,
+        darkTheme = darkModeState,
         dynamicColor = dynamicColor
     ) {
         val state: MainScreenState by mainVm.state.collectAsState()
+        darkModeState = state.darkModeEnabled
+        statusBarStyle(darkModeState)
 
         LocalizedApp(
             language = state.currentLanguage

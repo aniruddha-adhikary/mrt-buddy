@@ -28,6 +28,7 @@ class MainScreenViewModel(
     private var autoSaveEnabled: Boolean = true
 
     private val _state: MutableStateFlow<MainScreenState> = MutableStateFlow(initialState)
+    private val _darkModeState: MutableStateFlow<Boolean> = MutableStateFlow(true)
 
     init {
         viewModelScope.launch {
@@ -38,6 +39,11 @@ class MainScreenViewModel(
         viewModelScope.launch {
             settingsRepository.currentLanguage.collect { language ->
                 _state.update { it.copy(currentLanguage = language) }
+            }
+        }
+        viewModelScope.launch {
+            settingsRepository.darkModeEnabled.collect { darkMode ->
+                _state.update { it.copy(darkModeEnabled = darkMode) }
             }
         }
     }
