@@ -29,7 +29,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 @Preview
 fun App(
-    statusBarStyle: (Boolean) -> Unit,
+    statusBarStyle: @Composable (Boolean) -> Unit,
     dynamicColor: Boolean
 ) {
     val mainVm = koinViewModel<MainScreenViewModel>()
