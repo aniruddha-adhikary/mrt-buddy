@@ -1,0 +1,6 @@
+- **Introduced Station Map:** Easily navigate with the new interactive station map feature.
+- **Enhanced User Interface:** Updated to Material3 components with new color themes for a modern look.
+- **Improved Fare Calculations:** More accurate fare computations for round trips and specific routes like Shewrapara to Kamplapur.
+- **Optimized Display Modes:** Enhanced edge-to-edge display for a seamless viewing experience.
+- **Fixed Time Zone Issues:** Resolved timestamp discrepancies related to time zone changes.
+- **Added Google Play Store Link:** Direct access to our app on the Google Play Store.
