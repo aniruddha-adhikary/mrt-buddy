@@ -78,7 +78,7 @@ object FareCalculator {
         // Shewrapara (7)
         Pair(7 to 7, 0), Pair(7 to 8, 20), Pair(7 to 9, 20), Pair(7 to 10, 20),
         Pair(7 to 11, 30), Pair(7 to 12, 40), Pair(7 to 13, 40), Pair(7 to 14, 50),
-        Pair(7 to 15, 50), Pair(7 to 16, 50),
+        Pair(7 to 15, 50), Pair(7 to 16, 60),
 
         // Agargaon (8)
         Pair(8 to 8, 0), Pair(8 to 9, 20), Pair(8 to 10, 20), Pair(8 to 11, 20),
