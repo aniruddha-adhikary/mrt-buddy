@@ -30,6 +30,8 @@ import mrtbuddy.composeapp.generated.resources.aboutHeader
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetails
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetailsDescription
 import mrtbuddy.composeapp.generated.resources.contributors
+import mrtbuddy.composeapp.generated.resources.enableDarkMode
+import mrtbuddy.composeapp.generated.resources.enableDarkModeDescription
 import mrtbuddy.composeapp.generated.resources.help
 import mrtbuddy.composeapp.generated.resources.helpAndSupportButton
 import mrtbuddy.composeapp.generated.resources.language
@@ -104,6 +106,21 @@ fun MoreScreen(
                     )
                 }
             )
+
+            RoundedButton(
+                text =  stringResource(Res.string.enableDarkMode),
+                subtitle = stringResource(Res.string.enableDarkModeDescription),
+                onClick = { },
+                trailing = {
+                    Switch(
+                        checked = uiState.darkModeEnabled,
+                        onCheckedChange = { enabled ->
+                            viewModel.onAction(MoreScreenAction.SetDarkMode(enabled))
+
+                        }
+                    )
+                }
+            )
             
             RoundedButton(
                 text = stringResource(Res.string.language),
@@ -122,6 +139,7 @@ fun MoreScreen(
                     )
                 }
             )
+
 
             SectionHeader(text = stringResource(Res.string.others))
             RoundedButton(
