@@ -40,6 +40,11 @@ class MainScreenViewModel(
                 _state.update { it.copy(currentLanguage = language) }
             }
         }
+        viewModelScope.launch {
+            settingsRepository.darkModeEnabled.collect { darkMode ->
+                _state.update { it.copy(darkModeEnabled = darkMode) }
+            }
+        }
     }
 
     val state: StateFlow<MainScreenState> get() = _state.asStateFlow()
