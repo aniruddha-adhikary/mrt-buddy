@@ -1,3 +1,4 @@
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -113,7 +114,9 @@ fun MoreScreen(
                 onClick = { },
                 trailing = {
                     Switch(
-                        checked = uiState.darkModeEnabled,
+                        checked =
+                        if(uiState.darkModeEnabled == null) isSystemInDarkTheme()
+                        else uiState.darkModeEnabled!!,
                         onCheckedChange = { enabled ->
                             viewModel.onAction(MoreScreenAction.SetDarkMode(enabled))
 

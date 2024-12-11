@@ -13,5 +13,5 @@ data class MainScreenState(
     val transactionWithAmount: List<TransactionWithAmount> = emptyList(),
     val error: String? = null,
     val currentLanguage: String = "en",
-    val darkModeEnabled: Boolean = true
+    val darkModeEnabled: Boolean? = null
 )

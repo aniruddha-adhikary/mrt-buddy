@@ -28,7 +28,6 @@ class MainScreenViewModel(
     private var autoSaveEnabled: Boolean = true
 
     private val _state: MutableStateFlow<MainScreenState> = MutableStateFlow(initialState)
-    private val _darkModeState: MutableStateFlow<Boolean> = MutableStateFlow(true)
 
     init {
         viewModelScope.launch {

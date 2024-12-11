@@ -13,8 +13,8 @@ class SettingsRepository(private val settings: Settings) {
     private val _currentLanguage = MutableStateFlow(settings.getString(LANGUAGE_KEY, Language.English.isoFormat))
     val currentLanguage: StateFlow<String> = _currentLanguage.asStateFlow()
 
-    private val _darkModeEnabled = MutableStateFlow(settings.getBoolean(DARK_MODE_KEY, true))
-    val darkModeEnabled: StateFlow<Boolean> = _darkModeEnabled.asStateFlow()
+    private val _darkModeEnabled = MutableStateFlow(settings.getBooleanOrNull(DARK_MODE_KEY))
+    val darkModeEnabled: StateFlow<Boolean?> = _darkModeEnabled.asStateFlow()
 
     fun setAutoSave(enabled: Boolean) {
         settings.putBoolean(AUTO_SAVE_KEY, enabled)

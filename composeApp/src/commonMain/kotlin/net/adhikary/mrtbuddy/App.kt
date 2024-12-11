@@ -41,8 +41,6 @@ fun App(
         mutableStateOf(mainVm.state.value.darkModeEnabled)
     }
 
-
-
     mainVm.events.observeAsActions { event ->
         when (event) {
             is MainScreenEvent.Error -> {}
@@ -82,12 +80,17 @@ fun App(
 
 
     MRTBuddyTheme(
-        darkTheme = darkModeState,
+        darkTheme =
+        if(darkModeState == null) isSystemInDarkTheme()
+        else darkModeState!!,
         dynamicColor = dynamicColor
     ) {
         val state: MainScreenState by mainVm.state.collectAsState()
         darkModeState = state.darkModeEnabled
-        statusBarStyle(darkModeState)
+        statusBarStyle(
+            if(darkModeState == null) isSystemInDarkTheme()
+            else darkModeState!!
+        )
 
         LocalizedApp(
             language = state.currentLanguage
