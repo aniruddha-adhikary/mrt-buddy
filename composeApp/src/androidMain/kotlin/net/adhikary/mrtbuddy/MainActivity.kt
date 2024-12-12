@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
         Napier.d("App Running.....")
 
         setContent {
-            App(dynamicColor = true)
+            App(dynamicColor = supportsDynamicColor)
         }
     }
 }
@@ -31,5 +31,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App(dynamicColor = true)
+    App(dynamicColor = supportsDynamicColor)
 }

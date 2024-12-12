@@ -13,6 +13,9 @@ class SettingsRepository(private val settings: Settings) {
     private val _currentLanguage = MutableStateFlow(settings.getString(LANGUAGE_KEY, Language.English.isoFormat))
     val currentLanguage: StateFlow<String> = _currentLanguage.asStateFlow()
 
+    private val _isDynamicColorEnabled = MutableStateFlow(settings.getBoolean(DYNAMIC_COLOR_KEY, false))
+    val isDynamicColorEnabled: StateFlow<Boolean> = _isDynamicColorEnabled.asStateFlow()
+
     fun setAutoSave(enabled: Boolean) {
         settings.putBoolean(AUTO_SAVE_KEY, enabled)
         _autoSaveEnabled.value = enabled
@@ -23,8 +26,14 @@ class SettingsRepository(private val settings: Settings) {
         _currentLanguage.value = language
     }
 
+    fun setDynamicColor(enabled: Boolean) {
+        settings.putBoolean(DYNAMIC_COLOR_KEY, enabled)
+        _isDynamicColorEnabled.value = enabled
+    }
+
     companion object {
         private const val AUTO_SAVE_KEY = "auto_save_enabled"
         private const val LANGUAGE_KEY = "app_language"
+        private const val DYNAMIC_COLOR_KEY = "dynamic_color_enabled"
     }
 }
