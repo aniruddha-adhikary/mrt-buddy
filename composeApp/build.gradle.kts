@@ -67,6 +67,9 @@ kotlin {
 
             implementation(libs.coil.compose)
             implementation(libs.zoomimage.compose.coil3)
+
+            implementation(libs.moko.permissions)
+            implementation(libs.moko.permissions.compose)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

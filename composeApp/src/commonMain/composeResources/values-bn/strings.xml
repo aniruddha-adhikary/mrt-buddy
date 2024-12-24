@@ -98,6 +98,8 @@
     <string name="settings">সেটিংস</string>
     <string name="autoSaveCardDetails">স্বয়ংক্রিয় কার্ড সংরক্ষণ</string>
     <string name="autoSaveCardDetailsDescription">স্ক্যান করার সময় স্বয়ংক্রিয়ভাবে কার্ডের তথ্য সংরক্ষণ করুন</string>
+    <string name="cardSyncReminders">কার্ড ট্যাপ করার রিমাইন্ডার</string>
+    <string name="cardSyncRemindersDescription">আপনার কার্ড ট্যাপ করার সময় হলে নোটিফিকেশন পান এবং আপডেট সিঙ্ক করুন</string>
 
     <!-- Others screen -->
     <string name="others">অন্যান্য</string>

@@ -13,6 +13,9 @@ class SettingsRepository(private val settings: Settings) {
     private val _currentLanguage = MutableStateFlow(settings.getString(LANGUAGE_KEY, Language.English.isoFormat))
     val currentLanguage: StateFlow<String> = _currentLanguage.asStateFlow()
 
+    private val _reminderEnabled = MutableStateFlow(settings.getBoolean(REMINDER_KEY, false))
+    val reminderEnabled: StateFlow<Boolean> = _reminderEnabled.asStateFlow()
+
     fun setAutoSave(enabled: Boolean) {
         settings.putBoolean(AUTO_SAVE_KEY, enabled)
         _autoSaveEnabled.value = enabled
@@ -23,8 +26,14 @@ class SettingsRepository(private val settings: Settings) {
         _currentLanguage.value = language
     }
 
+    fun setReminder(enabled: Boolean) {
+        settings.putBoolean(REMINDER_KEY, enabled)
+        _reminderEnabled.value = enabled
+    }
+
     companion object {
         private const val AUTO_SAVE_KEY = "auto_save_enabled"
         private const val LANGUAGE_KEY = "app_language"
+        private const val REMINDER_KEY = "reminder_enabled"
     }
 }

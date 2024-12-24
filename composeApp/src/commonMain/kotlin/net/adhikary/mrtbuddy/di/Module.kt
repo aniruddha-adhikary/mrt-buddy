@@ -54,7 +54,8 @@ val appModule = module {
 
     viewModel {
         MoreScreenViewModel(
-            settingsRepository = get()
+            settingsRepository = get(),
+            notificationManager = get()
         )
     }
 
