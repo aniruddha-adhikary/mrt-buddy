@@ -18,17 +18,13 @@ expect class DatabaseProvider {
     fun getDatabase(): AppDatabase
 }
 
-@Database(
-    entities = [DemoLocal::class, CardEntity::class, ScanEntity::class, TransactionEntity::class],
-    version = 2
-)
+@Database(entities = [DemoLocal::class, CardEntity::class, ScanEntity::class, TransactionEntity::class], version = 2)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getDao(): DemoDao
     abstract fun getCardDao(): CardDao
     abstract fun getScanDao(): ScanDao
     abstract fun getTransactionDao(): TransactionDao
-
 }
 
 // The Room compiler generates the `actual` implementations.

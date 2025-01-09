@@ -8,7 +8,6 @@ import net.adhikary.mrtbuddy.di.platformModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
-
 class MRTApp : Application() {
     override fun onCreate() {
         super.onCreate()
@@ -21,6 +20,4 @@ class MRTApp : Application() {
             modules(appModule, platformModule)
         }
     }
-
-
 }
