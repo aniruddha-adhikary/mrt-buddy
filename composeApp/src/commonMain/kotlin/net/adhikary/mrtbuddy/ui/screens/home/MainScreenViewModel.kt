@@ -40,6 +40,11 @@ class MainScreenViewModel(
                 _state.update { it.copy(currentLanguage = language) }
             }
         }
+        viewModelScope.launch {
+            settingsRepository.reminderEnabled.collect { isEnabled ->
+                _state.update { it.copy(reminderEnabled = isEnabled) }
+            }
+        }
     }
 
     val state: StateFlow<MainScreenState> get() = _state.asStateFlow()

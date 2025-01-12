@@ -17,6 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,11 +26,21 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.icerock.moko.permissions.DeniedAlwaysException
+import dev.icerock.moko.permissions.DeniedException
+import dev.icerock.moko.permissions.Permission
+import dev.icerock.moko.permissions.PermissionsController
+import dev.icerock.moko.permissions.RequestCanceledException
+import dev.icerock.moko.permissions.compose.BindEffect
+import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.aboutHeader
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetails
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetailsDescription
+import mrtbuddy.composeapp.generated.resources.cardSyncReminders
+import mrtbuddy.composeapp.generated.resources.cardSyncRemindersDescription
 import mrtbuddy.composeapp.generated.resources.contributors
 import mrtbuddy.composeapp.generated.resources.help
 import mrtbuddy.composeapp.generated.resources.helpAndSupportButton
@@ -60,6 +72,14 @@ fun MoreScreen(
 ) {
     val uriHandler = LocalUriHandler.current
     val uiState by viewModel.state.collectAsState()
+
+    val scope = rememberCoroutineScope()
+    val factory = rememberPermissionsControllerFactory()
+    val controller = remember(factory) {
+        factory.createPermissionsController()
+    }
+
+    BindEffect(controller)
 
     LaunchedEffect(Unit) {
         viewModel.onAction(MoreScreenAction.OnInit)
@@ -119,6 +139,24 @@ fun MoreScreen(
                     Text(
                         text = if (uiState.currentLanguage == Language.English.isoFormat) "English" else "বাংলা",
                         modifier = Modifier.padding(end = 8.dp)
+                    )
+                }
+            )
+
+            RoundedButton(
+                text = stringResource(Res.string.cardSyncReminders),
+                subtitle = stringResource(Res.string.cardSyncRemindersDescription),
+                onClick = { },
+                trailing = {
+                    Switch(
+                        modifier = Modifier.padding(start = 8.dp),
+                        checked = uiState.reminderEnabled,
+                        onCheckedChange = { enabled ->
+                            scope.launch {
+                                val granted = checkPermission(controller, Permission.REMOTE_NOTIFICATION)
+                                if (granted) viewModel.onAction(MoreScreenAction.SetReminder(enabled))
+                            }
+                        }
                     )
                 }
             )
@@ -188,6 +226,24 @@ fun MoreScreen(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
         }
+    }
+}
+
+suspend fun checkPermission(controller: PermissionsController, permission: Permission): Boolean {
+    if (controller.isPermissionGranted(permission)) {
+        return true
+    }
+
+    return try {
+        controller.providePermission(permission)
+        true
+    } catch (e: DeniedAlwaysException) {
+        controller.openAppSettings()
+        false
+    } catch (e: DeniedException) {
+        false
+    } catch (e: RequestCanceledException) {
+        false
     }
 }
 

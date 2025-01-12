@@ -12,5 +12,6 @@ data class MainScreenState(
     val transaction: List<Transaction> = emptyList(),
     val transactionWithAmount: List<TransactionWithAmount> = emptyList(),
     val error: String? = null,
-    val currentLanguage: String = "en"
+    val currentLanguage: String = "en",
+    val reminderEnabled: Boolean = false
 )

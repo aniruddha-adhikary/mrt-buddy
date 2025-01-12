@@ -9,10 +9,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.changeLang
+import net.adhikary.mrtbuddy.notification.NotificationManager
 import net.adhikary.mrtbuddy.repository.SettingsRepository
 
 class MoreScreenViewModel(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val notificationManager: NotificationManager,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MoreScreenState())
@@ -32,9 +34,11 @@ class MoreScreenViewModel(
                     try {
                         val autoSaveEnabled = settingsRepository.autoSaveEnabled.value
                         val currentLanguage = settingsRepository.currentLanguage.value
+                        val reminderEnabled = settingsRepository.reminderEnabled.value
                         _state.value = _state.value.copy(
                             autoSaveEnabled = autoSaveEnabled,
-                            currentLanguage = currentLanguage
+                            currentLanguage = currentLanguage,
+                            reminderEnabled = reminderEnabled
                         )
                     } catch (e: Exception) {
                         _state.value = _state.value.copy(error = e.message)
@@ -68,6 +72,23 @@ class MoreScreenViewModel(
                         _state.value = _state.value.copy(currentLanguage = action.language)
                     } catch (e: Exception) {
                         _events.send(MoreScreenEvent.Error(e.message ?: "Failed to change language"))
+                    }
+                }
+            }
+
+            is MoreScreenAction.SetReminder -> {
+                viewModelScope.launch {
+                    try {
+                        if (action.enabled) {
+                            notificationManager.scheduleNotification()
+                        } else {
+                            notificationManager.cancelNotification()
+                        }
+
+                        settingsRepository.setReminder(action.enabled)
+                        _state.value = _state.value.copy(reminderEnabled = action.enabled)
+                    } catch (e: Exception) {
+                        _events.send(MoreScreenEvent.Error(e.message ?: "Failed to enable reminder"))
                     }
                 }
             }
