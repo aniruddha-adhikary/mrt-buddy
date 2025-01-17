@@ -365,37 +365,6 @@ private fun NoNfcSupportContent() {
 @Composable
 fun NfcDisabledContent() {
     val context = LocalContext.current
-    val showPopup = remember { mutableStateOf(false) }
-
-    if (showPopup.value) {
-        AlertDialog(
-            onDismissRequest = { showPopup.value = false },
-            title = { Text(text = "Enable NFC") },
-            text = { Text(text = "NFC is disabled. Would you like to enable it?") },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        val intent = Intent(Settings.ACTION_NFC_SETTINGS)
-                        if (intent.resolveActivity(context.packageManager) != null) {
-                            Log.d("NFC", "Opening NFC settings.")
-                            context.startActivity(intent)
-                        } else {
-                            Log.d("NFC", "Opening wireless settings.")
-                            context.startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
-                        }
-                        showPopup.value = false
-                    }
-                ) {
-                    Text("Enable")
-                }
-            },
-            dismissButton = {
-                Button(onClick = { showPopup.value = false }) {
-                    Text("Cancel")
-                }
-            }
-        )
-    }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -422,14 +391,22 @@ fun NfcDisabledContent() {
         )
         Spacer(modifier = Modifier.height(10.dp))
         Button(
-            onClick = { showPopup.value = true },
+            onClick = {
+                val intent = Intent(Settings.ACTION_NFC_SETTINGS)
+                if (intent.resolveActivity(context.packageManager) != null) {
+                    Log.d("NFC", "Opening NFC settings.")
+                    context.startActivity(intent)
+                } else {
+                    Log.d("NFC", "Opening wireless settings.")
+                    context.startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
+                }
+            },
             modifier = Modifier.padding(horizontal = 16.dp)
         ) {
             Text(text = "Enable NFC")
         }
     }
 }
-
 @Composable
 fun ParentComponent() {
     val context = LocalContext.current
