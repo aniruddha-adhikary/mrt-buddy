@@ -11,6 +11,9 @@
     <a href="https://play.google.com/store/apps/details?id=net.adhikary.mrtbuddy">
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/2560px-Google_Play_Store_badge_EN.svg.png" width="200" height="60" />
     </a>
+    <a href="https://f-droid.org/en/packages/net.adhikary.mrtbuddy/">
+       <img src="https://i.ibb.co.com/RvKJRjF/get-it-on-en.webp" alt="Get it on F-Droid" width="200" height=60">
+    </a>
 </div>
 
 A convenient Android app for checking your Dhaka MRT Card balance on the go.
