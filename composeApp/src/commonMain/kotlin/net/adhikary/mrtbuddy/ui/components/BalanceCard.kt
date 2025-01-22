@@ -1,5 +1,6 @@
 package net.adhikary.mrtbuddy.ui.components
 
+import androidx.compose.material3.Button
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -63,6 +64,21 @@ import net.adhikary.mrtbuddy.ui.theme.LightRapidPass
 import net.adhikary.mrtbuddy.utils.isRapidPassIdm
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import androidx.compose.ui.platform.LocalContext
+import android.os.Build
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.Text
+import android.nfc.NfcAdapter
+import android.content.Context
+import android.content.Intent
+import android.provider.Settings
+import android.util.Log
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun BalanceCard(
@@ -347,7 +363,9 @@ private fun NoNfcSupportContent() {
 }
 
 @Composable
-private fun NfcDisabledContent() {
+fun NfcDisabledContent() {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -360,16 +378,79 @@ private fun NfcDisabledContent() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = stringResource(Res.string.nfcDisabled),
+            text = "NFC is disabled.",
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = stringResource(Res.string.enableNfc),
+            text = "Please enable NFC to continue.",
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
+        Spacer(modifier = Modifier.height(10.dp))
+        Button(
+            onClick = {
+                val intent = Intent(Settings.ACTION_NFC_SETTINGS)
+                if (intent.resolveActivity(context.packageManager) != null) {
+                    Log.d("NFC", "Opening NFC settings.")
+                    context.startActivity(intent)
+                } else {
+                    Log.d("NFC", "Opening wireless settings.")
+                    context.startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
+                }
+            },
+            modifier = Modifier.padding(horizontal = 16.dp)
+        ) {
+            Text(text = "Enable NFC")
+        }
+    }
+}
+@Composable
+fun ParentComponent() {
+    val context = LocalContext.current
+    val nfcAdapter = NfcAdapter.getDefaultAdapter(context)
+
+    if (nfcAdapter == null) {
+        // Device doesn't support NFC
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = "NFC Not Supported",
+                    tint = MaterialTheme.colorScheme.error
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "NFC Not Supported",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(
+                    text = "This device does not support NFC functionality.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    } else {
+        // Device supports NFC
+        NfcDisabledContent()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewNfcComponents() {
+    MaterialTheme {
+        ParentComponent()
     }
 }
