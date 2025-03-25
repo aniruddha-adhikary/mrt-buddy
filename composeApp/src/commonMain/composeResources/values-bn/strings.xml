@@ -74,6 +74,9 @@
     <string name="helpAndSupportButton">সাহায্য</string>
     <string name="nonAffiliationDisclaimer">এটি একটি স্বাধীন প্রকল্প এবং এটি ঢাকা ম্যাস ট্রানজিট কোম্পানি লিমিটেড (ডিএমটিসিএল) দ্বারা আনুষ্ঠানিকভাবে অনুমোদিত বা সংযুক্ত নয়।</string>
     <string name="readOnlyDisclaimer">অ্যাপটি শুধুমাত্র কার্ডের তথ্য পড়তে সক্ষম, এবং কার্ডের ব্যালেন্স রিচার্জ, টপ-আপ বা পরিবর্তন করতে সক্ষম নয়।</string>
+    <string name="dynamicColor">ডায়নামিক রং</string>
+    <string name="on">চালু</string>
+    <string name="off">বন্ধ</string>
 
     <!-- History and Transaction screens -->
     <string name="transactions">লেনদেন</string>
