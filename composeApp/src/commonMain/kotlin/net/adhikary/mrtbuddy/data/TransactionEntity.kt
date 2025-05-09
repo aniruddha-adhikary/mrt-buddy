@@ -17,7 +17,11 @@ import androidx.room.Index
     ],
     indices = [
         Index(value = ["scanId"]),
-        Index(value = ["order"])
+        Index(value = ["order"]),
+        // Optimized index for pagination queries (combined index)
+        Index(value = ["cardIdm", "order"], name = "idx_cardIdm_order"),
+        // Index for date-based queries
+        Index(value = ["cardIdm", "dateTime"], name = "idx_cardIdm_dateTime")
     ]
 )
 data class TransactionEntity(
