@@ -29,12 +29,16 @@ import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.aboutHeader
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetails
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetailsDescription
+import mrtbuddy.composeapp.generated.resources.colors
 import mrtbuddy.composeapp.generated.resources.contributors
+import mrtbuddy.composeapp.generated.resources.dynamicColor
 import mrtbuddy.composeapp.generated.resources.help
 import mrtbuddy.composeapp.generated.resources.helpAndSupportButton
 import mrtbuddy.composeapp.generated.resources.language
 import mrtbuddy.composeapp.generated.resources.license
 import mrtbuddy.composeapp.generated.resources.nonAffiliationDisclaimer
+import mrtbuddy.composeapp.generated.resources.off
+import mrtbuddy.composeapp.generated.resources.on
 import mrtbuddy.composeapp.generated.resources.openSourceLicenses
 import mrtbuddy.composeapp.generated.resources.others
 import mrtbuddy.composeapp.generated.resources.policy
@@ -44,6 +48,7 @@ import mrtbuddy.composeapp.generated.resources.settings
 import mrtbuddy.composeapp.generated.resources.stationMap
 import mrtbuddy.composeapp.generated.resources.station_map
 import net.adhikary.mrtbuddy.Language
+import net.adhikary.mrtbuddy.supportsDynamicColor
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenAction
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenEvent
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenViewModel
@@ -131,6 +136,22 @@ fun MoreScreen(
                     viewModel.onAction(MoreScreenAction.StationMap)
                 }
             )
+            
+            if (supportsDynamicColor) {
+                RoundedButton(
+                    text = stringResource(Res.string.dynamicColor),
+                    painter = painterResource(Res.drawable.colors),
+                    onClick = {
+                        viewModel.onAction(MoreScreenAction.SetDynamicColor(!uiState.isDynamicColorEnabled))
+                    },
+                    trailing = {
+                        Text(
+                            text = stringResource(if (uiState.isDynamicColorEnabled) Res.string.on else Res.string.off),
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                    }
+                )
+            }
 
             SectionHeader(text = stringResource(Res.string.aboutHeader))
             RoundedButton(
