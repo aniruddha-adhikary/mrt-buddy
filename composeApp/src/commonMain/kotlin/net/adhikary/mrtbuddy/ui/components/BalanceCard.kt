@@ -144,6 +144,9 @@ fun BalanceCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
+                if (!cardName.isNullOrBlank() && cardState is CardState.Balance) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
                 when (cardState) {
                     is CardState.Balance -> BalanceContent(amount = cardState.amount, cardName = cardName)
                     CardState.Reading -> ReadingContent()
