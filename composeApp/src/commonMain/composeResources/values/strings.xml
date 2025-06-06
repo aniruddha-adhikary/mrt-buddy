@@ -60,6 +60,7 @@
     <string name="discount">Discount</string>
     <string name="yourBalance">Your balance is</string>
     <string name="tooLow">is too low.</string>
+    <string name="insufficient_balance_warning">Insufficient balance.</string>
     <string name="tapToCheckSufficientBalance">Tap your card to check if you have sufficient balance</string>
     <string name="rescanToCheckSufficientBalance">Rescan your card to check if you have sufficient balance</string>
     <string name="selectStations">Select Stations</string>
