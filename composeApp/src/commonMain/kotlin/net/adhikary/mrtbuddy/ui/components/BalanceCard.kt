@@ -128,7 +128,7 @@ fun BalanceCard(
                 // BANNER + ITS SPACER (if banner visible)
                 if (!cardName.isNullOrBlank() && cardState is CardState.Balance) {
                     ActualBannerComposable(cardIdm = cardIdm, cardName = cardName)
-                    Spacer(modifier = Modifier.height(12.dp)) // NEW SPACER FOR BANNER
+                    Spacer(modifier = Modifier.height(16.dp)) // Changed to 16.dp
                 }
 
                 // NEW INNER CONTENT COLUMN (was the old content column)
@@ -141,12 +141,12 @@ fun BalanceCard(
                         // Conditional top padding:
                         .padding(top = if (!cardName.isNullOrBlank() && cardState is CardState.Balance) 0.dp else 24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center // Always center content within this column
+                    verticalArrangement = if (!cardName.isNullOrBlank() && cardState is CardState.Balance) Arrangement.Top else Arrangement.Center // MODIFIED
                 ) {
                     // THE CONDITIONAL SPACER THAT WAS HERE IS NOW REMOVED.
 
                     when (cardState) {
-                        is CardState.Balance -> BalanceContent(amount = cardState.amount, cardName = cardName)
+                        is CardState.Balance -> BalanceContent(amount = cardState.amount)
                         CardState.Reading -> ReadingContent()
                     CardState.WaitingForTap -> WaitingContent()
                     is CardState.Error -> ErrorContent(message = cardState.message)
@@ -219,7 +219,7 @@ private fun PulsingCircle(iconSize: Dp) {
 }
 
 @Composable
-private fun BalanceContent(amount: Int, cardName: String? = null) {
+private fun BalanceContent(amount: Int) {
     Text(
         text = stringResource(Res.string.latestBalance),
         style = MaterialTheme.typography.titleLarge,
