@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.model.CardReadResult
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.model.TransactionWithAmount
@@ -18,6 +19,7 @@ import net.adhikary.mrtbuddy.repository.TransactionRepository
 import kotlinx.coroutines.flow.collect
 import net.adhikary.mrtbuddy.changeLang
 import net.adhikary.mrtbuddy.repository.SettingsRepository
+import kotlin.io.println
 
 class MainScreenViewModel(
     private val transactionRepository: TransactionRepository,
@@ -75,8 +77,23 @@ class MainScreenViewModel(
                 viewModelScope.launch {
                     val card = transactionRepository.getCardByIdm(action.cardReadResult.idm)
                     val transactionsWithAmount = transactionMapper(action.cardReadResult.transactions)
-                    _state.update {
-                        it.copy(
+                    // Determine the current balance from the transactions.
+                    // If transactions are empty, or for some other reason balance cannot be determined,
+                    // consider a sensible fallback or how an error should be propagated.
+                    // For now, let's assume transactions list is not empty for a successful read.
+                    val currentBalance = action.cardReadResult.transactions.firstOrNull()?.balance
+                                        ?: run {
+                                            // Fallback: if transactions are empty, try to keep existing balance if state is Balance, else 0.
+                                            // This part might need more robust error handling or domain logic.
+                                            val existingBalance = (_state.value.cardState as? CardState.Balance)?.amount ?: 0
+                                            // Optionally, log a warning here if transactions were expected but empty.
+                                            println("Warning: CardReadResult transactions empty. IDM: ${action.cardReadResult.idm}. Using fallback balance: $existingBalance")
+                                            existingBalance
+                                        }
+
+                    _state.update { currentState ->
+                        currentState.copy(
+                            cardState = CardState.Balance(currentBalance), // Set CardState.Balance here
                             cardIdm = action.cardReadResult.idm,
                             cardName = card?.name,
                             transaction = action.cardReadResult.transactions,
