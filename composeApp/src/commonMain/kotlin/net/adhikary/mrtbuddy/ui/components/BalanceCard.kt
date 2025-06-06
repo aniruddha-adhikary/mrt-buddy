@@ -238,7 +238,7 @@ private fun BalanceContent(amount: Int, cardName: String? = null) {
         }
     )
     Spacer(modifier = Modifier.height(4.dp))
-    if (amount <= 20) {
+    if (amount < 18) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.lowBalance),
