@@ -80,6 +80,33 @@ import android.provider.Settings
 import android.util.Log
 import androidx.compose.ui.tooling.preview.Preview
 
+// Helper composable for the banner
+@Composable
+private fun ActualBannerComposable(cardIdm: String?, cardName: String?) {
+    val isRapidPass = cardIdm?.let { isRapidPassIdm(it) } ?: false
+    val isDarkTheme = isSystemInDarkTheme()
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                if (isRapidPass) {
+                    if (isDarkTheme) DarkRapidPass else LightRapidPass
+                } else {
+                    if (isDarkTheme) DarkMRTPass else LightMRTPass
+                }
+            )
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+    ) {
+        Text(
+            // cardName is known not to be null if this composable is called based on the condition
+            text = cardName ?: "", // Provide a fallback for safety, though condition should prevent null
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
+}
+
 @Composable
 fun BalanceCard(
     cardState: CardState,
@@ -92,34 +119,44 @@ fun BalanceCard(
             .fillMaxWidth()
             .height(240.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
-        shape = RoundedCornerShape(24.dp) // Increased corner radius
+        shape = RoundedCornerShape(24.dp)
     ) {
-        Box(Modifier.fillMaxSize()) {
-            // Card name at the top with rounded background only in Balance state
-            if (!cardName.isNullOrBlank() && cardState is CardState.Balance) {
-                val isRapidPass = cardIdm?.let { isRapidPassIdm(it) } ?: false
-                val isDarkTheme = isSystemInDarkTheme()
-                Box(
+        Box(Modifier.fillMaxSize()) { // OUTER BOX (for Rescan button overlay)
+
+            Column(modifier = Modifier.fillMaxSize()) { // NEW MASTER COLUMN
+
+                // BANNER + ITS SPACER (if banner visible)
+                if (!cardName.isNullOrBlank() && cardState is CardState.Balance) {
+                    ActualBannerComposable(cardIdm = cardIdm, cardName = cardName)
+                    Spacer(modifier = Modifier.height(16.dp)) // Changed to 16.dp
+                }
+
+                // NEW INNER CONTENT COLUMN (was the old content column)
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            if (isRapidPass) {
-                                if (isDarkTheme) DarkRapidPass else LightRapidPass
-                            } else {
-                                if (isDarkTheme) DarkMRTPass else LightMRTPass
-                            }
-                        )
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                        .weight(1f) // Takes remaining vertical space
+                        .padding(horizontal = 24.dp)
+                        .padding(bottom = 24.dp)
+                        // Conditional top padding:
+                        .padding(top = if (!cardName.isNullOrBlank() && cardState is CardState.Balance) 0.dp else 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = if (!cardName.isNullOrBlank() && cardState is CardState.Balance) Arrangement.Top else Arrangement.Center // MODIFIED
                 ) {
-                    Text(
-                        text = cardName,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+                    // THE CONDITIONAL SPACER THAT WAS HERE IS NOW REMOVED.
+
+                    when (cardState) {
+                        is CardState.Balance -> BalanceContent(amount = cardState.amount)
+                        CardState.Reading -> ReadingContent()
+                    CardState.WaitingForTap -> WaitingContent()
+                    is CardState.Error -> ErrorContent(message = cardState.message)
+                    CardState.NoNfcSupport -> NoNfcSupportContent()
+                    CardState.NfcDisabled -> NfcDisabledContent()
+                    }
                 }
             }
 
+            // RESCAN BUTTON (remains direct child of OUTER BOX for overlay)
             if (getPlatform().name != "android") {
                 Box(
                     modifier = Modifier
@@ -128,29 +165,15 @@ fun BalanceCard(
                 ) {
                     Text(
                         stringResource(Res.string.rescan),
-                        modifier = Modifier
-                            .clickable { RescanManager.requestRescan() },
+                        modifier = Modifier.clickable { RescanManager.requestRescan() },
                         style = MaterialTheme.typography.bodyLarge,
-                        color = if (!cardName.isNullOrBlank()) MaterialTheme.colorScheme.onPrimary
-                               else MaterialTheme.colorScheme.onSurface
+                        // Conditional color for Rescan text
+                        color = if (!cardName.isNullOrBlank() && cardState is CardState.Balance) {
+                                    MaterialTheme.colorScheme.onPrimary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurface
+                                }
                     )
-                }
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                when (cardState) {
-                    is CardState.Balance -> BalanceContent(amount = cardState.amount, cardName = cardName)
-                    CardState.Reading -> ReadingContent()
-                    CardState.WaitingForTap -> WaitingContent()
-                    is CardState.Error -> ErrorContent(message = cardState.message)
-                    CardState.NoNfcSupport -> NoNfcSupportContent()
-                    CardState.NfcDisabled -> NfcDisabledContent()
                 }
             }
         }
@@ -196,7 +219,7 @@ private fun PulsingCircle(iconSize: Dp) {
 }
 
 @Composable
-private fun BalanceContent(amount: Int, cardName: String? = null) {
+private fun BalanceContent(amount: Int) {
     Text(
         text = stringResource(Res.string.latestBalance),
         style = MaterialTheme.typography.titleLarge,
@@ -215,7 +238,7 @@ private fun BalanceContent(amount: Int, cardName: String? = null) {
         }
     )
     Spacer(modifier = Modifier.height(4.dp))
-    if (amount <= 20) {
+    if (amount < 18) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.lowBalance),
