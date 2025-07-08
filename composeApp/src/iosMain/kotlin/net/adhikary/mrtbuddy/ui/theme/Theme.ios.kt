@@ -15,3 +15,4 @@ actual fun MRTBuddyTheme(
         content = content
     )
 }
+
