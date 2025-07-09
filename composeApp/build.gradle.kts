@@ -84,8 +84,8 @@ android {
         applicationId = "net.adhikary.mrtbuddy"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 22
-        versionName = "0.0.22"
+        versionCode = 23
+        versionName = "0.0.23"
     }
     packaging {
         resources {
