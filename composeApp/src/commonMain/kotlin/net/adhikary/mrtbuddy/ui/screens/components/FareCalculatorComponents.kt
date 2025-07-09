@@ -223,7 +223,7 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                         Spacer(modifier = Modifier.height(4.dp))
                     }
 
-                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.height(8.dp)) // MODIFIED SPACER
                     when (uiState.cardState) {
                         is CardState.Balance -> {
                             val balance = uiState.cardState.amount
@@ -236,7 +236,7 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                                 ) {
                                     Text(
                                         text = "${stringResource(Res.string.balanceAmount)} ৳ ${translateNumber(balance)}",
-                                        style = MaterialTheme.typography.bodyMedium,
+                                        style = MaterialTheme.typography.titleMedium, // CHANGED
                                         color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
                                     )
                                     if (roundTrips > 0) {
@@ -260,10 +260,11 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                                     }
                                 }
                             } else {
+                                // REPLACED INSUFFICIENT BALANCE TEXT
                                 Text(
-                                    text = "${stringResource(Res.string.yourBalance)} (৳ $balance)",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
+                                    text = "${stringResource(Res.string.yourBalance)} ৳ ${translateNumber(balance)}", // Changed to Res.string.yourBalance
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.error,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 )
@@ -291,7 +292,7 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.height(8.dp)) // MODIFIED SPACER
                 }
             }
         }
