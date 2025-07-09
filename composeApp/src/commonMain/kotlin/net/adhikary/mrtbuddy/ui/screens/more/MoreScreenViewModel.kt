@@ -32,9 +32,11 @@ class MoreScreenViewModel(
                     try {
                         val autoSaveEnabled = settingsRepository.autoSaveEnabled.value
                         val currentLanguage = settingsRepository.currentLanguage.value
+                        val darkThemeConfig = settingsRepository.darkThemeConfig.value
                         _state.value = _state.value.copy(
                             autoSaveEnabled = autoSaveEnabled,
-                            currentLanguage = currentLanguage
+                            currentLanguage = currentLanguage,
+                            darkThemeConfig = darkThemeConfig,
                         )
                     } catch (e: Exception) {
                         _state.value = _state.value.copy(error = e.message)
@@ -75,6 +77,17 @@ class MoreScreenViewModel(
             is MoreScreenAction.StationMap -> {
                 viewModelScope.launch {
                     _events.send(MoreScreenEvent.NavigateTooStationMap)
+                }
+            }
+
+            is MoreScreenAction.SetDarkThemeConfig -> {
+                viewModelScope.launch {
+                    try {
+                        settingsRepository.setDarkThemeConfig(action.darkThemeConfig)
+                        _state.value = _state.value.copy(darkThemeConfig = action.darkThemeConfig)
+                    } catch (e: Exception) {
+                        _events.send(MoreScreenEvent.Error(e.message ?: "Failed to update setting"))
+                    }
                 }
             }
         }

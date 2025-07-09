@@ -30,6 +30,11 @@ import mrtbuddy.composeapp.generated.resources.aboutHeader
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetails
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetailsDescription
 import mrtbuddy.composeapp.generated.resources.contributors
+import mrtbuddy.composeapp.generated.resources.dark_mode
+import mrtbuddy.composeapp.generated.resources.dark_mode_config_dark
+import mrtbuddy.composeapp.generated.resources.dark_mode_config_light
+import mrtbuddy.composeapp.generated.resources.dark_mode_config_system_default
+import mrtbuddy.composeapp.generated.resources.dark_mode_preference
 import mrtbuddy.composeapp.generated.resources.help
 import mrtbuddy.composeapp.generated.resources.helpAndSupportButton
 import mrtbuddy.composeapp.generated.resources.language
@@ -44,6 +49,7 @@ import mrtbuddy.composeapp.generated.resources.settings
 import mrtbuddy.composeapp.generated.resources.stationMap
 import mrtbuddy.composeapp.generated.resources.station_map
 import net.adhikary.mrtbuddy.Language
+import net.adhikary.mrtbuddy.settings.model.DarkThemeConfig
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenAction
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenEvent
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenViewModel
@@ -120,8 +126,30 @@ fun MoreScreen(
                         text = if (uiState.currentLanguage == Language.English.isoFormat) "English" else "বাংলা",
                         modifier = Modifier.padding(end = 8.dp)
                     )
-                }
-            )
+                })
+
+
+            RoundedButton(
+                text = stringResource(Res.string.dark_mode_preference),
+                painter = painterResource(Res.drawable.dark_mode),
+                onClick = {
+                    val currentConfig = uiState.darkThemeConfig
+                    val nextConfig = when (currentConfig) {
+                        DarkThemeConfig.FOLLOW_SYSTEM -> DarkThemeConfig.DARK
+                        DarkThemeConfig.DARK -> DarkThemeConfig.LIGHT
+                        DarkThemeConfig.LIGHT -> DarkThemeConfig.FOLLOW_SYSTEM
+                    }
+                    viewModel.onAction(MoreScreenAction.SetDarkThemeConfig(nextConfig))
+                },
+                trailing = {
+                    Text(
+                        text = when (uiState.darkThemeConfig) {
+                            DarkThemeConfig.FOLLOW_SYSTEM -> stringResource(Res.string.dark_mode_config_system_default)
+                            DarkThemeConfig.DARK ->  stringResource(Res.string.dark_mode_config_dark)
+                            DarkThemeConfig.LIGHT ->  stringResource(Res.string.dark_mode_config_light)
+                        }, modifier = Modifier.padding(end = 8.dp)
+                    )
+                })
 
             SectionHeader(text = stringResource(Res.string.others))
             RoundedButton(
