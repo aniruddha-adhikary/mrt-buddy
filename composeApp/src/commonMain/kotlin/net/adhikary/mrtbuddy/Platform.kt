@@ -7,3 +7,5 @@ interface Platform {
 expect fun getPlatform(): Platform
 
 expect val isDebug: Boolean
+
+expect val supportsDynamicColor: Boolean

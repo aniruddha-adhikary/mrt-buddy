@@ -93,6 +93,9 @@
     <string name="unnamedCard">Unnamed Card</string>
     <string name="cardId">Card ID</string>
     <string name="lastScan">Last Scan</string>
+    <string name="dynamicColor">Dynamic Color</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
     
     <!-- Settings screen -->
     <string name="settings">Settings</string>

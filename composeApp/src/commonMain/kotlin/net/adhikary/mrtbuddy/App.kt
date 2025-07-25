@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.managers.RescanManager
 import net.adhikary.mrtbuddy.nfc.getNFCManager
+import net.adhikary.mrtbuddy.repository.SettingsRepository
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreen
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenAction
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenEvent
@@ -17,6 +18,7 @@ import net.adhikary.mrtbuddy.ui.screens.home.MainScreenViewModel
 import net.adhikary.mrtbuddy.ui.theme.MRTBuddyTheme
 import net.adhikary.mrtbuddy.utils.observeAsActions
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -26,6 +28,7 @@ fun App(
     dynamicColor: Boolean
 ) {
     val mainVm = koinViewModel<MainScreenViewModel>()
+    val settingsRepository: SettingsRepository = koinInject()
     val scope = rememberCoroutineScope()
     val nfcManager = getNFCManager()
 
@@ -60,12 +63,13 @@ fun App(
         }
     }
 
+    val isDynamicColor by settingsRepository.isDynamicColorEnabled.collectAsState()
 
     nfcManager.startScan()
 
     MRTBuddyTheme(
         darkTheme = darkTheme,
-        dynamicColor = dynamicColor
+        dynamicColor = dynamicColor && isDynamicColor
     ) {
         val state: MainScreenState by mainVm.state.collectAsState()
 

@@ -21,5 +21,5 @@ fun MainViewController() = ComposeUIViewController {
         Napier.base(DebugAntilog())
     }
 
-    App(dynamicColor = false)
+    App(dynamicColor = supportsDynamicColor)
 }

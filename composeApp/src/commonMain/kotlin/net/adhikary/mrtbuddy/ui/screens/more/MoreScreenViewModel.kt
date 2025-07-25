@@ -32,9 +32,11 @@ class MoreScreenViewModel(
                     try {
                         val autoSaveEnabled = settingsRepository.autoSaveEnabled.value
                         val currentLanguage = settingsRepository.currentLanguage.value
+                        val isDynamicColorEnabled = settingsRepository.isDynamicColorEnabled.value
                         _state.value = _state.value.copy(
                             autoSaveEnabled = autoSaveEnabled,
-                            currentLanguage = currentLanguage
+                            currentLanguage = currentLanguage,
+                            isDynamicColorEnabled = isDynamicColorEnabled
                         )
                     } catch (e: Exception) {
                         _state.value = _state.value.copy(error = e.message)
@@ -75,6 +77,15 @@ class MoreScreenViewModel(
             is MoreScreenAction.StationMap -> {
                 viewModelScope.launch {
                     _events.send(MoreScreenEvent.NavigateTooStationMap)
+            
+            is MoreScreenAction.SetDynamicColor -> {
+                viewModelScope.launch {
+                    try {
+                        settingsRepository.setDynamicColor(action.enabled)
+                        _state.value = _state.value.copy(isDynamicColorEnabled = action.enabled)
+                    } catch (e: Exception) {
+                        _events.send(MoreScreenEvent.Error(e.message ?: "Failed to change dynamic color"))
+                    }
                 }
             }
         }

@@ -5,5 +5,6 @@ sealed interface MoreScreenAction {
     data class SetAutoSave(val enabled: Boolean) : MoreScreenAction
     data class SetLanguage(val language: String) : MoreScreenAction
     object StationMap : MoreScreenAction
+    data class SetDynamicColor(val enabled: Boolean) : MoreScreenAction
     object OpenLicenses : MoreScreenAction
 }
