@@ -17,12 +17,13 @@ class SettingsRepository(private val settings: Settings) {
 
 
     private val _darkThemeConfig = MutableStateFlow(
-        DarkThemeConfig.valueOf(
-            settings.getString(
-                DARK_THEME_CONFIG_KEY,
-                DarkThemeConfig.FOLLOW_SYSTEM.name
-            )
-        )
+        settings.getString(
+            DARK_THEME_CONFIG_KEY,
+            DarkThemeConfig.FOLLOW_SYSTEM.name
+        ).let { stored ->
+            DarkThemeConfig.entries.firstOrNull { it.name == stored }
+                ?: DarkThemeConfig.FOLLOW_SYSTEM
+        }
     )
     val darkThemeConfig: StateFlow<DarkThemeConfig> = _darkThemeConfig.asStateFlow()
 
