@@ -27,8 +27,8 @@
     <string name="tapRescanToStart">Tap 'Rescan' to start scanning</string>
     <!--    Main Page-->
     <string name="recentActivity">Recent Activity</string>
-    <string name="normalLowBalanceText">Recharge soon to enjoy seamless journeys!</string>
-    <string name="normalBalanceText">Your balance can easily cover a few more trips.</string>
+    <!--<string name="normalLowBalanceText">Recharge soon to enjoy seamless journeys!</string> -->
+    <!-- <string name="normalBalanceText">Your balance can easily cover a few more trips.</string> -->
     <string name="deviceCompatibilityWarningTitle">Device Compatibility</string>
     <string name="deviceCompatibilityWarningText">This device doesn't support NFC functionality required for card scanning. You'll need a different device with NFC capability.</string>
     <string name="scanFailed">Scan Failed</string>
@@ -82,7 +82,7 @@
     <string name="selectRouteDescription">Choose your stations</string>
     <string name="fromStationLabel">From</string>
     <string name="toStationLabel">To</string>
-    <string name="fareCalculateSuggestionText">Select stations above to calculate fare</string>
+    <!--<string name="fareCalculateSuggestionText">Select stations above to calculate fare</string>-->
     <string name="journeyInformationLabel">Journey Information</string>
     <string name="journeyInformationDescription">Travel details and estimates</string>
     <string name="route">Route</string>

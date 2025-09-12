@@ -1,5 +1,4 @@
 package net.adhikary.mrtbuddy.ui.components
-
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -22,14 +21,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -39,17 +37,11 @@ import androidx.compose.material.icons.filled.Contactless
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.NearMe
-import androidx.compose.material.icons.filled.Nfc
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.TapAndPlay
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Contactless
-import androidx.compose.material.icons.rounded.Lightbulb
-import androidx.compose.material.icons.rounded.LightbulbCircle
 import androidx.compose.material.icons.rounded.WbIncandescent
-import androidx.compose.material.icons.rounded.WbIridescent
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalButton
@@ -78,7 +70,6 @@ import androidx.compose.ui.unit.sp
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.deviceCompatibilityWarningText
 import mrtbuddy.composeapp.generated.resources.deviceCompatibilityWarningTitle
-import mrtbuddy.composeapp.generated.resources.enableNfc
 import mrtbuddy.composeapp.generated.resources.hold
 import mrtbuddy.composeapp.generated.resources.keepCardSteady
 import mrtbuddy.composeapp.generated.resources.latestBalance
@@ -86,8 +77,6 @@ import mrtbuddy.composeapp.generated.resources.lowBalance
 import mrtbuddy.composeapp.generated.resources.nfcDisabledText
 import mrtbuddy.composeapp.generated.resources.nfcEnableText
 import mrtbuddy.composeapp.generated.resources.noNfcSupport
-import mrtbuddy.composeapp.generated.resources.normalBalanceText
-import mrtbuddy.composeapp.generated.resources.normalLowBalanceText
 import mrtbuddy.composeapp.generated.resources.quickSetupGuideText
 import mrtbuddy.composeapp.generated.resources.quickSetupGuideText1
 import mrtbuddy.composeapp.generated.resources.quickSetupGuideText2
@@ -110,8 +99,6 @@ import net.adhikary.mrtbuddy.ui.theme.DarkMRTPass
 import net.adhikary.mrtbuddy.ui.theme.DarkRapidPass
 import net.adhikary.mrtbuddy.ui.theme.LightMRTPass
 import net.adhikary.mrtbuddy.ui.theme.LightRapidPass
-import net.adhikary.mrtbuddy.ui.theme.Transparent
-import net.adhikary.mrtbuddy.ui.theme.Yellow
 import net.adhikary.mrtbuddy.utils.isRapidPassIdm
 import org.jetbrains.compose.resources.stringResource
 
@@ -120,7 +107,6 @@ fun BalanceCard(
     cardState: CardState,
     cardIdm: String? = null,
     cardName: String? = null,
-    hasTransactions: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val animatedScale by animateFloatAsState(
@@ -475,7 +461,7 @@ private fun ModernBalanceContent(
                     ),
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    Text(
+                    /*Text(
                         text = "💡 ${stringResource(Res.string.normalLowBalanceText)}",
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontWeight = FontWeight.Medium
@@ -483,7 +469,7 @@ private fun ModernBalanceContent(
                         color = if (isSystemInDarkTheme()) Alert_yellow_D else Alert_yellow_L,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
-                    )
+                    )*/
                 }
             }
 
@@ -494,7 +480,7 @@ private fun ModernBalanceContent(
                     ),
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    Text(
+                    /*Text(
                         text = "✅ ${stringResource(Res.string.normalBalanceText)}",
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontWeight = FontWeight.Medium
@@ -502,7 +488,7 @@ private fun ModernBalanceContent(
                         color = MaterialTheme.colorScheme.primary,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
-                    )
+                    )*/
                 }
             }
         }

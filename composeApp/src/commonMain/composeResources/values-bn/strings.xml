@@ -31,8 +31,8 @@
 
     <!-- Main Page -->
     <string name="recentActivity">সাম্প্রতিক কার্যকলাপ</string>
-    <string name="normalLowBalanceText">সুন্দর ভ্রমণের জন্য শীঘ্রই রিচার্জ করুন!</string>
-    <string name="normalBalanceText">আপনার ব্যালেন্সে আরও কয়েকটি যাত্রা করা যাবে।</string>
+    <!--<string name="normalLowBalanceText">নিরবিঘ্ন ভ্রমণের জন্য শীঘ্রই রিচার্জ করুন!</string> -->
+    <!--<string name="normalBalanceText">আপনার ব্যালেন্সে আরও কয়েকটি যাত্রা করা যাবে।</string>-->
     <string name="deviceCompatibilityWarningTitle">ডিভাইস সামঞ্জস্যতা</string>
     <string name="deviceCompatibilityWarningText">এই ডিভাইসটি এনএফসি ফাংশনালিটি সমর্থন করে না যা কার্ড স্ক্যান করার জন্য প্রয়োজন। আপনাকে এনএফসি সক্ষমতা সহ একটি ভিন্ন ডিভাইস প্রয়োজন হবে।</string>
 
@@ -84,7 +84,7 @@
     <string name="selectRouteDescription">আপনার যাত্রার স্টেশনগুলো নির্বাচন করুন</string>
     <string name="fromStationLabel">শুরু</string>
     <string name="toStationLabel">গন্তব্য</string>
-    <string name="fareCalculateSuggestionText">ভাড়া গণনা করতে উপরে স্টেশনগুলো নির্বাচন করুন</string>
+    <!--<string name="fareCalculateSuggestionText">ভাড়া গণনা করতে উপরে স্টেশনগুলো নির্বাচন করুন</string>-->
     <string name="journeyInformationLabel">যাত্রার তথ্য</string>
     <string name="journeyInformationDescription">ভ্রমণের বিবরণ এবং অনুমান</string>
     <string name="route">রুট</string>
