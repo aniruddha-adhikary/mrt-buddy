@@ -101,6 +101,24 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                 .padding( if (isCompact) 12.dp else 16.dp), verticalArrangement = Arrangement.spacedBy(if (isCompact) 10.dp else 12.dp)) {
 
                 // Header (ModernHeader, horizontal layout, transparent, no padding)
+                // Swap animation state for header
+                val swapAnimCount = remember { mutableStateOf(0) }
+                val swapRotation by animateFloatAsState(
+                    targetValue = (swapAnimCount.value % 2) * 180f,
+                    animationSpec = tween(durationMillis = 420)
+                )
+                val swapPulse = remember { mutableStateOf(false) }
+                val swapScale by animateFloatAsState(
+                    targetValue = if (swapPulse.value) 1.06f else 1f,
+                    animationSpec = spring()
+                )
+                LaunchedEffect(swapAnimCount.value) {
+                    if (swapAnimCount.value > 0) {
+                        swapPulse.value = true
+                        delay(180)
+                        swapPulse.value = false
+                    }
+                }
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(18.dp),
@@ -143,6 +161,28 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                             )
                         }
 
+                        // Swap button (moved to header)
+                        Card(
+                            modifier = Modifier
+                                .size(44.dp)
+                                .scale(swapScale)
+                                .clickable(enabled = uiState.fromStation != null && uiState.toStation != null) {
+                                    swapAnimCount.value = swapAnimCount.value + 1
+                                    viewModel.onAction(FareCalculatorAction.SwapStations)
+                                },
+                            shape = CircleShape,
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                        ) {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.SwapVert,
+                                    contentDescription = stringResource(Res.string.selectRouteText),
+                                    modifier = Modifier.rotate(swapRotation),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+
                         // rescan action if available
                         if (getPlatform().name != "android") {
                             TextButton(onClick = { RescanManager.requestRescan() }) {
@@ -154,31 +194,8 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                     }
                 }
 
-                // Station chips row with swap — show From/To stacked vertically on left and swap on the right
+                // Station chips row — show From/To stacked vertically only
                 val combinedAnchor = remember { mutableStateOf<String?>(null) }
-                // Swap animation: use a counter so each click increments rotation by 180deg and retriggers animation
-                val swapAnimCount = remember { mutableStateOf(0) }
-                val swapRotation by animateFloatAsState(
-                    // alternate between 0 and 180 degrees so rotation doesn't accumulate indefinitely
-                    targetValue = (swapAnimCount.value % 2) * 180f,
-                    animationSpec = tween(durationMillis = 420)
-                )
-                // pulse flag toggles true briefly after each rotation increment to animate a scale pulse
-                val swapPulse = remember { mutableStateOf(false) }
-                val swapScale by animateFloatAsState(
-                    targetValue = if (swapPulse.value) 1.06f else 1f,
-                    animationSpec = spring()
-                )
-
-                // When the counter changes, trigger a short pulse
-                LaunchedEffect(swapAnimCount.value) {
-                    if (swapAnimCount.value > 0) {
-                        swapPulse.value = true
-                        delay(180)
-                        swapPulse.value = false
-                    }
-                }
-
                 Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     // Left column: From and To stacked vertically
                     Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -270,30 +287,6 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                             }
                         }
                     }
-
-                    // Right side: swap control
-                    Card(
-                        modifier = Modifier
-                            .size(52.dp)
-                            .padding(start = 8.dp)
-                            .scale(swapScale)
-                            .clickable(enabled = uiState.fromStation != null && uiState.toStation != null) {
-                                // increment rotation counter and request swap
-                                swapAnimCount.value = swapAnimCount.value + 1
-                                viewModel.onAction(FareCalculatorAction.SwapStations)
-                            },
-                         shape = CircleShape,
-                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-                     ) {
-                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                             Icon(
-                                 imageVector = Icons.Default.SwapVert,
-                                 contentDescription = stringResource(Res.string.selectRouteText),
-                                 modifier = Modifier.rotate(swapRotation),
-                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
-                             )
-                         }
-                     }
                 }
 
                 // Short simple steps for all ages
