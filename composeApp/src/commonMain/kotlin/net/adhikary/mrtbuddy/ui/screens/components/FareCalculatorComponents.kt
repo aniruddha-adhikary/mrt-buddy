@@ -33,6 +33,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -365,196 +366,159 @@ fun CombinedRouteDropdown(
 
 @Composable
 fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewModel, modifier: Modifier = Modifier) {
-    // make layout responsive
     BoxWithConstraints(modifier = modifier) {
         val isCompact = maxWidth < 420.dp
         val vmState = viewModel.state.value
 
-        Card(modifier = Modifier.fillMaxWidth().animateContentSize(), shape = RoundedCornerShape(20.dp), elevation = CardDefaults.elevatedCardElevation(8.dp)) {
-            if (isCompact) {
-                // Stack content vertically for small screens
-                Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Card(shape = RoundedCornerShape(12.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))) {
-                            Row(modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-                                Icon(imageVector = Icons.Default.DirectionsTransit, contentDescription = stringResource(Res.string.withMRT), tint = MaterialTheme.colorScheme.primary)
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(text = stringResource(Res.string.withMRT), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
+        Card(
+            modifier = Modifier.fillMaxWidth().animateContentSize(),
+            shape = RoundedCornerShape(20.dp),
+            elevation = CardDefaults.elevatedCardElevation(8.dp)
+        ) {
+            when (val cs = uiState.cardState) {
+                is CardState.Balance -> {
+                    val fare = vmState.discountedFare
+                    val original = vmState.calculatedFare
+                    val discount = (original - fare).coerceAtLeast(0)
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(if (isCompact) 14.dp else 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        // Header
+                        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                            Column {
+                                Text(text = "Fare Invoice", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                                if (uiState.fromStation != null || uiState.toStation != null) {
+                                    Text(
+                                        text = "${uiState.fromStation?.let { StationService.translate(it.name) } ?: "-"} → ${uiState.toStation?.let { StationService.translate(it.name) } ?: "-"}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                                    )
+                                }
+                            }
+
+                            Column(horizontalAlignment = Alignment.End) {
+                                Text(text = if (isCompact) "Summary" else "Invoice", style = MaterialTheme.typography.labelSmall)
                             }
                         }
 
-                        // make this column take remaining space so the row matches parent width
-                        Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
-                            Text(text = "৳ ${translateNumber(vmState.discountedFare)}", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold))
-                            Crossfade(targetState = vmState.discountedFare != vmState.calculatedFare) { showOriginal ->
-                                if (showOriginal) {
-                                    Text(text = "৳ ${translateNumber(vmState.calculatedFare)}", style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)))
+                        Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+
+                        // Line items
+                        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                                Text(text = "Base Fare", style = MaterialTheme.typography.bodyMedium)
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text(text = "৳ ${translateNumber(original)}", style = MaterialTheme.typography.bodyMedium)
+                            }
+
+                            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                                Text(text = "MRT / Rapid Pass Discount", style = MaterialTheme.typography.bodyMedium)
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text(text = "-৳ ${translateNumber(discount)}", style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.primary))
+                            }
+
+                            Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f))
+
+                            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                                Text(text = "Total", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold))
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text(text = "৳ ${translateNumber(fare)}", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold))
+                            }
+                        }
+
+                        // Card balance summary
+                        val balance = cs.amount
+                        val enough = balance >= fare
+
+                        // Professional balance panel: icon + balance + status chip
+                        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                            Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                                Icon(imageVector = Icons.Default.AccountBalanceWallet, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Column {
+                                    Text(text = "Current balance", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                                    Text(text = "৳ ${translateNumber(balance)}", style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold), color = if (enough) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
+                                }
+                            }
+
+                            // Status chip
+                            Card(
+                                shape = RoundedCornerShape(12.dp),
+                                colors = CardDefaults.cardColors(containerColor = if (enough) MaterialTheme.colorScheme.primary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.error.copy(alpha = 0.12f)),
+                                modifier = Modifier.padding(start = 8.dp)
+                            ) {
+                                Text(
+                                    text = if (enough) "Sufficient" else "Insufficient",
+                                    color = if (enough) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        }
+
+                        // If not enough, show a short professional message and a Top up CTA
+                        if (!enough) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text(
+                                    text = "Insufficient balance to cover this trip. Please top up your card to complete the journey.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    ElevatedButton(onClick = { /* navigate to top-up flow */ }, modifier = Modifier.weight(1f)) {
+                                        Text(text = "Top up", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                                    }
+
+                                    OutlinedButton(onClick = { /* show top-up help */ }, modifier = Modifier.weight(1f)) {
+                                        Text(text = "How to top up", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    // balance / ticket info
-                    Card(shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant), modifier = Modifier.fillMaxWidth()) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth().padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                             when (val cs = uiState.cardState) {
-                                 is CardState.Balance -> {
-                                     val balance = cs.amount
-                                     val enough = balance >= uiState.discountedFare
-                                     Row(
-                                         verticalAlignment = Alignment.CenterVertically,
-                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                     ) {
-                                         Icon(imageVector = Icons.Default.AccountBalanceWallet, contentDescription = stringResource(Res.string.balanceAmount), tint = if (enough) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
-                                         Column(horizontalAlignment = Alignment.Start) {
-                                             Text(text = stringResource(Res.string.balanceAmount) + " ৳ ${translateNumber(balance)}", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = if (enough) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
-                                             if (!enough) {
-                                                 Text(text = "Need ৳ ${translateNumber(uiState.discountedFare - balance)} more", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
-                                             }
-                                         }
-                                     }
-                                 }
-
-                                 is CardState.WaitingForTap -> {
-                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                         Icon(imageVector = Icons.Rounded.Sell, contentDescription = stringResource(Res.string.singleTicket), modifier = Modifier.size(28.dp), tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                                         Text(text = "${stringResource(Res.string.singleTicket)} ৳ ${translateNumber(uiState.calculatedFare)}", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
-                                         Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                                     }
-                                 }
-
-                                 is CardState.Reading -> {
-                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                         CircularProgressIndicator(modifier = Modifier.size(28.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.primary)
-                                         Spacer(modifier = Modifier.height(6.dp))
-                                         Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                                     }
-                                 }
-
-                                 is CardState.Error -> {
-                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                         Text(text = cs.message, color = MaterialTheme.colorScheme.error)
-                                     }
-                                 }
-
-                                 else -> {
-                                     Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                                 }
-                             }
-                        }
-                    }
-
-                    // Actions stacked
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                        ElevatedButton(onClick = { /* route preview / directions */ }, modifier = Modifier.weight(1f), enabled = uiState.fromStation != null && uiState.toStation != null) {
-                            Text(text = stringResource(Res.string.route), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
-                        }
-
-                        OutlinedButton(onClick = { /* open tips */ }, modifier = Modifier.weight(1f), enabled = true) {
-                            Text(text = stringResource(Res.string.travelTipsLabel), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                        // Actions
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            ElevatedButton(onClick = { /* route */ }, modifier = Modifier.weight(1f), enabled = uiState.fromStation != null && uiState.toStation != null) {
+                                Text(text = stringResource(Res.string.route), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                            }
+                            OutlinedButton(onClick = { /* tips */ }, modifier = Modifier.weight(1f)) {
+                                Text(text = stringResource(Res.string.travelTipsLabel), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                            }
                         }
                     }
                 }
-            } else {
-                // Larger layouts use the original structure
-                Column(modifier = Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                     // Top row: Service badge + Fare
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Card(shape = RoundedCornerShape(12.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))) {
-                                Row(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(imageVector = Icons.Default.DirectionsTransit, contentDescription = stringResource(Res.string.withMRT), tint = MaterialTheme.colorScheme.primary)
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text(text = stringResource(Res.string.withMRT), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
-                                }
-                            }
-                        }
 
-                        // ensure right column uses remaining space so content is aligned to the end
-                        Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
-                            Text(text = "৳ ${translateNumber(vmState.discountedFare)}", style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.ExtraBold))
-                            Crossfade(targetState = vmState.discountedFare != vmState.calculatedFare) { showOriginal ->
-                                if (showOriginal) {
-                                    Text(text = "৳ ${translateNumber(vmState.calculatedFare)}", style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)))
-                                }
-                            }
-                        }
+                is CardState.Reading -> {
+                    // show reading spinner and prompt
+                    Column(modifier = Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        CircularProgressIndicator(modifier = Modifier.size(28.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.primary)
+                        Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodyMedium)
                     }
+                }
 
-                    // Middle: balance / ticket info
-                    Card(shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant), modifier = Modifier.fillMaxWidth()) {
-                        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                            when (val cs = uiState.cardState) {
-                                is CardState.Balance -> {
-                                    val balance = cs.amount
-                                    val enough = balance >= uiState.discountedFare
-                                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                        Icon(imageVector = Icons.Default.AccountBalanceWallet, contentDescription = stringResource(Res.string.balanceAmount), tint = if (enough) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
-                                        Column(horizontalAlignment = Alignment.Start) {
-                                            Text(text = stringResource(Res.string.balanceAmount) + " ৳ ${translateNumber(balance)}", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = if (enough) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
-                                            if (!enough) {
-                                                Text(text = "Need ৳ ${translateNumber(uiState.discountedFare - balance)} more", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
-                                            }
-                                        }
-                                    }
-
-                                    if (enough && uiState.discountedFare > 0) {
-                                        val roundTrips = balance / (uiState.discountedFare * 2).coerceAtLeast(1)
-                                        if (roundTrips > 0) {
-                                            Spacer(modifier = Modifier.height(6.dp))
-                                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                                Icon(painter = painterResource(Res.drawable.two_way_arrows), contentDescription = stringResource(Res.string.roundTrips), tint = MaterialTheme.colorScheme.primary)
-                                                Text(text = "${translateNumber(roundTrips)} ${stringResource(Res.string.roundTrips)}", color = MaterialTheme.colorScheme.primary)
-                                            }
-                                        }
-                                    }
-                                }
-
-                                is CardState.WaitingForTap -> {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        Icon(imageVector = Icons.Rounded.Sell, contentDescription = stringResource(Res.string.singleTicket), modifier = Modifier.size(28.dp), tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                                        Text(text = "${stringResource(Res.string.singleTicket)} ৳ ${translateNumber(uiState.calculatedFare)}", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
-                                        Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                                    }
-                                }
-
-                                is CardState.Reading -> {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        CircularProgressIndicator(modifier = Modifier.size(28.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.primary)
-                                        Spacer(modifier = Modifier.height(6.dp))
-                                        Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                                    }
-                                }
-
-                                is CardState.Error -> {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        Text(text = cs.message, color = MaterialTheme.colorScheme.error)
-                                    }
-                                }
-
-                                else -> {
-                                    Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                                }
-                            }
-                        }
+                is CardState.Error -> {
+                    Column(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(text = cs.message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
                     }
+                }
 
-                    // Actions
-                    val routeSelected = uiState.fromStation != null && uiState.toStation != null
-                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
-                        ElevatedButton(onClick = { /* route preview / directions */ }, modifier = Modifier.weight(1f), enabled = routeSelected) {
-                            Text(text = stringResource(Res.string.route), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
-                        }
+                else -> {
+                    // Single-ticket preview
+                    Column(modifier = Modifier.fillMaxWidth().padding(if (isCompact) 14.dp else 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(imageVector = Icons.Rounded.Sell, contentDescription = stringResource(Res.string.singleTicket), modifier = Modifier.size(36.dp), tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f))
+                        Text(text = "${stringResource(Res.string.singleTicket)} ৳ ${translateNumber(vmState.calculatedFare)}", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                        Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
 
-                        OutlinedButton(onClick = { /* open tips */ }, modifier = Modifier.weight(1f), enabled = true) {
-                            Text(text = stringResource(Res.string.travelTipsLabel), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            ElevatedButton(onClick = { /* route preview */ }, modifier = Modifier.weight(1f), enabled = uiState.fromStation != null && uiState.toStation != null) {
+                                Text(text = stringResource(Res.string.route), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                            }
+                            OutlinedButton(onClick = { /* tips */ }, modifier = Modifier.weight(1f)) {
+                                Text(text = stringResource(Res.string.travelTipsLabel), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                            }
                         }
                     }
                 }
