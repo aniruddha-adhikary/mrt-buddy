@@ -66,6 +66,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.balance
 import mrtbuddy.composeapp.generated.resources.cardId
@@ -217,34 +218,45 @@ fun CardItem(
                     }
                 }
 
-                DropdownMenu(
-                    expanded = showDropdown,
-                    onDismissRequest = { showDropdown = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Rename Card") },
-                        onClick = {
-                            showDropdown = false
-                            onRenameClick()
-                        },
-                        leadingIcon = {
-                            Icon(Icons.Default.Edit, contentDescription = null)
+                // Inline menu overlay (avoid Popup/DropdownMenu which uses SubcomposeLayout)
+                if (showDropdown) {
+                    Card(modifier = Modifier
+                        .wrapContentSize()
+                        .padding(top = 40.dp)
+                        .zIndex(2f),
+                        shape = RoundedCornerShape(8.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)) {
+                        Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Row(modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    showDropdown = false
+                                    onRenameClick()
+                                }
+                                .padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Rename Card")
+                            }
+
+                            Row(modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    showDropdown = false
+                                    onDeleteClick()
+                                }
+                                .padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    Icons.Default.Delete,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Delete Card", color = MaterialTheme.colorScheme.error)
+                            }
                         }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Delete Card") },
-                        onClick = {
-                            showDropdown = false
-                            onDeleteClick()
-                        },
-                        leadingIcon = {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    )
+                    }
                 }
             }
 

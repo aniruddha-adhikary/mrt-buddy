@@ -17,16 +17,17 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Route
 import androidx.compose.material.icons.filled.SwapVert
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Percent
 import androidx.compose.material.icons.rounded.Sell
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.ui.window.Dialog
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.OutlinedButton
@@ -34,6 +35,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -78,6 +80,7 @@ import mrtbuddy.composeapp.generated.resources.two_way_arrows
 import mrtbuddy.composeapp.generated.resources.withMRT
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import androidx.compose.foundation.layout.Column
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -122,15 +125,34 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
             }
 
             // Station chips row with swap
+            // Hoist combinedAnchor so we know which chip ("from" or "to") opened the dropdown; null = closed
+            val combinedAnchor = remember { mutableStateOf<String?>(null) }
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                StationChip(
-                    label = stringResource(Res.string.fromStationLabel),
-                    value = uiState.fromStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectOrigin),
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    leading = Icons.Default.LocationOn,
-                    onClick = { viewModel.onAction(FareCalculatorAction.ToggleFromExpanded) }
-                )
+                Box {
+                    StationChip(
+                        label = stringResource(Res.string.fromStationLabel),
+                        value = uiState.fromStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectOrigin),
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        leading = Icons.Default.LocationOn,
+                        onClick = { combinedAnchor.value = "from" }
+                    )
 
+                    // Anchor the dropdown to the from chip Box (only select origin)
+                    if (combinedAnchor.value == "from") {
+                        CombinedRouteDropdown(
+                            uiState = uiState,
+                            stations = viewModel.stations,
+                            selecting = "from",
+                            onDismiss = { combinedAnchor.value = null },
+                            onApply = { selected ->
+                                selected?.let { viewModel.onAction(FareCalculatorAction.UpdateFromStation(it)) }
+                                combinedAnchor.value = null
+                            }
+                        )
+                    }
+                }
+
+                // Swap button
                 Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     val rotation by animateFloatAsState(targetValue = if (uiState.fromStation != null && uiState.toStation != null) 180f else 0f, animationSpec = spring())
                     Card(
@@ -143,44 +165,33 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                     }
                 }
 
-                StationChip(
-                    label = stringResource(Res.string.toStationLabel),
-                    value = uiState.toStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectDestination),
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    leading = Icons.Default.LocationOn,
-                    onClick = { viewModel.onAction(FareCalculatorAction.ToggleToExpanded) }
-                )
+                Box {
+                    StationChip(
+                        label = stringResource(Res.string.toStationLabel),
+                        value = uiState.toStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectDestination),
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        leading = Icons.Default.LocationOn,
+                        onClick = { combinedAnchor.value = "to" }
+                    )
+
+                    // Anchor the dropdown to the to chip Box (only select destination)
+                    if (combinedAnchor.value == "to") {
+                        CombinedRouteDropdown(
+                            uiState = uiState,
+                            stations = viewModel.stations,
+                            selecting = "to",
+                            onDismiss = { combinedAnchor.value = null },
+                            onApply = { selected ->
+                                selected?.let { viewModel.onAction(FareCalculatorAction.UpdateToStation(it)) }
+                                combinedAnchor.value = null
+                            }
+                        )
+                    }
+                }
             }
 
             // Short simple steps for all ages
             GettingStartedSteps()
-
-            // Dropdowns (kept visually hidden but available)
-            StationDropdownField(
-                label = stringResource(Res.string.fromStationLabel),
-                value = uiState.fromStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectOrigin),
-                expanded = uiState.fromExpanded,
-                onExpandedChange = { viewModel.onAction(FareCalculatorAction.ToggleFromExpanded) },
-                onDismiss = { viewModel.onAction(FareCalculatorAction.DismissDropdowns) },
-                stations = viewModel.stations,
-                onStationSelected = { station -> viewModel.onAction(FareCalculatorAction.UpdateFromStation(station)) },
-                leadingIcon = Icons.Default.LocationOn,
-                iconTint = MaterialTheme.colorScheme.primary,
-                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.12f),
-            )
-
-            StationDropdownField(
-                label = stringResource(Res.string.toStationLabel),
-                value = uiState.toStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectDestination),
-                expanded = uiState.toExpanded,
-                onExpandedChange = { viewModel.onAction(FareCalculatorAction.ToggleToExpanded) },
-                onDismiss = { viewModel.onAction(FareCalculatorAction.DismissDropdowns) },
-                stations = viewModel.stations,
-                onStationSelected = { station -> viewModel.onAction(FareCalculatorAction.UpdateToStation(station)) },
-                leadingIcon = Icons.Default.LocationOn,
-                iconTint = MaterialTheme.colorScheme.secondary,
-                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.12f),
-            )
         }
     }
 }
@@ -202,7 +213,7 @@ fun GettingStartedSteps() {
 }
 
 @Composable
-fun StationChip(label: String, value: String, color: Color, leading: ImageVector, onClick: () -> Unit) {
+fun StationChip(label: String, value: String, color: Color, leading: ImageVector, onClick: () ->  Unit) {
     // Ensure a comfortable touch target and animate size changes
     Card(
         shape = RoundedCornerShape(12.dp),
@@ -226,61 +237,43 @@ fun StationChip(label: String, value: String, color: Color, leading: ImageVector
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StationDropdownField(
-    label: String,
-    value: String,
-    expanded: Boolean,
-    onExpandedChange: (Boolean) -> Unit,
-    onDismiss: () -> Unit,
+fun CombinedRouteDropdown(
+    uiState: FareCalculatorState,
     stations: List<net.adhikary.mrtbuddy.data.model.Station>,
-    onStationSelected: (net.adhikary.mrtbuddy.data.model.Station) -> Unit,
-    leadingIcon: ImageVector,
-    iconTint: Color,
-    containerColor: Color
+    selecting: String, // "from" or "to"
+    onDismiss: () -> Unit,
+    onApply: (net.adhikary.mrtbuddy.data.model.Station?) -> Unit
 ) {
-    // Compact, accessible dropdown using OutlinedTextField as trigger
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.animateContentSize()) {
-        val rotation by animateFloatAsState(targetValue = if (expanded) 180f else 0f, animationSpec = spring())
+    // Use a Dialog (separate window) to avoid PopupLayout / intrinsic measurement interactions.
+    Dialog(onDismissRequest = onDismiss) {
+        Card(modifier = Modifier.width(320.dp)) {
+            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text(text = if (selecting == "from") stringResource(Res.string.fromStationLabel) else stringResource(Res.string.toStationLabel), style = MaterialTheme.typography.labelLarge)
 
-        OutlinedTextField(
-            value = value,
-            onValueChange = {},
-            readOnly = true,
-            leadingIcon = {
-                Card(modifier = Modifier.size(36.dp), shape = RoundedCornerShape(10.dp), colors = CardDefaults.cardColors(containerColor = containerColor)) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Icon(imageVector = leadingIcon, contentDescription = label, tint = iconTint)
-                    }
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onExpandedChange(!expanded) }
-                .semantics { contentDescription = label },
-            trailingIcon = {
-                Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = if (expanded) "Collapse" else "Expand", modifier = Modifier.rotate(rotation))
-            },
-            label = { Text(text = label) },
-            textStyle = MaterialTheme.typography.bodyLarge
-        )
-
-        if (expanded) {
-            // Simple dropdown list with improved hit targets
-            Card(shape = RoundedCornerShape(12.dp), elevation = CardDefaults.elevatedCardElevation(4.dp), modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    // If stations empty, show helpful message
-                    if (stations.isEmpty()) {
-                        Text(text = stringResource(Res.string.selectOrigin), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(12.dp))
-                    } else {
-                        stations.drop(1).forEach { station ->
+                if (stations.isEmpty()) {
+                    Text(text = if (selecting == "from") stringResource(Res.string.selectOrigin) else stringResource(Res.string.selectDestination), modifier = Modifier.padding(8.dp))
+                } else {
+                    LazyColumn(modifier = Modifier.heightIn(max = 400.dp)) {
+                        items(stations) { station ->
+                            // Immediately apply when user chooses a station
                             Row(modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable(role = Role.Button) { onStationSelected(station); onDismiss() }
-                                .padding(vertical = 12.dp, horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                                Text(text = StationService.translate(station.name), style = MaterialTheme.typography.bodyLarge)
+                                .clickable { onApply(station) }
+                                .padding(vertical = 12.dp, horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                                Text(text = StationService.translate(station.name), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                                // Highlight current selection based on uiState
+                                val selected = if (selecting == "from") uiState.fromStation?.id == station.id else uiState.toStation?.id == station.id
+                                if (selected) {
+                                    Text(text = "✓", color = MaterialTheme.colorScheme.primary)
+                                }
                             }
                         }
                     }
+                }
+
+                // Only a cancel button is needed now; selection auto-applies
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) { Text(text = "Cancel") }
                 }
             }
         }
