@@ -4,6 +4,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -36,8 +37,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
@@ -158,6 +162,28 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
 
                 // Station chips row with swap — show From/To stacked vertically on left and swap on the right
                 val combinedAnchor = remember { mutableStateOf<String?>(null) }
+                // Swap animation: use a counter so each click increments rotation by 180deg and retriggers animation
+                val swapAnimCount = remember { mutableStateOf(0) }
+                val swapRotation by animateFloatAsState(
+                    // alternate between 0 and 180 degrees so rotation doesn't accumulate indefinitely
+                    targetValue = (swapAnimCount.value % 2) * 180f,
+                    animationSpec = tween(durationMillis = 420)
+                )
+                // pulse flag toggles true briefly after each rotation increment to animate a scale pulse
+                val swapPulse = remember { mutableStateOf(false) }
+                val swapScale by animateFloatAsState(
+                    targetValue = if (swapPulse.value) 1.06f else 1f,
+                    animationSpec = spring()
+                )
+
+                // When the counter changes, trigger a short pulse
+                LaunchedEffect(swapAnimCount.value) {
+                    if (swapAnimCount.value > 0) {
+                        swapPulse.value = true
+                        delay(180)
+                        swapPulse.value = false
+                    }
+                }
 
                 Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     // Left column: From and To stacked vertically
@@ -214,15 +240,24 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                         modifier = Modifier
                             .size(52.dp)
                             .padding(start = 8.dp)
-                            .clickable(enabled = uiState.fromStation != null && uiState.toStation != null) { viewModel.onAction(FareCalculatorAction.SwapStations) },
-                        shape = CircleShape,
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-                    ) {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            val rotation by animateFloatAsState(targetValue = if (uiState.fromStation != null && uiState.toStation != null) 180f else 0f, animationSpec = spring())
-                            Icon(imageVector = Icons.Default.SwapVert, contentDescription = stringResource(Res.string.selectRouteText), modifier = Modifier.rotate(rotation), tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                        }
-                    }
+                            .scale(swapScale)
+                            .clickable(enabled = uiState.fromStation != null && uiState.toStation != null) {
+                                // increment rotation counter and request swap
+                                swapAnimCount.value = swapAnimCount.value + 1
+                                viewModel.onAction(FareCalculatorAction.SwapStations)
+                            },
+                         shape = CircleShape,
+                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                     ) {
+                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                             Icon(
+                                 imageVector = Icons.Default.SwapVert,
+                                 contentDescription = stringResource(Res.string.selectRouteText),
+                                 modifier = Modifier.rotate(swapRotation),
+                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
+                             )
+                         }
+                     }
                 }
 
                 // Short simple steps for all ages
