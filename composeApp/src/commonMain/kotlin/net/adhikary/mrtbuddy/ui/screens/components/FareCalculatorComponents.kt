@@ -100,68 +100,55 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                 .fillMaxWidth()
                 .padding( if (isCompact) 12.dp else 16.dp), verticalArrangement = Arrangement.spacedBy(if (isCompact) 10.dp else 12.dp)) {
 
-                // Header (inlined ModernHeader for this components file)
+                // Header (ModernHeader, horizontal layout, transparent, no padding)
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(18.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                    colors = CardDefaults.cardColors(containerColor =  MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
                 ) {
-
-                    Surface(
+                    Row(
                         modifier = Modifier.fillMaxWidth(),
-                        color = Color.Transparent
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Box(modifier = Modifier.fillMaxWidth().drawBehind {
-                            drawRect(brush = headerGradient)
-                        }) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
-                                // Circular icon avatar on the left
-                                Surface(
-                                    modifier = Modifier.size(if (isCompact) 52.dp else 64.dp),
-                                    shape = CircleShape,
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                ) {
-                                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                        Icon(
-                                            imageVector = Icons.Default.Route,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.size(if (isCompact) 22.dp else 28.dp)
-                                        )
-                                    }
-                                }
+                        // Circular icon avatar on the left
+                        Surface(
+                            modifier = Modifier.size(if (isCompact) 52.dp else 64.dp),
+                            shape = CircleShape,
+                            color = Color.Transparent
+                        ) {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.Route,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    modifier = Modifier.size(if (isCompact) 22.dp else 28.dp)
+                                )
+                            }
+                        }
 
-                                // Title + description
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = stringResource(Res.string.selectRouteText),
-                                        style = if (isCompact) MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold) else MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
-                                        color = MaterialTheme.colorScheme.onPrimary
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = stringResource(Res.string.selectRouteDescription),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.92f),
-                                        maxLines = 2
-                                    )
-                                }
+                        // Title + description
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(Res.string.selectRouteText),
+                                style = if (isCompact) MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold) else MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = stringResource(Res.string.selectRouteDescription),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.92f),
+                                maxLines = 2
+                            )
+                        }
 
-                                // rescan action if available
-                                if (getPlatform().name != "android") {
-                                    TextButton(onClick = { RescanManager.requestRescan() }) {
-                                        Icon(imageVector = Icons.Default.Refresh, contentDescription = stringResource(Res.string.rescan), tint = MaterialTheme.colorScheme.onPrimary)
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Text(text = stringResource(Res.string.rescan), color = MaterialTheme.colorScheme.onPrimary)
-                                    }
-                                }
+                        // rescan action if available
+                        if (getPlatform().name != "android") {
+                            TextButton(onClick = { RescanManager.requestRescan() }) {
+                                Icon(imageVector = Icons.Default.Refresh, contentDescription = stringResource(Res.string.rescan), tint = MaterialTheme.colorScheme.onPrimary)
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(text = stringResource(Res.string.rescan), color = MaterialTheme.colorScheme.onPrimary)
                             }
                         }
                     }
