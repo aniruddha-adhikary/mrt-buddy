@@ -23,8 +23,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Calculate
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Badge
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -50,7 +48,6 @@ import kotlinx.coroutines.flow.collectLatest
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.fareCalculatorDescription
 import mrtbuddy.composeapp.generated.resources.fareCalculatorText
-import mrtbuddy.composeapp.generated.resources.tapToCheckSufficientBalance
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.ui.screens.components.FareDisplayCard
 import net.adhikary.mrtbuddy.ui.screens.components.StationSelectionSection
@@ -130,11 +127,7 @@ fun FareCalculatorScreen(
                     enter = slideInVertically(initialOffsetY = { -it }, animationSpec = headerAnimSpec) + fadeIn()
                 ) {
                     // Use a smaller, cleaner header composed by a helper composable
-                    ModernHeader(uiState = uiState, onRescan = {
-                        if (net.adhikary.mrtbuddy.getPlatform().name != "android") {
-                            net.adhikary.mrtbuddy.managers.RescanManager.requestRescan()
-                        }
-                    })
+                    ModernHeader(uiState = uiState)
                 }
             }
 
@@ -154,7 +147,7 @@ fun FareCalculatorScreen(
                     visible = contentVisible,
                     enter = scaleIn(initialScale = 0.92f, animationSpec = scaleInAnimSpec) + fadeIn(animationSpec = fadeInAnimSpec)
                 ) {
-                    FareDisplayCard(uiState, viewModel)
+                    FareDisplayCard(uiState, viewModel, modifier = Modifier.fillMaxWidth())
                 }
             }
 
@@ -191,8 +184,7 @@ fun FareCalculatorScreen(
 @Composable
 private fun ModernHeader(
     uiState: FareCalculatorState,
-    modifier: Modifier = Modifier,
-    onRescan: () -> Unit = {}
+    modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),

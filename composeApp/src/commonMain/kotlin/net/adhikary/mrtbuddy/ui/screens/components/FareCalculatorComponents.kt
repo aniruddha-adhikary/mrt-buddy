@@ -364,19 +364,20 @@ fun CombinedRouteDropdown(
 }
 
 @Composable
-fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewModel) {
+fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewModel, modifier: Modifier = Modifier) {
     // make layout responsive
-    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+    BoxWithConstraints(modifier = modifier) {
         val isCompact = maxWidth < 420.dp
         val vmState = viewModel.state.value
 
-        Card(modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize(), shape = RoundedCornerShape(20.dp), elevation = CardDefaults.elevatedCardElevation(8.dp)) {
+        Card(modifier = Modifier.fillMaxWidth().animateContentSize(), shape = RoundedCornerShape(20.dp), elevation = CardDefaults.elevatedCardElevation(8.dp)) {
             if (isCompact) {
                 // Stack content vertically for small screens
                 Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         Card(shape = RoundedCornerShape(12.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))) {
                             Row(modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
                                 Icon(imageVector = Icons.Default.DirectionsTransit, contentDescription = stringResource(Res.string.withMRT), tint = MaterialTheme.colorScheme.primary)
@@ -385,7 +386,8 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                             }
                         }
 
-                        Column(horizontalAlignment = Alignment.End) {
+                        // make this column take remaining space so the row matches parent width
+                        Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
                             Text(text = "৳ ${translateNumber(vmState.discountedFare)}", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold))
                             Crossfade(targetState = vmState.discountedFare != vmState.calculatedFare) { showOriginal ->
                                 if (showOriginal) {
@@ -456,7 +458,7 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
             } else {
                 // Larger layouts use the original structure
                 Column(modifier = Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    // Top row: Service badge + Fare
+                     // Top row: Service badge + Fare
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             Card(shape = RoundedCornerShape(12.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))) {
@@ -468,7 +470,8 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                             }
                         }
 
-                        Column(horizontalAlignment = Alignment.End) {
+                        // ensure right column uses remaining space so content is aligned to the end
+                        Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
                             Text(text = "৳ ${translateNumber(vmState.discountedFare)}", style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.ExtraBold))
                             Crossfade(targetState = vmState.discountedFare != vmState.calculatedFare) { showOriginal ->
                                 if (showOriginal) {
