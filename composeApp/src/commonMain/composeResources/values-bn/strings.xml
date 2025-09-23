@@ -8,15 +8,34 @@
     <string name="rescan">পুনরায় স্ক্যান</string>
     <string name="latestBalance">সর্বশেষ ব্যালেন্স</string>
     <string name="lowBalance">পরবর্তী ভ্রমণের জন্য আপনার পর্যাপ্ত ব্যালেন্স নেই। টপ আপ করুন</string>
-    <string name="tap">আপনার কার্ডটি ট্যাপ করুন</string>
+    <string name="tap">কার্ডটি ট্যাপ করুন</string>
+    <string name="tips">টিপস</string>
+    <string name="tipsText">কার্ডটি NFC এরিয়ায় স্ক্যান শেষ না হওয়া পর্যন্ত ধরে রাখুন।</string>
+    <string name="nfcDisabledText">NFC বন্ধ আছে</string>
+    <string name="nfcEnableText">আপনার কার্ড স্ক্যান করতে ডিভাইসের সেটিংসে গিয়ে NFC চালু করুন।</string>
+    <string name="quickSetupGuideText">দ্রুত সেটআপ গাইড</string>
+    <string name="quickSetupGuideText1">১. সেটিংসে যান</string>
+    <string name="quickSetupGuideText2">২. NFC খুঁজুন এবং চালু করুন</string>
+    <string name="quickSetupGuideText3">৩. এই অ্যাপে ফিরে আসুন এবং আবার চেষ্টা করুন</string>
     <string name="readingCard">কার্ড পড়া হচ্ছে...</string>
     <string name="keepCardSteady">দয়া করে আপনার কার্ডটি স্থির রাখুন</string>
-    <string name="hold">ব্যালেন্স পড়ার জন্য আপনার ফোনের পিছনে কার্ডটি ধরুন</string>
+    <string name="hold">ব্যালেন্স দেখার জন্য ফোনের পিছনে কার্ডটি ধরুন</string>
     <string name="noNfcSupport">এই ডিভাইসটি এনএফসি সমর্থন করে না</string>
     <string name="requiredNfc">আপনার এমআরটি পাস পড়ার জন্য এনএফসি প্রয়োজন, যা এই ডিভাইসটি সমর্থন করে না</string>
     <string name="nfcDisabled">এনএফসি বন্ধ করা</string>
     <string name="enableNfc">আপনার এমআরটি পাস পড়ার জন্য দয়া করে আপনার ডিভাইসের সেটিংসে এনএফসি চালু করুন</string>
     <string name="tapRescanToStart">স্ক্যান শুরু করতে 'পুনরায় স্ক্যান' এ ট্যাপ করুন</string>
+    <string name="scanFailed">স্ক্যান করা যায়নি</string>
+    <string name="scanFailedText1">ব্যালেন্স পাওয়া যায়নি। আপনি কার্ডটি খুব দ্রুত সরিয়েছেন।</string>
+
+
+    <!-- Main Page -->
+    <string name="recentActivity">সাম্প্রতিক কার্যকলাপ</string>
+    <!--<string name="normalLowBalanceText">নিরবিঘ্ন ভ্রমণের জন্য শীঘ্রই রিচার্জ করুন!</string> -->
+    <!--<string name="normalBalanceText">আপনার ব্যালেন্সে আরও কয়েকটি যাত্রা করা যাবে।</string>-->
+    <string name="deviceCompatibilityWarningTitle">ডিভাইস সামঞ্জস্যতা</string>
+    <string name="deviceCompatibilityWarningText">এই ডিভাইসটি এনএফসি ফাংশনালিটি সমর্থন করে না যা কার্ড স্ক্যান করার জন্য প্রয়োজন। আপনাকে এনএফসি সক্ষমতা সহ একটি ভিন্ন ডিভাইস প্রয়োজন হবে।</string>
+
     <!-- transaction histories -->
     <string name="recentJourneys">সাম্প্রতিক ভ্রমণ</string>
     <string name="balanceUpdate">ব্যালেন্স আপডেট</string>
@@ -37,7 +56,13 @@
     <string name="uttaraSouth">উত্তরা দক্ষিণ</string>
     <string name="uttaraCenter">উত্তরা কেন্দ্র</string>
     <string name="uttaraNorth">উত্তরা উত্তর</string>
+    <string name="recharge">রিচার্জ</string>
     <string name="diabari">ঢাকা মেট্রোরেল ডিপো, দিয়াবাড়ী</string>
+    <string name="transactionSummary">লেনদেনের সারসংক্ষেপ</string>
+    <string name="journeys">ভ্রমণ</string>
+    <string name="topup">রিচার্জ</string>
+    <string name="added">টপ-আপ</string>
+    <string name="spent">ব্যয়</string>
 
     <string name="jan">জানুয়ারি</string>
     <string name="feb">ফেব্রুয়ারি</string>
@@ -53,9 +78,27 @@
     <string name="dec">ডিসেম্বর</string>
 
     <!-- fare calculator-->
+    <string name="fareCalculatorText">ভাড়া হিসাবকারী</string>
+    <string name="fareCalculatorDescription">আপনার যাত্রা পরিকল্পনা করুন • ভাড়া দেখুন • ব্যালেন্স ট্র্যাক করুন</string>
+    <string name="selectRouteText">রুট নির্বাচন করুন</string>
+    <string name="selectRouteDescription">আপনার যাত্রার স্টেশনগুলো নির্বাচন করুন</string>
+    <string name="fromStationLabel">শুরু</string>
+    <string name="toStationLabel">গন্তব্য</string>
+    <!--<string name="fareCalculateSuggestionText">ভাড়া গণনা করতে উপরে স্টেশনগুলো নির্বাচন করুন</string>-->
+    <string name="journeyInformationLabel">যাত্রার তথ্য</string>
+    <string name="journeyInformationDescription">ভ্রমণের বিবরণ এবং অনুমান</string>
+    <string name="route">রুট</string>
+    <string name="mrtCardDiscount">এমআরটি কার্ড ডিসকাউন্ট</string>
+    <string name="travelTipsLabel">ভ্রমণ টিপস</string>
+    <string name="travelTipsDescription">ভ্রমণের সময় আপনার যাত্রা আরও আরামদায়ক করতে কিছু টিপস</string>
+    <string name="travelTips1">ডিসকাউন্ট ও দ্রুত প্রবেশের জন্য এমআরটি পাস ব্যবহার করুন।</string>
+    <string name="travelTips2">আরামদায়ক ভ্রমণের জন্য ব্যস্ত সময় (সকাল ৮-১০টা, বিকেল ৫-৭টা) এড়িয়ে চলুন।</string>
+    <string name="travelTips3">বিলম্ব এড়াতে নিয়মিত আপনার কার্ডের ব্যালেন্স পরীক্ষা করুন।</string>
+
+
     <string name="selectStation">স্টেশন নির্বাচন করুন</string>
-    <string name="chooseOrgDest">ভাড়া হিসাব করার জন্য শুরু ও গন্তব্য\nনির্বাচন করুন</string>
-    <string name="withMRT">এমআরটি/র‍্যাপিড পাস সহ</string>
+    <string name="chooseOrgDest">ভাড়া হিসাব করার জন্য শুরু ও গন্তব্য\nস্টেশনগুলো নির্বাচন করুন</string>
+    <string name="withMRT">এমআরটি/র‌্যাপিড পাস ব্যবহারে</string>
     <string name="singleTicket">সিঙ্গেল টিকেট</string>
     <string name="discount">ডিসকাউন্ট</string>
     <string name="yourBalance">আপনার ব্যালেন্স</string>
@@ -63,7 +106,7 @@
     <string name="tapToCheckSufficientBalance">আপনার পর্যাপ্ত ব্যালেন্স আছে কিনা জানতে আপনার কার্ডটি ট্যাপ করুন</string>
     <string name="rescanToCheckSufficientBalance">আপনার পর্যাপ্ত ব্যালেন্স আছে কিনা জানতে আপনার কার্ডটি পুনরায় স্ক্যান করুন</string>
     <string name="selectStations">স্টেশন নির্বাচন</string>
-    <string name="selectOrigin">শুরুর স্টেশন নির্বাচন করুন</string>
+    <string name="selectOrigin">যাত্রা শুরুর স্টেশন নির্বাচন করুন</string>
     <string name="selectDestination">গন্তব্য স্টেশন নির্বাচন করুন</string>
     <string name="roundTrips">বার আপ-ডাউন</string>
     <string name="balanceAmount">ব্যালেন্স</string>
@@ -98,6 +141,15 @@
     <string name="settings">সেটিংস</string>
     <string name="autoSaveCardDetails">স্বয়ংক্রিয় কার্ড সংরক্ষণ</string>
     <string name="autoSaveCardDetailsDescription">স্ক্যান করার সময় স্বয়ংক্রিয়ভাবে কার্ডের তথ্য সংরক্ষণ করুন</string>
+    <string name="settingsAndMore">সেটিংস এবং আরও অনেক কিছু</string>
+    <string name="settingsAndMoreDescription">আপনার এমআরটি অভিজ্ঞতা ব্যক্তিগতকৃত করুন</string>
+    <string name="selectLanguageDescription">Switch between English and বাংলা</string>
+    <string name="metroStationMapDescription">সম্পূর্ণ মেট্রো রেল নেটওয়ার্ক মানচিত্র দেখুন</string>
+    <string name="privacyPolicyDescription">আমাদের গোপনীয়তা নীতি এবং ডেটা হ্যান্ডলিং পদ্ধতিগুলি পড়ুন</string>
+    <string name="getHelpDescription">অ্যাপটি ব্যবহারের জন্য সাহায্য এবং সহায়তা পান</string>
+    <string name="contributorsDescription">এই অ্যাপটি সম্ভব করে তুলেছে এমন মানুষদের সাথে দেখা করুন</string>
+    <string name="openSourceLicensesDescription">ব্যবহৃত তৃতীয় পক্ষের লাইব্রেরির লাইসেন্স দেখুন</string>
+
 
     <!-- Others screen -->
     <string name="others">অন্যান্য</string>

@@ -40,6 +40,7 @@ val lightScheme = lightColorScheme(
     surfaceContainerLow = surfaceContainerLowLight,
     surfaceContainer = surfaceContainerLight,
     surfaceContainerHigh = surfaceContainerHighLight,
+
     surfaceContainerHighest = surfaceContainerHighestLight,
 )
 
@@ -79,7 +80,7 @@ val darkScheme = darkColorScheme(
     surfaceContainer = surfaceContainerDark,
     surfaceContainerHigh = surfaceContainerHighDark,
     surfaceContainerHighest = surfaceContainerHighestDark,
-)
+    )
 
 @Composable
 expect fun MRTBuddyTheme(

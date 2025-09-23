@@ -11,4 +11,5 @@ sealed interface FareCalculatorAction {
     object ToggleFromExpanded : FareCalculatorAction
     object ToggleToExpanded : FareCalculatorAction
     object DismissDropdowns : FareCalculatorAction
+    object SwapStations : FareCalculatorAction
 }

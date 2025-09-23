@@ -47,6 +47,7 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             //  implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(compose.materialIconsExtended)
             implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.datetime)
@@ -84,8 +85,8 @@ android {
         applicationId = "net.adhikary.mrtbuddy"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 23
-        versionName = "0.0.23"
+        versionCode = 27
+        versionName = "0.0.27"
     }
     packaging {
         resources {
