@@ -5,7 +5,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,9 +38,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.graphics.Color
@@ -85,113 +83,207 @@ import androidx.compose.foundation.layout.Column
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalculatorViewModel) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp)
-    ) {
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    // Use BoxWithConstraints so we can adapt layout to the available width
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val isCompact = maxWidth < 420.dp
 
-            // Header row
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Card(
-                    modifier = Modifier.size(44.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
-                ) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Icon(imageVector = Icons.Default.Route, contentDescription = stringResource(Res.string.selectRouteText), tint = MaterialTheme.colorScheme.onPrimary)
-                    }
-                }
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .animateContentSize(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp)
+        ) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding( if (isCompact) 12.dp else 16.dp), verticalArrangement = Arrangement.spacedBy(if (isCompact) 10.dp else 12.dp)) {
 
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(text = stringResource(Res.string.selectRouteText), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
-                    Text(text = stringResource(Res.string.selectRouteDescription), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f))
-                }
-
-                // Quick rescan for non-Android platforms
-                if (getPlatform().name != "android") {
-                    TextButton(onClick = { RescanManager.requestRescan() }) {
-                        Icon(imageVector = Icons.Default.Refresh, contentDescription = stringResource(Res.string.rescan), tint = MaterialTheme.colorScheme.primary)
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = stringResource(Res.string.rescan), color = MaterialTheme.colorScheme.primary)
-                    }
-                }
-            }
-
-            // Station chips row with swap
-            // Hoist combinedAnchor so we know which chip ("from" or "to") opened the dropdown; null = closed
-            val combinedAnchor = remember { mutableStateOf<String?>(null) }
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Box {
-                    StationChip(
-                        label = stringResource(Res.string.fromStationLabel),
-                        value = uiState.fromStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectOrigin),
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        leading = Icons.Default.LocationOn,
-                        onClick = { combinedAnchor.value = "from" }
-                    )
-
-                    // Anchor the dropdown to the from chip Box (only select origin)
-                    if (combinedAnchor.value == "from") {
-                        CombinedRouteDropdown(
-                            uiState = uiState,
-                            stations = viewModel.stations,
-                            selecting = "from",
-                            onDismiss = { combinedAnchor.value = null },
-                            onApply = { selected ->
-                                selected?.let { viewModel.onAction(FareCalculatorAction.UpdateFromStation(it)) }
-                                combinedAnchor.value = null
+                // Header row (title + optional rescan) — stack on narrow screens
+                if (isCompact) {
+                    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Card(
+                                modifier = Modifier.size(40.dp),
+                                shape = RoundedCornerShape(10.dp),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
+                            ) {
+                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                    Icon(imageVector = Icons.Default.Route, contentDescription = stringResource(Res.string.selectRouteText), tint = MaterialTheme.colorScheme.onPrimary)
+                                }
                             }
-                        )
-                    }
-                }
 
-                // Swap button
-                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    val rotation by animateFloatAsState(targetValue = if (uiState.fromStation != null && uiState.toStation != null) 180f else 0f, animationSpec = spring())
-                    Card(
-                        modifier = Modifier.size(52.dp).clickable(enabled = uiState.fromStation != null && uiState.toStation != null) { viewModel.onAction(FareCalculatorAction.SwapStations) },
-                        shape = CircleShape,
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Icon(imageVector = Icons.Default.SwapVert, contentDescription = stringResource(Res.string.selectRouteText), modifier = Modifier.rotate(rotation), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(text = stringResource(Res.string.selectRouteText), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                                Text(text = stringResource(Res.string.selectRouteDescription), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f))
+                            }
+                        }
+
+                        if (getPlatform().name != "android") {
+                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                                TextButton(onClick = { RescanManager.requestRescan() }) {
+                                    Icon(imageVector = Icons.Default.Refresh, contentDescription = stringResource(Res.string.rescan), tint = MaterialTheme.colorScheme.primary)
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(text = stringResource(Res.string.rescan), color = MaterialTheme.colorScheme.primary)
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Card(
+                            modifier = Modifier.size(44.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
+                        ) {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                Icon(imageVector = Icons.Default.Route, contentDescription = stringResource(Res.string.selectRouteText), tint = MaterialTheme.colorScheme.onPrimary)
+                            }
+                        }
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(text = stringResource(Res.string.selectRouteText), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                            Text(text = stringResource(Res.string.selectRouteDescription), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f))
+                        }
+
+                        if (getPlatform().name != "android") {
+                            TextButton(onClick = { RescanManager.requestRescan() }) {
+                                Icon(imageVector = Icons.Default.Refresh, contentDescription = stringResource(Res.string.rescan), tint = MaterialTheme.colorScheme.primary)
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(text = stringResource(Res.string.rescan), color = MaterialTheme.colorScheme.primary)
+                            }
                         }
                     }
                 }
 
-                Box {
-                    StationChip(
-                        label = stringResource(Res.string.toStationLabel),
-                        value = uiState.toStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectDestination),
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                        leading = Icons.Default.LocationOn,
-                        onClick = { combinedAnchor.value = "to" }
-                    )
+                // Station chips row with swap — horizontal on wide, vertical on narrow
+                val combinedAnchor = remember { mutableStateOf<String?>(null) }
+                if (isCompact) {
+                    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            StationChip(
+                                label = stringResource(Res.string.fromStationLabel),
+                                value = uiState.fromStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectOrigin),
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                leading = Icons.Default.LocationOn,
+                                onClick = { combinedAnchor.value = "from" },
+                            )
 
-                    // Anchor the dropdown to the to chip Box (only select destination)
-                    if (combinedAnchor.value == "to") {
-                        CombinedRouteDropdown(
-                            uiState = uiState,
-                            stations = viewModel.stations,
-                            selecting = "to",
-                            onDismiss = { combinedAnchor.value = null },
-                            onApply = { selected ->
-                                selected?.let { viewModel.onAction(FareCalculatorAction.UpdateToStation(it)) }
-                                combinedAnchor.value = null
+                            if (combinedAnchor.value == "from") {
+                                CombinedRouteDropdown(
+                                    uiState = uiState,
+                                    stations = viewModel.stations,
+                                    selecting = "from",
+                                    onDismiss = { combinedAnchor.value = null },
+                                    onApply = { selected ->
+                                        selected?.let { viewModel.onAction(FareCalculatorAction.UpdateFromStation(it)) }
+                                        combinedAnchor.value = null
+                                    }
+                                )
                             }
-                        )
+                        }
+
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Box(modifier = Modifier.weight(1f)) {
+                                StationChip(
+                                    label = stringResource(Res.string.toStationLabel),
+                                    value = uiState.toStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectDestination),
+                                    color = MaterialTheme.colorScheme.secondaryContainer,
+                                    leading = Icons.Default.LocationOn,
+                                    onClick = { combinedAnchor.value = "to" },
+                                )
+
+                                if (combinedAnchor.value == "to") {
+                                    CombinedRouteDropdown(
+                                        uiState = uiState,
+                                        stations = viewModel.stations,
+                                        selecting = "to",
+                                        onDismiss = { combinedAnchor.value = null },
+                                        onApply = { selected ->
+                                            selected?.let { viewModel.onAction(FareCalculatorAction.UpdateToStation(it)) }
+                                            combinedAnchor.value = null
+                                        }
+                                    )
+                                }
+                            }
+
+                            Card(
+                                modifier = Modifier.size(48.dp).clickable(enabled = uiState.fromStation != null && uiState.toStation != null) { viewModel.onAction(FareCalculatorAction.SwapStations) },
+                                shape = CircleShape,
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                    val rotation by animateFloatAsState(targetValue = if (uiState.fromStation != null && uiState.toStation != null) 180f else 0f, animationSpec = spring())
+                                    Icon(imageVector = Icons.Default.SwapVert, contentDescription = stringResource(Res.string.selectRouteText), modifier = Modifier.rotate(rotation), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // Use the same vertical arrangement on larger screens as well (stacked route selection)
+                    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            StationChip(
+                                label = stringResource(Res.string.fromStationLabel),
+                                value = uiState.fromStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectOrigin),
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                leading = Icons.Default.LocationOn,
+                                onClick = { combinedAnchor.value = "from" },
+                            )
+
+                            if (combinedAnchor.value == "from") {
+                                CombinedRouteDropdown(
+                                    uiState = uiState,
+                                    stations = viewModel.stations,
+                                    selecting = "from",
+                                    onDismiss = { combinedAnchor.value = null },
+                                    onApply = { selected ->
+                                        selected?.let { viewModel.onAction(FareCalculatorAction.UpdateFromStation(it)) }
+                                        combinedAnchor.value = null
+                                    }
+                                )
+                            }
+                        }
+
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                            Card(
+                                modifier = Modifier.size(52.dp).clickable(enabled = uiState.fromStation != null && uiState.toStation != null) { viewModel.onAction(FareCalculatorAction.SwapStations) },
+                                shape = CircleShape,
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                    val rotation by animateFloatAsState(targetValue = if (uiState.fromStation != null && uiState.toStation != null) 180f else 0f, animationSpec = spring())
+                                    Icon(imageVector = Icons.Default.SwapVert, contentDescription = stringResource(Res.string.selectRouteText), modifier = Modifier.rotate(rotation), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                            }
+                        }
+
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            StationChip(
+                                label = stringResource(Res.string.toStationLabel),
+                                value = uiState.toStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectDestination),
+                                color = MaterialTheme.colorScheme.secondaryContainer,
+                                leading = Icons.Default.LocationOn,
+                                onClick = { combinedAnchor.value = "to" },
+                            )
+
+                            if (combinedAnchor.value == "to") {
+                                CombinedRouteDropdown(
+                                    uiState = uiState,
+                                    stations = viewModel.stations,
+                                    selecting = "to",
+                                    onDismiss = { combinedAnchor.value = null },
+                                    onApply = { selected ->
+                                        selected?.let { viewModel.onAction(FareCalculatorAction.UpdateToStation(it)) }
+                                        combinedAnchor.value = null
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
-            }
 
-            // Short simple steps for all ages
-            GettingStartedSteps()
+                // Short simple steps for all ages
+                GettingStartedSteps()
+            }
         }
     }
 }
@@ -213,23 +305,32 @@ fun GettingStartedSteps() {
 }
 
 @Composable
-fun StationChip(label: String, value: String, color: Color, leading: ImageVector, onClick: () ->  Unit) {
-    // Ensure a comfortable touch target and animate size changes
+fun StationChip(
+    label: String,
+    value: String,
+    color: Color,
+    leading: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier.fillMaxWidth()
+) {
     Card(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = color),
-        modifier = Modifier
-            .clickable(onClick = onClick, role = Role.Button, indication = null, interactionSource = remember { MutableInteractionSource() })
-            .animateContentSize()
+        modifier = modifier
             .sizeIn(minWidth = 140.dp, minHeight = 56.dp)
             .padding(0.dp)
             .semantics { contentDescription = "$label: $value" }
+            .clickable(onClick = onClick)
     ) {
-        Row(modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             Icon(imageVector = leading, contentDescription = label, tint = MaterialTheme.colorScheme.onSurface)
             Column {
-                Text(text = label, style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold))
-                Text(text = value, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+                Text(text = label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                Text(text = value, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold))
             }
         }
     }
@@ -244,36 +345,86 @@ fun CombinedRouteDropdown(
     onDismiss: () -> Unit,
     onApply: (net.adhikary.mrtbuddy.data.model.Station?) -> Unit
 ) {
-    // Use a Dialog (separate window) to avoid PopupLayout / intrinsic measurement interactions.
     Dialog(onDismissRequest = onDismiss) {
-        Card(modifier = Modifier.width(320.dp)) {
-            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text(text = if (selecting == "from") stringResource(Res.string.fromStationLabel) else stringResource(Res.string.toStationLabel), style = MaterialTheme.typography.labelLarge)
+        BoxWithConstraints {
+            val availWidth = maxWidth
+            val availHeight = maxHeight
+            val isCompactLocal = availWidth < 420.dp
+            val listMaxHeightLocal = if (isCompactLocal) (availHeight * 0.6f) else 400.dp
 
-                if (stations.isEmpty()) {
-                    Text(text = if (selecting == "from") stringResource(Res.string.selectOrigin) else stringResource(Res.string.selectDestination), modifier = Modifier.padding(8.dp))
-                } else {
-                    LazyColumn(modifier = Modifier.heightIn(max = 400.dp)) {
-                        items(stations) { station ->
-                            // Immediately apply when user chooses a station
-                            Row(modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onApply(station) }
-                                .padding(vertical = 12.dp, horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                                Text(text = StationService.translate(station.name), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                                // Highlight current selection based on uiState
-                                val selected = if (selecting == "from") uiState.fromStation?.id == station.id else uiState.toStation?.id == station.id
-                                if (selected) {
-                                    Text(text = "✓", color = MaterialTheme.colorScheme.primary)
+            if (isCompactLocal) {
+                // Full-screen modal for small widths
+                Card(modifier = Modifier.fillMaxSize().padding(8.dp)) {
+                    Column(modifier = Modifier.fillMaxSize().padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text(
+                                text = if (selecting == "from") stringResource(Res.string.fromStationLabel) else stringResource(Res.string.toStationLabel),
+                                style = MaterialTheme.typography.titleMedium,
+                                maxLines = 1
+                            )
+                            OutlinedButton(onClick = onDismiss) { Text(text = "Close") }
+                        }
+
+                        if (stations.isEmpty()) {
+                            Text(text = if (selecting == "from") stringResource(Res.string.selectOrigin) else stringResource(Res.string.selectDestination), modifier = Modifier.padding(8.dp))
+                        } else {
+                            LazyColumn(modifier = Modifier.fillMaxWidth().heightIn(max = listMaxHeightLocal)) {
+                                items(stations) { station ->
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable { onApply(station) }
+                                            .padding(vertical = 12.dp, horizontal = 8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(text = StationService.translate(station.name), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                                        val selected = if (selecting == "from") uiState.fromStation?.id == station.id else uiState.toStation?.id == station.id
+                                        if (selected) Text(text = "✓", color = MaterialTheme.colorScheme.primary)
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
-                // Only a cancel button is needed now; selection auto-applies
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) { Text(text = "Cancel") }
+            } else {
+                // Centered card for larger screens
+                val targetWidth = (availWidth * 0.45f).coerceAtLeast(280.dp).coerceAtMost(560.dp)
+                Card(modifier = Modifier.widthIn(max = targetWidth)) {
+                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Text(
+                            text = if (selecting == "from") stringResource(Res.string.fromStationLabel) else stringResource(Res.string.toStationLabel),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+
+                        if (stations.isEmpty()) {
+                            Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
+                                Box(modifier = Modifier.padding(12.dp)) {
+                                    Text(text = if (selecting == "from") stringResource(Res.string.selectOrigin) else stringResource(Res.string.selectDestination))
+                                }
+                            }
+                        } else {
+                            LazyColumn(modifier = Modifier.heightIn(max = listMaxHeightLocal)) {
+                                items(stations) { station ->
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable { onApply(station) }
+                                            .padding(vertical = 12.dp, horizontal = 8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(text = StationService.translate(station.name), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                                        val selected = if (selecting == "from") uiState.fromStation?.id == station.id else uiState.toStation?.id == station.id
+                                        if (selected) Text(text = "✓", color = MaterialTheme.colorScheme.primary)
+                                    }
+                                }
+                            }
+                        }
+
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                            OutlinedButton(onClick = onDismiss) { Text(text = "Cancel") }
+                        }
+                    }
                 }
             }
         }
@@ -282,101 +433,188 @@ fun CombinedRouteDropdown(
 
 @Composable
 fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewModel) {
-    // Read vm state once to avoid repetitive access
-    val vmState = viewModel.state.value
+    // make layout responsive
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val isCompact = maxWidth < 420.dp
+        val vmState = viewModel.state.value
 
-    Card(modifier = Modifier.fillMaxWidth().animateContentSize(), shape = RoundedCornerShape(20.dp), elevation = CardDefaults.elevatedCardElevation(8.dp)) {
-        Column(modifier = Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            // Top row: Service badge + Fare
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Card(shape = RoundedCornerShape(12.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))) {
-                        Row(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                            Icon(imageVector = Icons.Default.DirectionsTransit, contentDescription = stringResource(Res.string.withMRT), tint = MaterialTheme.colorScheme.primary)
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(text = stringResource(Res.string.withMRT), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
+        Card(modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize(), shape = RoundedCornerShape(20.dp), elevation = CardDefaults.elevatedCardElevation(8.dp)) {
+            if (isCompact) {
+                // Stack content vertically for small screens
+                Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Card(shape = RoundedCornerShape(12.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))) {
+                            Row(modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                                Icon(imageVector = Icons.Default.DirectionsTransit, contentDescription = stringResource(Res.string.withMRT), tint = MaterialTheme.colorScheme.primary)
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(text = stringResource(Res.string.withMRT), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
+                            }
                         }
-                    }
-                }
 
-                Column(horizontalAlignment = Alignment.End) {
-                    Text(text = "৳ ${translateNumber(vmState.discountedFare)}", style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.ExtraBold))
-                    Crossfade(targetState = vmState.discountedFare != vmState.calculatedFare) { showOriginal ->
-                        if (showOriginal) {
-                            Text(text = "৳ ${translateNumber(vmState.calculatedFare)}", style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)))
-                        }
-                    }
-                }
-            }
-
-            // Middle: balance / ticket info
-            Card(shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant), modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                    when (val cs = uiState.cardState) {
-                        is CardState.Balance -> {
-                            val balance = cs.amount
-                            val enough = balance >= uiState.discountedFare
-                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                Icon(imageVector = Icons.Default.AccountBalanceWallet, contentDescription = stringResource(Res.string.balanceAmount), tint = if (enough) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
-                                Column(horizontalAlignment = Alignment.Start) {
-                                    Text(text = stringResource(Res.string.balanceAmount) + " ৳ ${translateNumber(balance)}", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = if (enough) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
-                                    if (!enough) {
-                                        Text(text = "Need ৳ ${translateNumber(uiState.discountedFare - balance)} more", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
-                                    }
+                        Column(horizontalAlignment = Alignment.End) {
+                            Text(text = "৳ ${translateNumber(vmState.discountedFare)}", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold))
+                            Crossfade(targetState = vmState.discountedFare != vmState.calculatedFare) { showOriginal ->
+                                if (showOriginal) {
+                                    Text(text = "৳ ${translateNumber(vmState.calculatedFare)}", style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)))
                                 }
                             }
+                        }
+                    }
 
-                            if (enough && uiState.discountedFare > 0) {
-                                val roundTrips = balance / (uiState.discountedFare * 2).coerceAtLeast(1)
-                                if (roundTrips > 0) {
-                                    Spacer(modifier = Modifier.height(6.dp))
+                    // balance / ticket info
+                    Card(shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant), modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                            when (val cs = uiState.cardState) {
+                                is CardState.Balance -> {
+                                    val balance = cs.amount
+                                    val enough = balance >= uiState.discountedFare
                                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                        Icon(painter = painterResource(Res.drawable.two_way_arrows), contentDescription = stringResource(Res.string.roundTrips), tint = MaterialTheme.colorScheme.primary)
-                                        Text(text = "${translateNumber(roundTrips)} ${stringResource(Res.string.roundTrips)}", color = MaterialTheme.colorScheme.primary)
+                                        Icon(imageVector = Icons.Default.AccountBalanceWallet, contentDescription = stringResource(Res.string.balanceAmount), tint = if (enough) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
+                                        Column(horizontalAlignment = Alignment.Start) {
+                                            Text(text = stringResource(Res.string.balanceAmount) + " ৳ ${translateNumber(balance)}", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = if (enough) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
+                                            if (!enough) {
+                                                Text(text = "Need ৳ ${translateNumber(uiState.discountedFare - balance)} more", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
+                                            }
+                                        }
                                     }
+                                }
+
+                                is CardState.WaitingForTap -> {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Icon(imageVector = Icons.Rounded.Sell, contentDescription = stringResource(Res.string.singleTicket), modifier = Modifier.size(28.dp), tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                                        Text(text = "${stringResource(Res.string.singleTicket)} ৳ ${translateNumber(uiState.calculatedFare)}", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+                                        Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                                    }
+                                }
+
+                                is CardState.Reading -> {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        CircularProgressIndicator(modifier = Modifier.size(28.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.primary)
+                                        Spacer(modifier = Modifier.height(6.dp))
+                                        Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                                    }
+                                }
+
+                                is CardState.Error -> {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Text(text = cs.message, color = MaterialTheme.colorScheme.error)
+                                    }
+                                }
+
+                                else -> {
+                                    Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                                }
+                            }
+                        }
+                    }
+
+                    // Actions stacked
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                        ElevatedButton(onClick = { /* route preview / directions */ }, modifier = Modifier.weight(1f), enabled = uiState.fromStation != null && uiState.toStation != null) {
+                            Text(text = stringResource(Res.string.route), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                        }
+
+                        OutlinedButton(onClick = { /* open tips */ }, modifier = Modifier.weight(1f), enabled = true) {
+                            Text(text = stringResource(Res.string.travelTipsLabel), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                        }
+                    }
+                }
+            } else {
+                // Larger layouts use the original structure
+                Column(modifier = Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    // Top row: Service badge + Fare
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Card(shape = RoundedCornerShape(12.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))) {
+                                Row(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(imageVector = Icons.Default.DirectionsTransit, contentDescription = stringResource(Res.string.withMRT), tint = MaterialTheme.colorScheme.primary)
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(text = stringResource(Res.string.withMRT), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
                                 }
                             }
                         }
 
-                        is CardState.WaitingForTap -> {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Icon(imageVector = Icons.Rounded.Sell, contentDescription = stringResource(Res.string.singleTicket), modifier = Modifier.size(28.dp), tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                                Text(text = "${stringResource(Res.string.singleTicket)} ৳ ${translateNumber(uiState.calculatedFare)}", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
-                                Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                        Column(horizontalAlignment = Alignment.End) {
+                            Text(text = "৳ ${translateNumber(vmState.discountedFare)}", style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.ExtraBold))
+                            Crossfade(targetState = vmState.discountedFare != vmState.calculatedFare) { showOriginal ->
+                                if (showOriginal) {
+                                    Text(text = "৳ ${translateNumber(vmState.calculatedFare)}", style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)))
+                                }
                             }
-                        }
-
-                        is CardState.Reading -> {
-                            // Show an inline progress indicator so users know reading is in progress
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                CircularProgressIndicator(modifier = Modifier.size(28.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.primary)
-                                Spacer(modifier = Modifier.height(6.dp))
-                                Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                            }
-                        }
-
-                        is CardState.Error -> {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = cs.message, color = MaterialTheme.colorScheme.error)
-                            }
-                        }
-
-                        else -> {
-                            Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
                         }
                     }
-                }
-            }
 
-            // Actions: clear and primary CTA buttons with clear affordance for all ages
-            val routeSelected = uiState.fromStation != null && uiState.toStation != null
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
-                ElevatedButton(onClick = { /* route preview / directions */ }, modifier = Modifier.weight(1f), enabled = routeSelected) {
-                    Text(text = stringResource(Res.string.route), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
-                }
+                    // Middle: balance / ticket info
+                    Card(shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant), modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                            when (val cs = uiState.cardState) {
+                                is CardState.Balance -> {
+                                    val balance = cs.amount
+                                    val enough = balance >= uiState.discountedFare
+                                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        Icon(imageVector = Icons.Default.AccountBalanceWallet, contentDescription = stringResource(Res.string.balanceAmount), tint = if (enough) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
+                                        Column(horizontalAlignment = Alignment.Start) {
+                                            Text(text = stringResource(Res.string.balanceAmount) + " ৳ ${translateNumber(balance)}", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = if (enough) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
+                                            if (!enough) {
+                                                Text(text = "Need ৳ ${translateNumber(uiState.discountedFare - balance)} more", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
+                                            }
+                                        }
+                                    }
 
-                OutlinedButton(onClick = { /* open tips */ }, modifier = Modifier.weight(1f), enabled = true) {
-                    Text(text = stringResource(Res.string.travelTipsLabel), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                                    if (enough && uiState.discountedFare > 0) {
+                                        val roundTrips = balance / (uiState.discountedFare * 2).coerceAtLeast(1)
+                                        if (roundTrips > 0) {
+                                            Spacer(modifier = Modifier.height(6.dp))
+                                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                                Icon(painter = painterResource(Res.drawable.two_way_arrows), contentDescription = stringResource(Res.string.roundTrips), tint = MaterialTheme.colorScheme.primary)
+                                                Text(text = "${translateNumber(roundTrips)} ${stringResource(Res.string.roundTrips)}", color = MaterialTheme.colorScheme.primary)
+                                            }
+                                        }
+                                    }
+                                }
+
+                                is CardState.WaitingForTap -> {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Icon(imageVector = Icons.Rounded.Sell, contentDescription = stringResource(Res.string.singleTicket), modifier = Modifier.size(28.dp), tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                                        Text(text = "${stringResource(Res.string.singleTicket)} ৳ ${translateNumber(uiState.calculatedFare)}", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+                                        Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                                    }
+                                }
+
+                                is CardState.Reading -> {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        CircularProgressIndicator(modifier = Modifier.size(28.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.primary)
+                                        Spacer(modifier = Modifier.height(6.dp))
+                                        Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                                    }
+                                }
+
+                                is CardState.Error -> {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Text(text = cs.message, color = MaterialTheme.colorScheme.error)
+                                    }
+                                }
+
+                                else -> {
+                                    Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                                }
+                            }
+                        }
+                    }
+
+                    // Actions
+                    val routeSelected = uiState.fromStation != null && uiState.toStation != null
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
+                        ElevatedButton(onClick = { /* route preview / directions */ }, modifier = Modifier.weight(1f), enabled = routeSelected) {
+                            Text(text = stringResource(Res.string.route), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                        }
+
+                        OutlinedButton(onClick = { /* open tips */ }, modifier = Modifier.weight(1f), enabled = true) {
+                            Text(text = stringResource(Res.string.travelTipsLabel), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                        }
+                    }
                 }
             }
         }
@@ -385,66 +623,100 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
 
 @Composable
 fun TravelInfoCard(uiState: FareCalculatorState) {
-    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), elevation = CardDefaults.elevatedCardElevation(4.dp)) {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            // Header
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Card(modifier = Modifier.size(40.dp), shape = RoundedCornerShape(10.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f))) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Icon(imageVector = Icons.Rounded.Info, contentDescription = stringResource(Res.string.journeyInformationLabel), tint = MaterialTheme.colorScheme.secondary)
-                    }
-                }
-                Column {
-                    Text(text = stringResource(Res.string.journeyInformationLabel), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
-                    Text(text = stringResource(Res.string.journeyInformationDescription), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                }
-            }
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val isCompact = maxWidth < 420.dp
 
-            // Route summary
-            Card(shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth()) {
-                Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Icon(imageVector = Icons.Default.Route, contentDescription = stringResource(Res.string.route), tint = MaterialTheme.colorScheme.primary)
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(text = stringResource(Res.string.route), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                        Text(text = "${uiState.fromStation?.let { StationService.translate(it.name) } ?: "-"} → ${uiState.toStation?.let { StationService.translate(it.name) } ?: "-"}", style = MaterialTheme.typography.bodyLarge)
-                    }
-                    // small badge with estimated price range
-                    Column(horizontalAlignment = Alignment.End) {
-                        Text(text = "Single: ৳ ${translateNumber(uiState.calculatedFare)}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
-                        Text(text = "MRT/Rapid Pass: ৳ ${translateNumber(uiState.discountedFare)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                    }
-                }
-            }
-
-            // Price breakdown and savings
-            Card(shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.04f))) {
-                Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+        Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), elevation = CardDefaults.elevatedCardElevation(4.dp)) {
+            if (isCompact) {
+                Column(modifier = Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Card(modifier = Modifier.size(36.dp), shape = RoundedCornerShape(10.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f))) {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                Icon(imageVector = Icons.Rounded.Info, contentDescription = stringResource(Res.string.journeyInformationLabel), tint = MaterialTheme.colorScheme.secondary)
+                            }
+                        }
                         Column {
-                            Text(text = stringResource(Res.string.singleTicket), style = MaterialTheme.typography.labelLarge)
-                            Text(text = "৳ ${translateNumber(uiState.calculatedFare)}", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
-                        }
-
-                        Column(horizontalAlignment = Alignment.End) {
-                            Text(text = stringResource(Res.string.withMRT), style = MaterialTheme.typography.labelLarge)
-                            Text(text = "৳ ${translateNumber(uiState.discountedFare)}", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.primary)
+                            Text(text = stringResource(Res.string.journeyInformationLabel), style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold))
+                            Text(text = stringResource(Res.string.journeyInformationDescription), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
                         }
                     }
 
-                    val saved = (uiState.calculatedFare - uiState.discountedFare).coerceAtLeast(0)
-                    if (saved > 0) {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Icon(imageVector = Icons.Rounded.Percent, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                            Text(text = "You save ৳ ${translateNumber(saved)} (${((saved * 100f) / (uiState.calculatedFare.takeIf { it > 0 } ?: 1)).toInt()}%) with MRT/Rapid Pass", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+                    Card(shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                Icon(imageVector = Icons.Default.Route, contentDescription = stringResource(Res.string.route), tint = MaterialTheme.colorScheme.primary)
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(text = stringResource(Res.string.route), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                                    Text(text = "${uiState.fromStation?.let { StationService.translate(it.name) } ?: "-"} → ${uiState.toStation?.let { StationService.translate(it.name) } ?: "-"}", style = MaterialTheme.typography.bodyMedium)
+                                }
+                            }
                         }
-                    } else {
-                        Text(text = "No additional MRT discount available", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
                     }
 
-                    // subtle CTA
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                        TextButton(onClick = { /* navigate to route details */ }) {
-                            Text(text = stringResource(Res.string.route), color = MaterialTheme.colorScheme.primary)
+                    Card(shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.04f))) {
+                        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            val saved = (uiState.calculatedFare - uiState.discountedFare).coerceAtLeast(0)
+                            if (saved > 0) {
+                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Icon(imageVector = Icons.Rounded.Percent, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                    Text(text = "You save ৳ ${translateNumber(saved)} (${((saved * 100f) / (uiState.calculatedFare.takeIf { it > 0 } ?: 1)).toInt()}%) with MRT/Rapid Pass", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+                                }
+                            } else {
+                                Text(text = "No additional MRT discount available", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                            }
+                        }
+                    }
+                }
+            } else {
+                Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    // Header
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Card(modifier = Modifier.size(40.dp), shape = RoundedCornerShape(10.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f))) {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                Icon(imageVector = Icons.Rounded.Info, contentDescription = stringResource(Res.string.journeyInformationLabel), tint = MaterialTheme.colorScheme.secondary)
+                            }
+                        }
+                        Column {
+                            Text(text = stringResource(Res.string.journeyInformationLabel), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                            Text(text = stringResource(Res.string.journeyInformationDescription), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                        }
+                    }
+
+                    // Route summary
+                    Card(shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth()) {
+                        Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Icon(imageVector = Icons.Default.Route, contentDescription = stringResource(Res.string.route), tint = MaterialTheme.colorScheme.primary)
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(text = stringResource(Res.string.route), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                                Text(text = "${uiState.fromStation?.let { StationService.translate(it.name) } ?: "-"} → ${uiState.toStation?.let { StationService.translate(it.name) } ?: "-"}", style = MaterialTheme.typography.bodyLarge)
+                            }
+                            // small badge with estimated price range
+                            Column(horizontalAlignment = Alignment.End) {
+                                Text(text = "Single: ৳ ${translateNumber(uiState.calculatedFare)}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
+                                Text(text = "MRT/Rapid Pass: ৳ ${translateNumber(uiState.discountedFare)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                            }
+                        }
+                    }
+
+                    // Price breakdown and savings
+                    Card(shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.04f))) {
+                        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            val saved = (uiState.calculatedFare - uiState.discountedFare).coerceAtLeast(0)
+                            if (saved > 0) {
+                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Icon(imageVector = Icons.Rounded.Percent, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                    Text(text = "You save ৳ ${translateNumber(saved)} (${((saved * 100f) / (uiState.calculatedFare.takeIf { it > 0 } ?: 1)).toInt()}%) with MRT/Rapid Pass", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+                                }
+                            } else {
+                                Text(text = "No additional MRT discount available", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                            }
+
+                            // subtle CTA
+                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                                TextButton(onClick = { /* navigate to route details */ }) {
+                                    Text(text = stringResource(Res.string.route), color = MaterialTheme.colorScheme.primary)
+                                }
+                            }
                         }
                     }
                 }
@@ -455,24 +727,48 @@ fun TravelInfoCard(uiState: FareCalculatorState) {
 
 @Composable
 fun QuickTipsCard() {
-    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), elevation = CardDefaults.elevatedCardElevation(4.dp)) {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Card(modifier = Modifier.size(40.dp), shape = RoundedCornerShape(10.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f))) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Icon(imageVector = Icons.Default.AccessTime, contentDescription = stringResource(Res.string.travelTipsLabel), tint = MaterialTheme.colorScheme.tertiary)
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val isCompact = maxWidth < 420.dp
+
+        Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), elevation = CardDefaults.elevatedCardElevation(4.dp)) {
+            if (isCompact) {
+                Column(modifier = Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Card(modifier = Modifier.size(36.dp), shape = RoundedCornerShape(10.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f))) {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                Icon(imageVector = Icons.Default.AccessTime, contentDescription = stringResource(Res.string.travelTipsLabel), tint = MaterialTheme.colorScheme.tertiary)
+                            }
+                        }
+                        Column {
+                            Text(text = stringResource(Res.string.travelTipsLabel), style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold))
+                            Text(text = stringResource(Res.string.travelTipsDescription), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                        }
                     }
+
+                    TipItem(icon = Icons.Default.AccountBalanceWallet, text = stringResource(Res.string.travelTips1), iconColor = MaterialTheme.colorScheme.primary)
+                    TipItem(icon = Icons.Default.AccessTime, text = stringResource(Res.string.travelTips2), iconColor = MaterialTheme.colorScheme.secondary)
+                    TipItem(icon = Icons.Default.Route, text = stringResource(Res.string.travelTips3), iconColor = MaterialTheme.colorScheme.tertiary)
                 }
-                Column {
-                    Text(text = stringResource(Res.string.travelTipsLabel), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
-                    Text(text = stringResource(Res.string.travelTipsDescription), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+            } else {
+                Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Card(modifier = Modifier.size(40.dp), shape = RoundedCornerShape(10.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f))) {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                Icon(imageVector = Icons.Default.AccessTime, contentDescription = stringResource(Res.string.travelTipsLabel), tint = MaterialTheme.colorScheme.tertiary)
+                            }
+                        }
+                        Column {
+                            Text(text = stringResource(Res.string.travelTipsLabel), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                            Text(text = stringResource(Res.string.travelTipsDescription), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                        }
+                    }
+
+                    // tip items
+                    TipItem(icon = Icons.Default.AccountBalanceWallet, text = stringResource(Res.string.travelTips1), iconColor = MaterialTheme.colorScheme.primary)
+                    TipItem(icon = Icons.Default.AccessTime, text = stringResource(Res.string.travelTips2), iconColor = MaterialTheme.colorScheme.secondary)
+                    TipItem(icon = Icons.Default.Route, text = stringResource(Res.string.travelTips3), iconColor = MaterialTheme.colorScheme.tertiary)
                 }
             }
-
-            // tip items
-            TipItem(icon = Icons.Default.AccountBalanceWallet, text = stringResource(Res.string.travelTips1), iconColor = MaterialTheme.colorScheme.primary)
-            TipItem(icon = Icons.Default.AccessTime, text = stringResource(Res.string.travelTips2), iconColor = MaterialTheme.colorScheme.secondary)
-            TipItem(icon = Icons.Default.Route, text = stringResource(Res.string.travelTips3), iconColor = MaterialTheme.colorScheme.tertiary)
         }
     }
 }

@@ -766,7 +766,7 @@ private fun ModernErrorContent(message: String) {
             FilledTonalButton(
                 onClick = { RescanManager.requestRescan() },
                 shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth(0.8f)
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(
                     imageVector = Icons.Default.Refresh,
@@ -1002,13 +1002,15 @@ private fun ModernNfcDisabledContent() {
                         text = stringResource(Res.string.quickSetupGuideText2),
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontSize = 12.sp
-                        ), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                     )
                     Text(
                         text = stringResource(Res.string.quickSetupGuideText3),
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontSize = 12.sp
-                        ), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                     )
                 }
             }
