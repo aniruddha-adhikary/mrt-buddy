@@ -51,7 +51,6 @@ import mrtbuddy.composeapp.generated.resources.fareCalculatorText
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.ui.screens.components.FareDisplayCard
 import net.adhikary.mrtbuddy.ui.screens.components.StationSelectionSection
-import net.adhikary.mrtbuddy.ui.screens.components.TravelInfoCard
 import net.adhikary.mrtbuddy.ui.screens.components.QuickTipsCard
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -158,7 +157,7 @@ fun FareCalculatorScreen(
                         visible = contentVisible,
                         enter = slideInVertically(initialOffsetY = { it / 3 }, animationSpec = infoAnimSpec) + fadeIn(animationSpec = fadeInAnimSpec)
                     ) {
-                        TravelInfoCard(uiState)
+//                        TravelInfoCard(uiState)
                     }
                 }
             }

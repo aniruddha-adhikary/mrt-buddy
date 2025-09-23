@@ -1,6 +1,5 @@
 package net.adhikary.mrtbuddy.ui.screens.components
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -12,12 +11,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.AccountBalanceWallet
-import androidx.compose.material.icons.filled.DirectionsTransit
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Route
 import androidx.compose.material.icons.filled.SwapVert
-import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Percent
 import androidx.compose.material.icons.rounded.Sell
 import androidx.compose.material3.Card
@@ -28,12 +25,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +41,7 @@ import kotlinx.coroutines.delay
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
@@ -60,12 +59,14 @@ import net.adhikary.mrtbuddy.ui.screens.farecalculator.FareCalculatorAction
 import net.adhikary.mrtbuddy.ui.screens.farecalculator.FareCalculatorState
 import net.adhikary.mrtbuddy.ui.screens.farecalculator.FareCalculatorViewModel
 import mrtbuddy.composeapp.generated.resources.Res
-import mrtbuddy.composeapp.generated.resources.balanceAmount
+import org.jetbrains.compose.resources.stringResource
+import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.foundation.background
 import mrtbuddy.composeapp.generated.resources.fromStationLabel
 import mrtbuddy.composeapp.generated.resources.journeyInformationDescription
 import mrtbuddy.composeapp.generated.resources.journeyInformationLabel
 import mrtbuddy.composeapp.generated.resources.rescan
-import mrtbuddy.composeapp.generated.resources.roundTrips
 import mrtbuddy.composeapp.generated.resources.route
 import mrtbuddy.composeapp.generated.resources.selectDestination
 import mrtbuddy.composeapp.generated.resources.selectOrigin
@@ -79,11 +80,6 @@ import mrtbuddy.composeapp.generated.resources.travelTips2
 import mrtbuddy.composeapp.generated.resources.travelTips3
 import mrtbuddy.composeapp.generated.resources.travelTipsDescription
 import mrtbuddy.composeapp.generated.resources.travelTipsLabel
-import mrtbuddy.composeapp.generated.resources.two_way_arrows
-import mrtbuddy.composeapp.generated.resources.withMRT
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
-import androidx.compose.foundation.layout.Column
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,15 +100,72 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                 .fillMaxWidth()
                 .padding( if (isCompact) 12.dp else 16.dp), verticalArrangement = Arrangement.spacedBy(if (isCompact) 10.dp else 12.dp)) {
 
-                // Header
-                ModernHeader(
-                    title = stringResource(Res.string.selectRouteText),
-                    description = stringResource(Res.string.selectRouteDescription),
-                    icon = Icons.Default.Route,
-                    isCompact = isCompact,
-                    showRescan = getPlatform().name != "android",
-                    onRescan = { RescanManager.requestRescan() }
-                )
+                // Header (inlined ModernHeader for this components file)
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                    elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
+                ) {
+
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = Color.Transparent
+                    ) {
+                        Box(modifier = Modifier.fillMaxWidth().drawBehind {
+                            drawRect(brush = headerGradient)
+                        }) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                // Circular icon avatar on the left
+                                Surface(
+                                    modifier = Modifier.size(if (isCompact) 52.dp else 64.dp),
+                                    shape = CircleShape,
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                ) {
+                                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                        Icon(
+                                            imageVector = Icons.Default.Route,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(if (isCompact) 22.dp else 28.dp)
+                                        )
+                                    }
+                                }
+
+                                // Title + description
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = stringResource(Res.string.selectRouteText),
+                                        style = if (isCompact) MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold) else MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
+                                        color = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = stringResource(Res.string.selectRouteDescription),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.92f),
+                                        maxLines = 2
+                                    )
+                                }
+
+                                // rescan action if available
+                                if (getPlatform().name != "android") {
+                                    TextButton(onClick = { RescanManager.requestRescan() }) {
+                                        Icon(imageVector = Icons.Default.Refresh, contentDescription = stringResource(Res.string.rescan), tint = MaterialTheme.colorScheme.onPrimary)
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(text = stringResource(Res.string.rescan), color = MaterialTheme.colorScheme.onPrimary)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
                 // Station chips row with swap — show From/To stacked vertically on left and swap on the right
                 val combinedAnchor = remember { mutableStateOf<String?>(null) }
@@ -403,7 +456,7 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                             }
                         }
 
-                        Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
 
                         // Line items
                         Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -419,7 +472,7 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                                 Text(text = "-৳ ${translateNumber(discount)}", style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.primary))
                             }
 
-                            Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f))
+                            HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f))
 
                             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                                 Text(text = "Total", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold))
@@ -466,30 +519,21 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.error
                                 )
-
-                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    ElevatedButton(onClick = { /* navigate to top-up flow */ }, modifier = Modifier.weight(1f)) {
-                                        Text(text = "Top up", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
-                                    }
-
-                                    OutlinedButton(onClick = { /* show top-up help */ }, modifier = Modifier.weight(1f)) {
-                                        Text(text = "How to top up", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
-                                    }
-                                }
                             }
                         }
 
-                        // Actions
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            ElevatedButton(onClick = { /* route */ }, modifier = Modifier.weight(1f), enabled = uiState.fromStation != null && uiState.toStation != null) {
-                                Text(text = stringResource(Res.string.route), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
-                            }
-                            OutlinedButton(onClick = { /* tips */ }, modifier = Modifier.weight(1f)) {
-                                Text(text = stringResource(Res.string.travelTipsLabel), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
-                            }
-                        }
-                    }
-                }
+//                        // Actions
+//                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+//                            ElevatedButton(onClick = { /* route */ }, modifier = Modifier.weight(1f), enabled = uiState.fromStation != null && uiState.toStation != null) {
+//                                Text(text = stringResource(Res.string.route), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+//                            }
+//                            OutlinedButton(onClick = { /* tips */ }, modifier = Modifier.weight(1f)) {
+//                                Text(text = stringResource(Res.string.travelTipsLabel), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+//                            }
+//                        }
+                        // --- end merged Travel Info section ---
+                     }
+                 }
 
                 is CardState.Reading -> {
                     // show reading spinner and prompt
@@ -526,111 +570,6 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
         }
     }
 }
-
-@Composable
-fun TravelInfoCard(uiState: FareCalculatorState) {
-    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-        val isCompact = maxWidth < 420.dp
-
-        Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), elevation = CardDefaults.elevatedCardElevation(4.dp)) {
-            if (isCompact) {
-                Column(modifier = Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Card(modifier = Modifier.size(36.dp), shape = RoundedCornerShape(10.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f))) {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Icon(imageVector = Icons.Rounded.Info, contentDescription = stringResource(Res.string.journeyInformationLabel), tint = MaterialTheme.colorScheme.secondary)
-                            }
-                        }
-                        Column {
-                            Text(text = stringResource(Res.string.journeyInformationLabel), style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold))
-                            Text(text = stringResource(Res.string.journeyInformationDescription), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                        }
-                    }
-
-                    Card(shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth()) {
-                        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                Icon(imageVector = Icons.Default.Route, contentDescription = stringResource(Res.string.route), tint = MaterialTheme.colorScheme.primary)
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(text = stringResource(Res.string.route), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                                    Text(text = "${uiState.fromStation?.let { StationService.translate(it.name) } ?: "-"} → ${uiState.toStation?.let { StationService.translate(it.name) } ?: "-"}", style = MaterialTheme.typography.bodyMedium)
-                                }
-                            }
-                        }
-                    }
-
-                    Card(shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.04f))) {
-                        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            val saved = (uiState.calculatedFare - uiState.discountedFare).coerceAtLeast(0)
-                            if (saved > 0) {
-                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    Icon(imageVector = Icons.Rounded.Percent, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                                    Text(text = "You save ৳ ${translateNumber(saved)} (${((saved * 100f) / (uiState.calculatedFare.takeIf { it > 0 } ?: 1)).toInt()}%) with MRT/Rapid Pass", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
-                                }
-                            } else {
-                                Text(text = "No additional MRT discount available", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                            }
-                        }
-                    }
-                }
-            } else {
-                Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    // Header
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Card(modifier = Modifier.size(40.dp), shape = RoundedCornerShape(10.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f))) {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Icon(imageVector = Icons.Rounded.Info, contentDescription = stringResource(Res.string.journeyInformationLabel), tint = MaterialTheme.colorScheme.secondary)
-                            }
-                        }
-                        Column {
-                            Text(text = stringResource(Res.string.journeyInformationLabel), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
-                            Text(text = stringResource(Res.string.journeyInformationDescription), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                        }
-                    }
-
-                    // Route summary
-                    Card(shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth()) {
-                        Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Icon(imageVector = Icons.Default.Route, contentDescription = stringResource(Res.string.route), tint = MaterialTheme.colorScheme.primary)
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(text = stringResource(Res.string.route), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                                Text(text = "${uiState.fromStation?.let { StationService.translate(it.name) } ?: "-"} → ${uiState.toStation?.let { StationService.translate(it.name) } ?: "-"}", style = MaterialTheme.typography.bodyLarge)
-                            }
-                            // small badge with estimated price range
-                            Column(horizontalAlignment = Alignment.End) {
-                                Text(text = "Single: ৳ ${translateNumber(uiState.calculatedFare)}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
-                                Text(text = "MRT/Rapid Pass: ৳ ${translateNumber(uiState.discountedFare)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                            }
-                        }
-                    }
-
-                    // Price breakdown and savings
-                    Card(shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.04f))) {
-                        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            val saved = (uiState.calculatedFare - uiState.discountedFare).coerceAtLeast(0)
-                            if (saved > 0) {
-                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    Icon(imageVector = Icons.Rounded.Percent, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                                    Text(text = "You save ৳ ${translateNumber(saved)} (${((saved * 100f) / (uiState.calculatedFare.takeIf { it > 0 } ?: 1)).toInt()}%) with MRT/Rapid Pass", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
-                                }
-                            } else {
-                                Text(text = "No additional MRT discount available", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                            }
-
-                            // subtle CTA
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                                TextButton(onClick = { /* navigate to route details */ }) {
-                                    Text(text = stringResource(Res.string.route), color = MaterialTheme.colorScheme.primary)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 @Composable
 fun QuickTipsCard() {
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
@@ -669,7 +608,6 @@ fun QuickTipsCard() {
                         }
                     }
 
-                    // tip items
                     TipItem(icon = Icons.Default.AccountBalanceWallet, text = stringResource(Res.string.travelTips1), iconColor = MaterialTheme.colorScheme.primary)
                     TipItem(icon = Icons.Default.AccessTime, text = stringResource(Res.string.travelTips2), iconColor = MaterialTheme.colorScheme.secondary)
                     TipItem(icon = Icons.Default.Route, text = stringResource(Res.string.travelTips3), iconColor = MaterialTheme.colorScheme.tertiary)
@@ -688,55 +626,5 @@ fun TipItem(icon: ImageVector, text: String, iconColor: Color) {
             }
         }
         Text(text = text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f))
-    }
-}
-
-@Composable
-fun ModernHeader(
-    title: String,
-    description: String,
-    icon: ImageVector = Icons.Default.Route,
-    isCompact: Boolean,
-    modifier: Modifier = Modifier,
-    showRescan: Boolean = false,
-    onRescan: () -> Unit = {},
-    trailingContent: (@Composable () -> Unit)? = null
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = 56.dp)
-            .padding(vertical = if (isCompact) 6.dp else 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        val iconSize = if (isCompact) 40.dp else 44.dp
-        Card(
-            modifier = Modifier.size(iconSize),
-            shape = RoundedCornerShape(if (isCompact) 10.dp else 12.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
-        ) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Icon(imageVector = icon, contentDescription = title, tint = MaterialTheme.colorScheme.onPrimary)
-            }
-        }
-
-        Column(modifier = Modifier.weight(1f)) {
-            val titleStyle = if (isCompact) MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold) else MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-            Text(text = title, style = titleStyle, maxLines = 1)
-            Text(text = description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f), maxLines = 2)
-        }
-
-        // trailing content slot: prefer explicit content; fallback to showRescan
-        when {
-            trailingContent != null -> trailingContent()
-            showRescan -> {
-                TextButton(onClick = onRescan) {
-                    Icon(imageVector = Icons.Default.Refresh, contentDescription = stringResource(Res.string.rescan), tint = MaterialTheme.colorScheme.primary)
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = stringResource(Res.string.rescan), color = MaterialTheme.colorScheme.primary)
-                }
-            }
-        }
     }
 }
