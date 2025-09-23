@@ -156,17 +156,19 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                     }
                 }
 
-                // Station chips row with swap — horizontal on wide, vertical on narrow
+                // Station chips row with swap — show From/To stacked vertically on left and swap on the right
                 val combinedAnchor = remember { mutableStateOf<String?>(null) }
-                if (isCompact) {
-                    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Box(modifier = Modifier.fillMaxWidth()) {
+
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    // Left column: From and To stacked vertically
+                    Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Box {
                             StationChip(
                                 label = stringResource(Res.string.fromStationLabel),
                                 value = uiState.fromStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectOrigin),
                                 color = MaterialTheme.colorScheme.primaryContainer,
                                 leading = Icons.Default.LocationOn,
-                                onClick = { combinedAnchor.value = "from" },
+                                onClick = { combinedAnchor.value = "from" }
                             )
 
                             if (combinedAnchor.value == "from") {
@@ -183,86 +185,13 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                             }
                         }
 
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Box(modifier = Modifier.weight(1f)) {
-                                StationChip(
-                                    label = stringResource(Res.string.toStationLabel),
-                                    value = uiState.toStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectDestination),
-                                    color = MaterialTheme.colorScheme.secondaryContainer,
-                                    leading = Icons.Default.LocationOn,
-                                    onClick = { combinedAnchor.value = "to" },
-                                )
-
-                                if (combinedAnchor.value == "to") {
-                                    CombinedRouteDropdown(
-                                        uiState = uiState,
-                                        stations = viewModel.stations,
-                                        selecting = "to",
-                                        onDismiss = { combinedAnchor.value = null },
-                                        onApply = { selected ->
-                                            selected?.let { viewModel.onAction(FareCalculatorAction.UpdateToStation(it)) }
-                                            combinedAnchor.value = null
-                                        }
-                                    )
-                                }
-                            }
-
-                            Card(
-                                modifier = Modifier.size(48.dp).clickable(enabled = uiState.fromStation != null && uiState.toStation != null) { viewModel.onAction(FareCalculatorAction.SwapStations) },
-                                shape = CircleShape,
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
-                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                    val rotation by animateFloatAsState(targetValue = if (uiState.fromStation != null && uiState.toStation != null) 180f else 0f, animationSpec = spring())
-                                    Icon(imageVector = Icons.Default.SwapVert, contentDescription = stringResource(Res.string.selectRouteText), modifier = Modifier.rotate(rotation), tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    // Use the same vertical arrangement on larger screens as well (stacked route selection)
-                    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Box(modifier = Modifier.fillMaxWidth()) {
-                            StationChip(
-                                label = stringResource(Res.string.fromStationLabel),
-                                value = uiState.fromStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectOrigin),
-                                color = MaterialTheme.colorScheme.primaryContainer,
-                                leading = Icons.Default.LocationOn,
-                                onClick = { combinedAnchor.value = "from" },
-                            )
-
-                            if (combinedAnchor.value == "from") {
-                                CombinedRouteDropdown(
-                                    uiState = uiState,
-                                    stations = viewModel.stations,
-                                    selecting = "from",
-                                    onDismiss = { combinedAnchor.value = null },
-                                    onApply = { selected ->
-                                        selected?.let { viewModel.onAction(FareCalculatorAction.UpdateFromStation(it)) }
-                                        combinedAnchor.value = null
-                                    }
-                                )
-                            }
-                        }
-
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-                            Card(
-                                modifier = Modifier.size(52.dp).clickable(enabled = uiState.fromStation != null && uiState.toStation != null) { viewModel.onAction(FareCalculatorAction.SwapStations) },
-                                shape = CircleShape,
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
-                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                    val rotation by animateFloatAsState(targetValue = if (uiState.fromStation != null && uiState.toStation != null) 180f else 0f, animationSpec = spring())
-                                    Icon(imageVector = Icons.Default.SwapVert, contentDescription = stringResource(Res.string.selectRouteText), modifier = Modifier.rotate(rotation), tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                                }
-                            }
-                        }
-
-                        Box(modifier = Modifier.fillMaxWidth()) {
+                        Box {
                             StationChip(
                                 label = stringResource(Res.string.toStationLabel),
                                 value = uiState.toStation?.let { StationService.translate(it.name) } ?: stringResource(Res.string.selectDestination),
                                 color = MaterialTheme.colorScheme.secondaryContainer,
                                 leading = Icons.Default.LocationOn,
-                                onClick = { combinedAnchor.value = "to" },
+                                onClick = { combinedAnchor.value = "to" }
                             )
 
                             if (combinedAnchor.value == "to") {
@@ -277,6 +206,21 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                                     }
                                 )
                             }
+                        }
+                    }
+
+                    // Right side: swap control
+                    Card(
+                        modifier = Modifier
+                            .size(52.dp)
+                            .padding(start = 8.dp)
+                            .clickable(enabled = uiState.fromStation != null && uiState.toStation != null) { viewModel.onAction(FareCalculatorAction.SwapStations) },
+                        shape = CircleShape,
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                    ) {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            val rotation by animateFloatAsState(targetValue = if (uiState.fromStation != null && uiState.toStation != null) 180f else 0f, animationSpec = spring())
+                            Icon(imageVector = Icons.Default.SwapVert, contentDescription = stringResource(Res.string.selectRouteText), modifier = Modifier.rotate(rotation), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
