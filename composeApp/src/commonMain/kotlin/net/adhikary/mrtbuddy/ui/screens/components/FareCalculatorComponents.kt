@@ -192,16 +192,37 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                             )
 
                             if (combinedAnchor.value == "from") {
-                                CombinedRouteDropdown(
-                                    uiState = uiState,
-                                    stations = viewModel.stations,
-                                    selecting = "from",
-                                    onDismiss = { combinedAnchor.value = null },
-                                    onApply = { selected ->
-                                        selected?.let { viewModel.onAction(FareCalculatorAction.UpdateFromStation(it)) }
-                                        combinedAnchor.value = null
+                                // Inline dropdown instead of Dialog
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 56.dp), // Position below chip
+                                    shape = RoundedCornerShape(12.dp),
+                                    elevation = CardDefaults.elevatedCardElevation(4.dp)
+                                ) {
+                                    Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+                                        Text(text = stringResource(Res.string.fromStationLabel), style = MaterialTheme.typography.labelLarge)
+                                        if (viewModel.stations.isEmpty()) {
+                                            Text(text = stringResource(Res.string.selectOrigin), modifier = Modifier.padding(8.dp))
+                                        } else {
+                                            LazyColumn(modifier = Modifier.fillMaxWidth().heightIn(max = 240.dp)) {
+                                                items(viewModel.stations) { station ->
+                                                    Row(
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .clickable { viewModel.onAction(FareCalculatorAction.UpdateFromStation(station)); combinedAnchor.value = null }
+                                                            .padding(vertical = 8.dp, horizontal = 8.dp),
+                                                        verticalAlignment = Alignment.CenterVertically
+                                                    ) {
+                                                        Text(text = StationService.translate(station.name), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                                                        val selected = uiState.fromStation?.id == station.id
+                                                        if (selected) Text(text = "✓", color = MaterialTheme.colorScheme.primary)
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
-                                )
+                                }
                             }
                         }
 
@@ -215,16 +236,37 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                             )
 
                             if (combinedAnchor.value == "to") {
-                                CombinedRouteDropdown(
-                                    uiState = uiState,
-                                    stations = viewModel.stations,
-                                    selecting = "to",
-                                    onDismiss = { combinedAnchor.value = null },
-                                    onApply = { selected ->
-                                        selected?.let { viewModel.onAction(FareCalculatorAction.UpdateToStation(it)) }
-                                        combinedAnchor.value = null
+                                // Inline dropdown instead of Dialog
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 56.dp), // Position below chip
+                                    shape = RoundedCornerShape(12.dp),
+                                    elevation = CardDefaults.elevatedCardElevation(4.dp)
+                                ) {
+                                    Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+                                        Text(text = stringResource(Res.string.toStationLabel), style = MaterialTheme.typography.labelLarge)
+                                        if (viewModel.stations.isEmpty()) {
+                                            Text(text = stringResource(Res.string.selectDestination), modifier = Modifier.padding(8.dp))
+                                        } else {
+                                            LazyColumn(modifier = Modifier.fillMaxWidth().heightIn(max = 240.dp)) {
+                                                items(viewModel.stations) { station ->
+                                                    Row(
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .clickable { viewModel.onAction(FareCalculatorAction.UpdateToStation(station)); combinedAnchor.value = null }
+                                                            .padding(vertical = 8.dp, horizontal = 8.dp),
+                                                        verticalAlignment = Alignment.CenterVertically
+                                                    ) {
+                                                        Text(text = StationService.translate(station.name), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                                                        val selected = uiState.toStation?.id == station.id
+                                                        if (selected) Text(text = "✓", color = MaterialTheme.colorScheme.primary)
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
-                                )
+                                }
                             }
                         }
                     }
@@ -304,101 +346,6 @@ fun StationChip(
             Column {
                 Text(text = label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
                 Text(text = value, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold))
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CombinedRouteDropdown(
-    uiState: FareCalculatorState,
-    stations: List<net.adhikary.mrtbuddy.data.model.Station>,
-    selecting: String, // "from" or "to"
-    onDismiss: () -> Unit,
-    onApply: (net.adhikary.mrtbuddy.data.model.Station?) -> Unit
-) {
-    Dialog(onDismissRequest = onDismiss) {
-        BoxWithConstraints {
-            val availWidth = maxWidth
-            val availHeight = maxHeight
-            val isCompactLocal = availWidth < 420.dp
-            val listMaxHeightLocal = if (isCompactLocal) (availHeight * 0.6f) else 400.dp
-
-            if (isCompactLocal) {
-                // Full-screen modal for small widths
-                Card(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-                    Column(modifier = Modifier.fillMaxSize().padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(
-                                text = if (selecting == "from") stringResource(Res.string.fromStationLabel) else stringResource(Res.string.toStationLabel),
-                                style = MaterialTheme.typography.titleMedium,
-                                maxLines = 1
-                            )
-                            OutlinedButton(onClick = onDismiss) { Text(text = "Close") }
-                        }
-
-                        if (stations.isEmpty()) {
-                            Text(text = if (selecting == "from") stringResource(Res.string.selectOrigin) else stringResource(Res.string.selectDestination), modifier = Modifier.padding(8.dp))
-                        } else {
-                            LazyColumn(modifier = Modifier.fillMaxWidth().heightIn(max = listMaxHeightLocal)) {
-                                items(stations) { station ->
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable { onApply(station) }
-                                            .padding(vertical = 12.dp, horizontal = 8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(text = StationService.translate(station.name), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                                        val selected = if (selecting == "from") uiState.fromStation?.id == station.id else uiState.toStation?.id == station.id
-                                        if (selected) Text(text = "✓", color = MaterialTheme.colorScheme.primary)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-            } else {
-                // Centered card for larger screens
-                val targetWidth = (availWidth * 0.45f).coerceAtLeast(280.dp).coerceAtMost(560.dp)
-                Card(modifier = Modifier.widthIn(max = targetWidth)) {
-                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Text(
-                            text = if (selecting == "from") stringResource(Res.string.fromStationLabel) else stringResource(Res.string.toStationLabel),
-                            style = MaterialTheme.typography.labelLarge
-                        )
-
-                        if (stations.isEmpty()) {
-                            Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
-                                Box(modifier = Modifier.padding(12.dp)) {
-                                    Text(text = if (selecting == "from") stringResource(Res.string.selectOrigin) else stringResource(Res.string.selectDestination))
-                                }
-                            }
-                        } else {
-                            LazyColumn(modifier = Modifier.heightIn(max = listMaxHeightLocal)) {
-                                items(stations) { station ->
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable { onApply(station) }
-                                            .padding(vertical = 12.dp, horizontal = 8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(text = StationService.translate(station.name), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                                        val selected = if (selecting == "from") uiState.fromStation?.id == station.id else uiState.toStation?.id == station.id
-                                        if (selected) Text(text = "✓", color = MaterialTheme.colorScheme.primary)
-                                    }
-                                }
-                            }
-                        }
-
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                            OutlinedButton(onClick = onDismiss) { Text(text = "Cancel") }
-                        }
-                    }
-                }
             }
         }
     }
