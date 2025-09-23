@@ -1,27 +1,12 @@
 package net.adhikary.mrtbuddy.ui.screens.components
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -32,6 +17,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Route
 import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Percent
 import androidx.compose.material.icons.rounded.Sell
@@ -42,10 +28,24 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.Alignment
 import net.adhikary.mrtbuddy.getPlatform
 import net.adhikary.mrtbuddy.managers.RescanManager
 import net.adhikary.mrtbuddy.model.CardState
@@ -83,7 +83,9 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalculatorViewModel) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp)
@@ -100,19 +102,19 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Icon(imageVector = Icons.Default.Route, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
+                        Icon(imageVector = Icons.Default.Route, contentDescription = stringResource(Res.string.selectRouteText), tint = MaterialTheme.colorScheme.onPrimary)
                     }
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(text = stringResource(Res.string.selectRouteText), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
-                    Text(text = stringResource(Res.string.selectRouteDescription), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                    Text(text = stringResource(Res.string.selectRouteDescription), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f))
                 }
 
                 // Quick rescan for non-Android platforms
                 if (getPlatform().name != "android") {
                     TextButton(onClick = { RescanManager.requestRescan() }) {
-                        Icon(imageVector = Icons.Default.Refresh, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                        Icon(imageVector = Icons.Default.Refresh, contentDescription = stringResource(Res.string.rescan), tint = MaterialTheme.colorScheme.primary)
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(text = stringResource(Res.string.rescan), color = MaterialTheme.colorScheme.primary)
                     }
@@ -131,11 +133,12 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
 
                 Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     val rotation by animateFloatAsState(targetValue = if (uiState.fromStation != null && uiState.toStation != null) 180f else 0f, animationSpec = spring())
-                    Card(modifier = Modifier.size(48.dp).clickable(enabled = uiState.fromStation != null && uiState.toStation != null) { viewModel.onAction(FareCalculatorAction.SwapStations) },
+                    Card(
+                        modifier = Modifier.size(52.dp).clickable(enabled = uiState.fromStation != null && uiState.toStation != null) { viewModel.onAction(FareCalculatorAction.SwapStations) },
                         shape = CircleShape,
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Icon(imageVector = Icons.Default.SwapVert, contentDescription = null, modifier = Modifier.rotate(rotation), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Icon(imageVector = Icons.Default.SwapVert, contentDescription = stringResource(Res.string.selectRouteText), modifier = Modifier.rotate(rotation), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
@@ -148,6 +151,9 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                     onClick = { viewModel.onAction(FareCalculatorAction.ToggleToExpanded) }
                 )
             }
+
+            // Short simple steps for all ages
+            GettingStartedSteps()
 
             // Dropdowns (kept visually hidden but available)
             StationDropdownField(
@@ -180,13 +186,39 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
 }
 
 @Composable
+fun GettingStartedSteps() {
+    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp), elevation = CardDefaults.elevatedCardElevation(2.dp)) {
+        Row(modifier = Modifier.padding(12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = "How to use (simple)", style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold))
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(text = "1) Tap 'From' → choose station", style = MaterialTheme.typography.bodyMedium)
+                Text(text = "2) Tap 'To' → choose destination", style = MaterialTheme.typography.bodyMedium)
+                Text(text = "3) Tap your card on the reader to check balance", style = MaterialTheme.typography.bodyMedium)
+            }
+            Icon(imageVector = Icons.Default.AccessTime, contentDescription = "Quick help", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(36.dp))
+        }
+    }
+}
+
+@Composable
 fun StationChip(label: String, value: String, color: Color, leading: ImageVector, onClick: () -> Unit) {
-    Card(shape = RoundedCornerShape(12.dp), colors = CardDefaults.cardColors(containerColor = color), modifier = Modifier.clickable { onClick() }) {
-        Row(modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Icon(imageVector = leading, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface)
+    // Ensure a comfortable touch target and animate size changes
+    Card(
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = color),
+        modifier = Modifier
+            .clickable(onClick = onClick, role = Role.Button, indication = null, interactionSource = remember { MutableInteractionSource() })
+            .animateContentSize()
+            .sizeIn(minWidth = 140.dp, minHeight = 56.dp)
+            .padding(0.dp)
+            .semantics { contentDescription = "$label: $value" }
+    ) {
+        Row(modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Icon(imageVector = leading, contentDescription = label, tint = MaterialTheme.colorScheme.onSurface)
             Column {
-                Text(text = label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                Text(text = value, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold))
+                Text(text = label, style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold))
+                Text(text = value, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
             }
         }
     }
@@ -207,33 +239,46 @@ fun StationDropdownField(
     containerColor: Color
 ) {
     // Compact, accessible dropdown using OutlinedTextField as trigger
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.animateContentSize()) {
+        val rotation by animateFloatAsState(targetValue = if (expanded) 180f else 0f, animationSpec = spring())
+
         OutlinedTextField(
             value = value,
             onValueChange = {},
             readOnly = true,
             leadingIcon = {
-                Card(modifier = Modifier.size(32.dp), shape = RoundedCornerShape(8.dp), colors = CardDefaults.cardColors(containerColor = containerColor)) {
+                Card(modifier = Modifier.size(36.dp), shape = RoundedCornerShape(10.dp), colors = CardDefaults.cardColors(containerColor = containerColor)) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Icon(imageVector = leadingIcon, contentDescription = null, tint = iconTint)
+                        Icon(imageVector = leadingIcon, contentDescription = label, tint = iconTint)
                     }
                 }
             },
-            modifier = Modifier.fillMaxWidth().clickable { onExpandedChange(!expanded) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onExpandedChange(!expanded) }
+                .semantics { contentDescription = label },
+            trailingIcon = {
+                Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = if (expanded) "Collapse" else "Expand", modifier = Modifier.rotate(rotation))
+            },
             label = { Text(text = label) },
-            textStyle = MaterialTheme.typography.bodyMedium
+            textStyle = MaterialTheme.typography.bodyLarge
         )
 
         if (expanded) {
-            // Simple dropdown list
+            // Simple dropdown list with improved hit targets
             Card(shape = RoundedCornerShape(12.dp), elevation = CardDefaults.elevatedCardElevation(4.dp), modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    stations.drop(1).forEach { station ->
-                        Row(modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onStationSelected(station); onDismiss() }
-                            .padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = StationService.translate(station.name), style = MaterialTheme.typography.bodyLarge)
+                    // If stations empty, show helpful message
+                    if (stations.isEmpty()) {
+                        Text(text = stringResource(Res.string.selectOrigin), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(12.dp))
+                    } else {
+                        stations.drop(1).forEach { station ->
+                            Row(modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable(role = Role.Button) { onStationSelected(station); onDismiss() }
+                                .padding(vertical = 12.dp, horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                                Text(text = StationService.translate(station.name), style = MaterialTheme.typography.bodyLarge)
+                            }
                         }
                     }
                 }
@@ -244,14 +289,17 @@ fun StationDropdownField(
 
 @Composable
 fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewModel) {
-    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp), elevation = CardDefaults.elevatedCardElevation(8.dp)) {
+    // Read vm state once to avoid repetitive access
+    val vmState = viewModel.state.value
+
+    Card(modifier = Modifier.fillMaxWidth().animateContentSize(), shape = RoundedCornerShape(20.dp), elevation = CardDefaults.elevatedCardElevation(8.dp)) {
         Column(modifier = Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             // Top row: Service badge + Fare
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Card(shape = RoundedCornerShape(12.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))) {
                         Row(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                            Icon(imageVector = Icons.Default.DirectionsTransit, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            Icon(imageVector = Icons.Default.DirectionsTransit, contentDescription = stringResource(Res.string.withMRT), tint = MaterialTheme.colorScheme.primary)
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(text = stringResource(Res.string.withMRT), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
                         }
@@ -259,10 +307,10 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                 }
 
                 Column(horizontalAlignment = Alignment.End) {
-                    Text(text = "৳ ${translateNumber(viewModel.state.value.discountedFare)}", style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.ExtraBold))
-                    Crossfade(targetState = viewModel.state.value.discountedFare != viewModel.state.value.calculatedFare) { showOriginal ->
+                    Text(text = "৳ ${translateNumber(vmState.discountedFare)}", style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.ExtraBold))
+                    Crossfade(targetState = vmState.discountedFare != vmState.calculatedFare) { showOriginal ->
                         if (showOriginal) {
-                            Text(text = "৳ ${translateNumber(viewModel.state.value.calculatedFare)}", style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)))
+                            Text(text = "৳ ${translateNumber(vmState.calculatedFare)}", style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)))
                         }
                     }
                 }
@@ -276,7 +324,7 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                             val balance = cs.amount
                             val enough = balance >= uiState.discountedFare
                             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                Icon(imageVector = Icons.Default.AccountBalanceWallet, contentDescription = null, tint = if (enough) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
+                                Icon(imageVector = Icons.Default.AccountBalanceWallet, contentDescription = stringResource(Res.string.balanceAmount), tint = if (enough) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
                                 Column(horizontalAlignment = Alignment.Start) {
                                     Text(text = stringResource(Res.string.balanceAmount) + " ৳ ${translateNumber(balance)}", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = if (enough) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
                                     if (!enough) {
@@ -290,17 +338,26 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                                 if (roundTrips > 0) {
                                     Spacer(modifier = Modifier.height(6.dp))
                                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                        Icon(painter = painterResource(Res.drawable.two_way_arrows), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                        Icon(painter = painterResource(Res.drawable.two_way_arrows), contentDescription = stringResource(Res.string.roundTrips), tint = MaterialTheme.colorScheme.primary)
                                         Text(text = "${translateNumber(roundTrips)} ${stringResource(Res.string.roundTrips)}", color = MaterialTheme.colorScheme.primary)
                                     }
                                 }
                             }
                         }
 
-                        is CardState.WaitingForTap, is CardState.Reading -> {
+                        is CardState.WaitingForTap -> {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Icon(imageVector = Icons.Rounded.Sell, contentDescription = null, modifier = Modifier.size(28.dp), tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                                Icon(imageVector = Icons.Rounded.Sell, contentDescription = stringResource(Res.string.singleTicket), modifier = Modifier.size(28.dp), tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
                                 Text(text = "${stringResource(Res.string.singleTicket)} ৳ ${translateNumber(uiState.calculatedFare)}", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+                                Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                            }
+                        }
+
+                        is CardState.Reading -> {
+                            // Show an inline progress indicator so users know reading is in progress
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                CircularProgressIndicator(modifier = Modifier.size(28.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.primary)
+                                Spacer(modifier = Modifier.height(6.dp))
                                 Text(text = stringResource(Res.string.tapToCheckSufficientBalance), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
                             }
                         }
@@ -318,13 +375,14 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                 }
             }
 
-            // Actions: quick CTA buttons
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                TextButton(onClick = { /* route preview / directions */ }, modifier = Modifier.weight(1f)) {
+            // Actions: clear and primary CTA buttons with clear affordance for all ages
+            val routeSelected = uiState.fromStation != null && uiState.toStation != null
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
+                ElevatedButton(onClick = { /* route preview / directions */ }, modifier = Modifier.weight(1f), enabled = routeSelected) {
                     Text(text = stringResource(Res.string.route), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
                 }
 
-                TextButton(onClick = { /* open tips */ }, modifier = Modifier.weight(1f)) {
+                OutlinedButton(onClick = { /* open tips */ }, modifier = Modifier.weight(1f), enabled = true) {
                     Text(text = stringResource(Res.string.travelTipsLabel), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
                 }
             }
@@ -340,7 +398,7 @@ fun TravelInfoCard(uiState: FareCalculatorState) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Card(modifier = Modifier.size(40.dp), shape = RoundedCornerShape(10.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f))) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Icon(imageVector = Icons.Rounded.Info, contentDescription = null, tint = MaterialTheme.colorScheme.secondary)
+                        Icon(imageVector = Icons.Rounded.Info, contentDescription = stringResource(Res.string.journeyInformationLabel), tint = MaterialTheme.colorScheme.secondary)
                     }
                 }
                 Column {
@@ -352,7 +410,7 @@ fun TravelInfoCard(uiState: FareCalculatorState) {
             // Route summary
             Card(shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth()) {
                 Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Icon(imageVector = Icons.Default.Route, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                    Icon(imageVector = Icons.Default.Route, contentDescription = stringResource(Res.string.route), tint = MaterialTheme.colorScheme.primary)
                     Column(modifier = Modifier.weight(1f)) {
                         Text(text = stringResource(Res.string.route), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
                         Text(text = "${uiState.fromStation?.let { StationService.translate(it.name) } ?: "-"} → ${uiState.toStation?.let { StationService.translate(it.name) } ?: "-"}", style = MaterialTheme.typography.bodyLarge)
@@ -409,7 +467,7 @@ fun QuickTipsCard() {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Card(modifier = Modifier.size(40.dp), shape = RoundedCornerShape(10.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f))) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Icon(imageVector = Icons.Default.AccessTime, contentDescription = null, tint = MaterialTheme.colorScheme.tertiary)
+                        Icon(imageVector = Icons.Default.AccessTime, contentDescription = stringResource(Res.string.travelTipsLabel), tint = MaterialTheme.colorScheme.tertiary)
                     }
                 }
                 Column {
