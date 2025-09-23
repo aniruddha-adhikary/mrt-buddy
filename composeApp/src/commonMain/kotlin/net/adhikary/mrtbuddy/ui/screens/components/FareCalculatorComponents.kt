@@ -222,18 +222,20 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                                         if (viewModel.stations.isEmpty()) {
                                             Text(text = stringResource(Res.string.selectOrigin), modifier = Modifier.padding(8.dp))
                                         } else {
-                                            LazyColumn(modifier = Modifier.fillMaxWidth().heightIn(max = 240.dp)) {
-                                                items(viewModel.stations) { station ->
-                                                    Row(
-                                                        modifier = Modifier
-                                                            .fillMaxWidth()
-                                                            .clickable { viewModel.onAction(FareCalculatorAction.UpdateFromStation(station)); combinedAnchor.value = null }
-                                                            .padding(vertical = 8.dp, horizontal = 8.dp),
-                                                        verticalAlignment = Alignment.CenterVertically
-                                                    ) {
-                                                        Text(text = StationService.translate(station.name), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                                                        val selected = uiState.fromStation?.id == station.id
-                                                        if (selected) Text(text = "✓", color = MaterialTheme.colorScheme.primary)
+                                            Box(modifier = Modifier.heightIn(max = 320.dp)) {
+                                                LazyColumn(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+                                                    items(viewModel.stations.drop(1)) { station ->
+                                                        Row(
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .clickable { viewModel.onAction(FareCalculatorAction.UpdateFromStation(station)); combinedAnchor.value = null }
+                                                                .padding(vertical = 8.dp, horizontal = 8.dp),
+                                                            verticalAlignment = Alignment.CenterVertically
+                                                        ) {
+                                                            Text(text = StationService.translate(station.name), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                                                            val selected = uiState.fromStation?.id == station.id
+                                                            if (selected) Text(text = "✓", color = MaterialTheme.colorScheme.primary)
+                                                        }
                                                     }
                                                 }
                                             }
@@ -266,18 +268,20 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                                         if (viewModel.stations.isEmpty()) {
                                             Text(text = stringResource(Res.string.selectDestination), modifier = Modifier.padding(8.dp))
                                         } else {
-                                            LazyColumn(modifier = Modifier.fillMaxWidth().heightIn(max = 240.dp)) {
-                                                items(viewModel.stations) { station ->
-                                                    Row(
-                                                        modifier = Modifier
-                                                            .fillMaxWidth()
-                                                            .clickable { viewModel.onAction(FareCalculatorAction.UpdateToStation(station)); combinedAnchor.value = null }
-                                                            .padding(vertical = 8.dp, horizontal = 8.dp),
-                                                        verticalAlignment = Alignment.CenterVertically
-                                                    ) {
-                                                        Text(text = StationService.translate(station.name), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                                                        val selected = uiState.toStation?.id == station.id
-                                                        if (selected) Text(text = "✓", color = MaterialTheme.colorScheme.primary)
+                                            Box(modifier = Modifier.heightIn(max = 320.dp)) {
+                                                LazyColumn(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+                                                    items(viewModel.stations.drop(1)) { station ->
+                                                        Row(
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .clickable { viewModel.onAction(FareCalculatorAction.UpdateToStation(station)); combinedAnchor.value = null }
+                                                                .padding(vertical = 8.dp, horizontal = 8.dp),
+                                                            verticalAlignment = Alignment.CenterVertically
+                                                        ) {
+                                                            Text(text = StationService.translate(station.name), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                                                            val selected = uiState.toStation?.id == station.id
+                                                            if (selected) Text(text = "✓", color = MaterialTheme.colorScheme.primary)
+                                                        }
                                                     }
                                                 }
                                             }

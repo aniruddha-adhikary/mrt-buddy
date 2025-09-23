@@ -210,47 +210,29 @@ private fun ModernHeader(
                     .fillMaxWidth()
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-                // Circular icon avatar on the left
-                Surface(
-                    modifier = Modifier.size(64.dp),
-                    shape = androidx.compose.foundation.shape.CircleShape,
-                    color = MaterialTheme.colorScheme.onPrimary
-                ) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.Calculate,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
-                }
+                // Icon only, no circular background
+                Icon(
+                    imageVector = Icons.Default.Calculate,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(40.dp)
+                )
 
-                // Title + description + optional route
+                // Title + description
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = stringResource(Res.string.fareCalculatorText),
                         style = MaterialTheme.typography.headlineSmall.copy(fontSize = 20.sp, fontWeight = FontWeight.ExtraBold),
                         color = MaterialTheme.colorScheme.onPrimary
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = stringResource(Res.string.fareCalculatorDescription),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.92f),
                         maxLines = 2
                     )
-
-                    if (uiState.fromStation != null && uiState.toStation != null) {
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = uiState.fromStation.name, color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.95f), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
-                            Text(text = "→", color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f), fontSize = 13.sp)
-                            Text(text = uiState.toStation.name, color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.95f), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
-                        }
-                    }
                 }
             }
         }
