@@ -19,12 +19,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Calculate
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Card
@@ -53,8 +51,6 @@ import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.fareCalculatorDescription
 import mrtbuddy.composeapp.generated.resources.fareCalculatorText
 import mrtbuddy.composeapp.generated.resources.tapToCheckSufficientBalance
-import mrtbuddy.composeapp.generated.resources.yourBalance
-import mrtbuddy.composeapp.generated.resources.rescan
 import net.adhikary.mrtbuddy.model.CardState
 import net.adhikary.mrtbuddy.ui.screens.components.FareDisplayCard
 import net.adhikary.mrtbuddy.ui.screens.components.StationSelectionSection
@@ -133,112 +129,12 @@ fun FareCalculatorScreen(
                     visible = headerVisible,
                     enter = slideInVertically(initialOffsetY = { -it }, animationSpec = headerAnimSpec) + fadeIn()
                 ) {
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(20.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 0.dp)
-                    ) {
-                        // gradient surface inside card
-                        Surface(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(
-                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.95f),
-                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.85f)
-                                        )
-                                    )
-                                ),
-                            color = Color.Transparent
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(18.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
-                                Card(
-                                    modifier = Modifier.size(62.dp),
-                                    shape = RoundedCornerShape(16.dp),
-                                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary)
-                                ) {
-                                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                        Icon(
-                                            imageVector = Icons.Default.Calculate,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
-                                }
-
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = stringResource(Res.string.fareCalculatorText),
-                                        style = MaterialTheme.typography.headlineSmall.copy(fontSize = 20.sp, fontWeight = FontWeight.ExtraBold),
-                                        color = MaterialTheme.colorScheme.onPrimary
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = stringResource(Res.string.fareCalculatorDescription),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f)
-                                    )
-                                }
-
-                                // compact card state indicator / rescan
-                                Column(horizontalAlignment = Alignment.End) {
-                                    when (val cs = uiState.cardState) {
-                                        is CardState.Balance -> {
-                                            Badge(
-                                                containerColor = MaterialTheme.colorScheme.secondary,
-                                                contentColor = MaterialTheme.colorScheme.onSecondary
-                                            ) {
-                                                Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-                                                    Icon(imageVector = Icons.Default.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.onSecondary)
-                                                    Spacer(modifier = Modifier.width(6.dp))
-                                                    Text(text = translateBalanceLabel(cs.amount), color = MaterialTheme.colorScheme.onSecondary)
-                                                }
-                                            }
-                                        }
-                                        is CardState.WaitingForTap -> {
-                                            Badge(containerColor = MaterialTheme.colorScheme.surfaceVariant) {
-                                                Text(text = stringResource(Res.string.tapToCheckSufficientBalance), modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
-                                            }
-                                        }
-                                        is CardState.Reading -> {
-                                            Badge(containerColor = MaterialTheme.colorScheme.primary) {
-                                                Text(text = "Reading…", modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), color = MaterialTheme.colorScheme.onPrimary)
-                                            }
-                                        }
-                                        is CardState.Error -> {
-                                            Badge(containerColor = MaterialTheme.colorScheme.error) {
-                                                Text(text = cs.message, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), color = MaterialTheme.colorScheme.onError)
-                                            }
-                                        }
-                                        else -> {
-                                            Badge(containerColor = MaterialTheme.colorScheme.surfaceVariant) {
-                                                Text(text = stringResource(Res.string.yourBalance), modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
-                                            }
-                                        }
-                                    }
-
-                                    Spacer(modifier = Modifier.height(8.dp))
-
-                                    // Rescan button for non-Android platforms
-                                    if (net.adhikary.mrtbuddy.getPlatform().name != "android") {
-                                        androidx.compose.material3.TextButton(onClick = { net.adhikary.mrtbuddy.managers.RescanManager.requestRescan() }) {
-                                            Icon(imageVector = Icons.Default.Refresh, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
-                                            Spacer(modifier = Modifier.width(6.dp))
-                                            Text(text = stringResource(Res.string.rescan), color = MaterialTheme.colorScheme.onPrimary)
-                                        }
-                                    }
-                                }
-                            }
+                    // Use a smaller, cleaner header composed by a helper composable
+                    ModernHeader(uiState = uiState, onRescan = {
+                        if (net.adhikary.mrtbuddy.getPlatform().name != "android") {
+                            net.adhikary.mrtbuddy.managers.RescanManager.requestRescan()
                         }
-                    }
+                    })
                 }
             }
 
@@ -291,8 +187,81 @@ fun FareCalculatorScreen(
     }
 }
 
-// small helper used in header to show a compact balance label
+// New modern header composable (redesigned)
 @Composable
-private fun translateBalanceLabel(amount: Int): String {
-    return "৳ ${net.adhikary.mrtbuddy.translateNumber(amount)}"
+private fun ModernHeader(
+    uiState: FareCalculatorState,
+    modifier: Modifier = Modifier,
+    onRescan: () -> Unit = {}
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.98f),
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.88f)
+                        )
+                    )
+                ),
+            color = Color.Transparent
+        ) {
+            // Horizontal layout: icon | title/desc (+ route) | status/actions
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Circular icon avatar on the left
+                Surface(
+                    modifier = Modifier.size(64.dp),
+                    shape = androidx.compose.foundation.shape.CircleShape,
+                    color = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.Calculate,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
+
+                // Title + description + optional route
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(Res.string.fareCalculatorText),
+                        style = MaterialTheme.typography.headlineSmall.copy(fontSize = 20.sp, fontWeight = FontWeight.ExtraBold),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = stringResource(Res.string.fareCalculatorDescription),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.92f),
+                        maxLines = 2
+                    )
+
+                    if (uiState.fromStation != null && uiState.toStation != null) {
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                            Text(text = uiState.fromStation.name, color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.95f), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                            Text(text = "→", color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f), fontSize = 13.sp)
+                            Text(text = uiState.toStation.name, color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.95f), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

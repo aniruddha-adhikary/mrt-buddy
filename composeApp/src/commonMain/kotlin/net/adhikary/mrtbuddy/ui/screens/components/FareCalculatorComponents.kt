@@ -103,62 +103,15 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
                 .fillMaxWidth()
                 .padding( if (isCompact) 12.dp else 16.dp), verticalArrangement = Arrangement.spacedBy(if (isCompact) 10.dp else 12.dp)) {
 
-                // Header row (title + optional rescan) — stack on narrow screens
-                if (isCompact) {
-                    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Card(
-                                modifier = Modifier.size(40.dp),
-                                shape = RoundedCornerShape(10.dp),
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
-                            ) {
-                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                    Icon(imageVector = Icons.Default.Route, contentDescription = stringResource(Res.string.selectRouteText), tint = MaterialTheme.colorScheme.onPrimary)
-                                }
-                            }
-
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(text = stringResource(Res.string.selectRouteText), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
-                                Text(text = stringResource(Res.string.selectRouteDescription), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f))
-                            }
-                        }
-
-                        if (getPlatform().name != "android") {
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                                TextButton(onClick = { RescanManager.requestRescan() }) {
-                                    Icon(imageVector = Icons.Default.Refresh, contentDescription = stringResource(Res.string.rescan), tint = MaterialTheme.colorScheme.primary)
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text(text = stringResource(Res.string.rescan), color = MaterialTheme.colorScheme.primary)
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Card(
-                            modifier = Modifier.size(44.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
-                        ) {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Icon(imageVector = Icons.Default.Route, contentDescription = stringResource(Res.string.selectRouteText), tint = MaterialTheme.colorScheme.onPrimary)
-                            }
-                        }
-
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(text = stringResource(Res.string.selectRouteText), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
-                            Text(text = stringResource(Res.string.selectRouteDescription), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f))
-                        }
-
-                        if (getPlatform().name != "android") {
-                            TextButton(onClick = { RescanManager.requestRescan() }) {
-                                Icon(imageVector = Icons.Default.Refresh, contentDescription = stringResource(Res.string.rescan), tint = MaterialTheme.colorScheme.primary)
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(text = stringResource(Res.string.rescan), color = MaterialTheme.colorScheme.primary)
-                            }
-                        }
-                    }
-                }
+                // Header
+                ModernHeader(
+                    title = stringResource(Res.string.selectRouteText),
+                    description = stringResource(Res.string.selectRouteDescription),
+                    icon = Icons.Default.Route,
+                    isCompact = isCompact,
+                    showRescan = getPlatform().name != "android",
+                    onRescan = { RescanManager.requestRescan() }
+                )
 
                 // Station chips row with swap — show From/To stacked vertically on left and swap on the right
                 val combinedAnchor = remember { mutableStateOf<String?>(null) }
@@ -761,5 +714,55 @@ fun TipItem(icon: ImageVector, text: String, iconColor: Color) {
             }
         }
         Text(text = text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f))
+    }
+}
+
+@Composable
+fun ModernHeader(
+    title: String,
+    description: String,
+    icon: ImageVector = Icons.Default.Route,
+    isCompact: Boolean,
+    modifier: Modifier = Modifier,
+    showRescan: Boolean = false,
+    onRescan: () -> Unit = {},
+    trailingContent: (@Composable () -> Unit)? = null
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = 56.dp)
+            .padding(vertical = if (isCompact) 6.dp else 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        val iconSize = if (isCompact) 40.dp else 44.dp
+        Card(
+            modifier = Modifier.size(iconSize),
+            shape = RoundedCornerShape(if (isCompact) 10.dp else 12.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
+        ) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Icon(imageVector = icon, contentDescription = title, tint = MaterialTheme.colorScheme.onPrimary)
+            }
+        }
+
+        Column(modifier = Modifier.weight(1f)) {
+            val titleStyle = if (isCompact) MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold) else MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+            Text(text = title, style = titleStyle, maxLines = 1)
+            Text(text = description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f), maxLines = 2)
+        }
+
+        // trailing content slot: prefer explicit content; fallback to showRescan
+        when {
+            trailingContent != null -> trailingContent()
+            showRescan -> {
+                TextButton(onClick = onRescan) {
+                    Icon(imageVector = Icons.Default.Refresh, contentDescription = stringResource(Res.string.rescan), tint = MaterialTheme.colorScheme.primary)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = stringResource(Res.string.rescan), color = MaterialTheme.colorScheme.primary)
+                }
+            }
+        }
     }
 }
