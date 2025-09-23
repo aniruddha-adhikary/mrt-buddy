@@ -9,6 +9,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -60,6 +61,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -164,9 +166,17 @@ fun CardItem(
             .padding(horizontal = 16.dp, vertical = 10.dp)
             .scale(animatedScale)
             .rotate(animatedRotation)
-            .clickable {
-                isPressed = true
-                onCardSelected()
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = {
+                        isPressed = true
+                        try {
+                            awaitRelease()
+                        } finally {
+                            isPressed = false
+                        }
+                        onCardSelected()
+                    })
             },
         elevation = CardDefaults.cardElevation(
             defaultElevation = 16.dp,
@@ -220,26 +230,37 @@ fun CardItem(
 
                 // Inline menu overlay (avoid Popup/DropdownMenu which uses SubcomposeLayout)
                 if (showDropdown) {
-                    Card(modifier = Modifier
-                        .wrapContentSize()
-                        .padding(top = 40.dp)
-                        .zIndex(2f),
+                    Card(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .padding(top = 40.dp)
+                            .zIndex(2f),
                         shape = RoundedCornerShape(8.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)) {
-                        Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Row(modifier = Modifier
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
                                     showDropdown = false
                                     onRenameClick()
                                 }
                                 .padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Icon(
+                                    Icons.Default.Edit,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text("Rename Card")
                             }
 
-                            Row(modifier = Modifier
+                            Row(
+                                modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
                                     showDropdown = false
