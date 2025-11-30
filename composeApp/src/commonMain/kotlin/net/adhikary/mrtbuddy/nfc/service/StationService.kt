@@ -39,6 +39,11 @@ object StationService {
         80 to "Uttara South",
         85 to "Uttara Center",
         90 to "Uttara North"
+        90 to "Uttara North",
+
+        // Hatirjheel Bus Stations
+        13 to "Mohanagar",
+        28 to "FDC (HJ)"
     )
 
     fun getStationName(code: Int): String =

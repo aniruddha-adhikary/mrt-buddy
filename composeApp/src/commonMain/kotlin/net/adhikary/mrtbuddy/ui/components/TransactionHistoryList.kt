@@ -64,6 +64,7 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
             val validTransactions = transactions.filter { it.transaction.timestamp.year >= 2015 }
 
             items(validTransactions) { transactionWithAmount ->
+                // FIXME: Hatirjheel charges 40 and then refunds the change (shows as balance update)
                 TransactionItem(
                     type = if (transactionWithAmount.amount != null && transactionWithAmount.amount > 0)
                         TransactionType.BalanceUpdate
