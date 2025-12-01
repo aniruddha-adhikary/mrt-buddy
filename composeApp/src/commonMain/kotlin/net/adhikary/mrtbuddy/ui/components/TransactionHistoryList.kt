@@ -60,16 +60,13 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
                 )
             }
-            
+
             val validTransactions = transactions.filter { it.transaction.timestamp.year >= 2015 }
 
             items(validTransactions) { transactionWithAmount ->
                 // FIXME: Hatirjheel charges 40 and then refunds the change (shows as balance update)
                 TransactionItem(
-                    type = if (transactionWithAmount.amount != null && transactionWithAmount.amount > 0)
-                        TransactionType.BalanceUpdate
-                    else
-                        TransactionType.Commute,
+                    type = TransactionType.fromHeader(transactionWithAmount.transaction.fixedHeader),
                     date = transactionWithAmount.transaction.timestamp,
                     fromStation = transactionWithAmount.transaction.fromStation,
                     toStation = transactionWithAmount.transaction.toStation,
@@ -78,6 +75,7 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
                         ?: "N/A",
                     amountValue = transactionWithAmount.amount
                 )
+
 
                 if (transactionWithAmount != validTransactions.last()) {
                     HorizontalDivider(
@@ -114,9 +112,12 @@ fun TransactionItem(
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = if (type == TransactionType.Commute)
-                    "${StationService.translate(fromStation)} → ${StationService.translate(toStation)}"
-                else stringResource(Res.string.balanceUpdate),
+                text = when (type) {
+                    TransactionType.BalanceUpdate -> stringResource(Res.string.balanceUpdate)
+                    else -> "${StationService.translate(fromStation)} → ${
+                        StationService.translate(toStation)
+                    }"
+                },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
