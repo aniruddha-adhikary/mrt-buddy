@@ -43,16 +43,17 @@ object StationService {
         // Hatirjheel Bus Stations
         13 to "Mohanagar (HJ)",
         16 to "Rampura (HJ)",
+        17 to "Badda (HJ)",
         19 to "Police Plaza (HJ)",
         28 to "FDC (HJ)",
 
-        // ?? to "Badda"
-        // 25 to "Bou bazar (HJ)", // Guess
-        // 22 to "Kunipara (HJ)", // Guess
+        // ?? to "Modhubag (HJ)"
+        // ?? to "Bou bazar (HJ)",
+        // ?? to "Kunipara (HJ)",
     )
 
     fun getStationName(code: Int): String =
-        stationMap.getOrElse(code) { "Unknown Station ($code)" }
+        stationMap.getOrElse(code) { "Unknown ($code)" }
 
     @Composable
     fun translate(stationName: String): String {
