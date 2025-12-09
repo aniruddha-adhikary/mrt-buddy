@@ -133,9 +133,6 @@ fun TransactionListScreen(
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(
-                            top = 0.dp,
-                            start = 0.dp,
-                            end = 0.dp,
                             bottom = 24.dp + paddingValues.calculateBottomPadding()
                         ),
                         verticalArrangement = Arrangement.spacedBy(0.dp)
