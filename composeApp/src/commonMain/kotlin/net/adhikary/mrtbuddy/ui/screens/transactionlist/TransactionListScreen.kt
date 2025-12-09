@@ -15,13 +15,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -29,14 +33,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toLocalDateTime
 import mrtbuddy.composeapp.generated.resources.Res
+import mrtbuddy.composeapp.generated.resources.avg
 import mrtbuddy.composeapp.generated.resources.balanceUpdate
 import mrtbuddy.composeapp.generated.resources.noTransactionsFound
+import mrtbuddy.composeapp.generated.resources.recharged
+import mrtbuddy.composeapp.generated.resources.spent
 import mrtbuddy.composeapp.generated.resources.transactionsAppearPrompt
+import mrtbuddy.composeapp.generated.resources.trips
 import mrtbuddy.composeapp.generated.resources.unnamedCard
 import net.adhikary.mrtbuddy.data.TransactionEntityWithAmount
 import net.adhikary.mrtbuddy.model.TransactionType
@@ -124,18 +133,27 @@ fun TransactionListScreen(
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(
-                            top = 24.dp,
-                            start = 24.dp,
-                            end = 24.dp,
+                            top = 0.dp,
+                            start = 0.dp,
+                            end = 0.dp,
                             bottom = 24.dp + paddingValues.calculateBottomPadding()
                         ),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        verticalArrangement = Arrangement.spacedBy(0.dp)
                     ) {
+                        item {
+                            TransactionSummaryCard(transactions = uiState.transactions)
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                            )
+                        }
                         items(uiState.transactions) { transaction ->
-                            TransactionItem(transaction)
+                            Box(modifier = Modifier.padding(horizontal = 24.dp)) {
+                                TransactionItem(transaction)
+                            }
                             if (transaction != uiState.transactions.last()) {
                                 HorizontalDivider(
-                                    modifier = Modifier.padding(top = 12.dp),
+                                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
                                 )
                             }
@@ -215,5 +233,99 @@ fun TransactionItem(trxEntity: TransactionEntityWithAmount) {
                 color = amountColor
             )
         }
+    }
+}
+
+@Composable
+private fun TransactionSummaryCard(
+    transactions: List<TransactionEntityWithAmount>,
+    modifier: Modifier = Modifier
+) {
+    val totalSpent = transactions
+        .filter { it.amount != null && it.amount < 0 }
+        .sumOf { it.amount ?: 0 }
+        .let { kotlin.math.abs(it) }
+    
+    val totalRecharged = transactions
+        .filter { it.amount != null && it.amount > 0 }
+        .sumOf { it.amount ?: 0 }
+    
+    val averageSpent = if (totalSpent > 0) {
+        val commuteCount = transactions.count { it.amount != null && it.amount < 0 }
+        if (commuteCount > 0) totalSpent / commuteCount else 0
+    } else {
+        0
+    }
+    val isDarkTheme = isSystemInDarkTheme()
+
+    OutlinedCard (
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 12.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            SummaryItem(
+                title = stringResource(Res.string.trips),
+                value = transactions.count { it.amount != null && it.amount < 0 }.toString(),
+                modifier = Modifier.weight(1f)
+            )
+            SummaryItem(
+                title = stringResource(Res.string.spent),
+                value = "৳ ${translateNumber(totalSpent)}",
+                modifier = Modifier.weight(1f),
+                amountColor = if ((totalRecharged) > 0) {
+                    if (isDarkTheme) DarkNegativeRed else LightNegativeRed
+                } else MaterialTheme.colorScheme.onSurface
+            )
+            SummaryItem(
+                title = stringResource(Res.string.recharged),
+                value = "৳ ${translateNumber(totalRecharged)}",
+                modifier = Modifier.weight(1f),
+                amountColor = if ((totalRecharged) > 0) {
+                    if (isDarkTheme) DarkPositiveGreen else LightPositiveGreen
+                } else MaterialTheme.colorScheme.onSurface
+            )
+            SummaryItem(
+                title = stringResource(Res.string.avg),
+                value = "৳ ${translateNumber(averageSpent)}",
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun SummaryItem(
+    title: String,
+    value: String,
+    amountColor : Color = MaterialTheme.colorScheme.onSurface,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = amountColor
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+        )
     }
 }

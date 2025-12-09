@@ -118,4 +118,10 @@
     <string name="yearsAgo">years ago</string>
     <string name="contributors">Contributors</string>
     <string name="openSourceLicenses">Open Source Licenses</string>
+
+    <!-- History Summary -->
+    <string name="trips">Trips</string>
+    <string name="spent">Spent</string>
+    <string name="recharged">Recharged</string>
+    <string name="avg">Avg</string>
 </resources>

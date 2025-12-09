@@ -118,4 +118,10 @@
     <string name="yearsAgo">বছর আগে</string>
     <string name="contributors">অবদানকারীগণ</string>
     <string name="openSourceLicenses">ওপেন সোর্স লাইসেন্স</string>
+
+    <!-- History Summary -->
+    <string name="trips">ভ্রমণ</string>
+    <string name="spent">ব্যয়</string>
+    <string name="recharged">রিচার্জ</string>
+    <string name="avg">গড়</string>
 </resources>
