@@ -16,6 +16,7 @@
     <string name="requiredNfc">আপনার এমআরটি পাস পড়ার জন্য এনএফসি প্রয়োজন, যা এই ডিভাইসটি সমর্থন করে না</string>
     <string name="nfcDisabled">এনএফসি বন্ধ করা</string>
     <string name="enableNfc">আপনার এমআরটি পাস পড়ার জন্য দয়া করে আপনার ডিভাইসের সেটিংসে এনএফসি চালু করুন</string>
+    <string name="openNfcSettings">এনএফসি সেটিংস খুলুন</string>
     <string name="tapRescanToStart">স্ক্যান শুরু করতে 'পুনরায় স্ক্যান' এ ট্যাপ করুন</string>
     <!-- transaction histories -->
     <string name="recentJourneys">সাম্প্রতিক ভ্রমণ</string>

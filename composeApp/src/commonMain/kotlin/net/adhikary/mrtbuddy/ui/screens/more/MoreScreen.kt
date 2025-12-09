@@ -181,7 +181,7 @@ fun MoreScreen(
             )
 
             Text(
-                text = "Copyright © 2024 Aniruddha Adhikary.",
+                text = "Copyright © 2025 Aniruddha Adhikary.",
                 fontSize = 12.sp,
                 lineHeight = 16.sp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
