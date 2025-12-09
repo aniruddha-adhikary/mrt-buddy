@@ -51,6 +51,7 @@ import net.adhikary.mrtbuddy.data.TransactionEntityWithAmount
 import net.adhikary.mrtbuddy.model.TransactionType
 import net.adhikary.mrtbuddy.nfc.service.StationService
 import net.adhikary.mrtbuddy.nfc.service.TimestampService
+import net.adhikary.mrtbuddy.translateDoubleNumber
 import net.adhikary.mrtbuddy.translateNumber
 import net.adhikary.mrtbuddy.ui.theme.DarkNegativeRed
 import net.adhikary.mrtbuddy.ui.theme.DarkPositiveGreen
@@ -59,6 +60,7 @@ import net.adhikary.mrtbuddy.ui.theme.LightPositiveGreen
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import kotlin.math.round
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -246,13 +248,17 @@ private fun TransactionSummaryCard(
     val totalRecharged = transactions
         .filter { it.amount != null && it.amount > 0 }
         .sumOf { it.amount ?: 0 }
-    
+
     val averageSpent = if (totalSpent > 0) {
         val commuteCount = transactions.count { it.amount != null && it.amount < 0 }
-        if (commuteCount > 0) totalSpent / commuteCount else 0
+        if (commuteCount > 0) {
+            val result = totalSpent.toDouble() / commuteCount
+            round(result * 100) / 100.0
+        } else 0.0
     } else {
-        0
+        0.0
     }
+
     val isDarkTheme = isSystemInDarkTheme()
 
     OutlinedCard (
@@ -279,7 +285,7 @@ private fun TransactionSummaryCard(
                 title = stringResource(Res.string.spent),
                 value = "৳ ${translateNumber(totalSpent)}",
                 modifier = Modifier.weight(1f),
-                amountColor = if ((totalRecharged) > 0) {
+                amountColor = if ((totalSpent) > 0) {
                     if (isDarkTheme) DarkNegativeRed else LightNegativeRed
                 } else MaterialTheme.colorScheme.onSurface
             )
@@ -293,7 +299,7 @@ private fun TransactionSummaryCard(
             )
             SummaryItem(
                 title = stringResource(Res.string.avg),
-                value = "৳ ${translateNumber(averageSpent)}",
+                value = "৳ ${translateDoubleNumber(averageSpent)}",
                 modifier = Modifier.weight(1f)
             )
         }

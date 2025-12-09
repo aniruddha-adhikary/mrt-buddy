@@ -15,3 +15,10 @@ actual fun changeLang(lang: String) {
 actual fun translateNumber(number: Int): String {
     return DecimalFormat.getInstance().format(number).replace(",", "")  // Remove commas
 }
+
+actual fun translateDoubleNumber(number: Double): String {
+    return DecimalFormat.getInstance().apply {
+        minimumFractionDigits = 2
+        maximumFractionDigits = 2
+    }.format(number).replace(",", "")
+}
