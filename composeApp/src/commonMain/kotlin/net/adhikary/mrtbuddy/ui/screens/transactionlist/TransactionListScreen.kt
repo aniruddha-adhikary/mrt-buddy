@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -21,7 +22,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -34,15 +35,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pullrefresh.PullRefreshIndicator
-import androidx.compose.material3.pullrefresh.pullRefresh
-import androidx.compose.material3.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -88,28 +84,21 @@ fun TransactionListScreen(
     val state = viewModel.state.collectAsState().value
     val lazyListState = rememberLazyListState()
 
-    // Pull-to-refresh state
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = state.isLoading,
-        onRefresh = { viewModel.refresh() }
-    )
-
     // Monitor scroll position to trigger loading more
-    LaunchedEffect(lazyListState, state) {
-        val shouldLoadMore by remember {
-            derivedStateOf {
-                val layoutInfo = lazyListState.layoutInfo
-                val totalItems = layoutInfo.totalItemsCount
-                val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0)
+    LaunchedEffect(lazyListState) {
+        snapshotFlow {
+            val layoutInfo = lazyListState.layoutInfo
+            val totalItems = layoutInfo.totalItemsCount
+            val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
 
-                // Load more when we're 5 items from the bottom and can load more
-                lastVisibleItemIndex >= (totalItems - 5) && state.canLoadMore && !state.isLoadingMore
-            }
+            // Load more when we're 5 items from the bottom
+            lastVisibleItemIndex >= (totalItems - 5) && totalItems > 0
         }
-
-        // When approaching end of list, load more
-        if (shouldLoadMore) {
-            viewModel.loadMoreTransactions()
+        .distinctUntilChanged()
+        .collect { shouldLoadMore ->
+            if (shouldLoadMore) {
+                viewModel.loadMoreTransactions()
+            }
         }
     }
 
@@ -151,7 +140,6 @@ fun TransactionListScreen(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .pullRefresh(pullRefreshState)
         ) {
             when {
                 // Initial loading
@@ -174,7 +162,7 @@ fun TransactionListScreen(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Error,
+                            imageVector = Icons.Filled.Warning,
                             contentDescription = null,
                             modifier = Modifier.size(48.dp),
                             tint = MaterialTheme.colorScheme.error
@@ -230,15 +218,6 @@ fun TransactionListScreen(
                     )
                 }
             }
-
-            // Pull refresh indicator
-            PullRefreshIndicator(
-                refreshing = state.isLoading,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter),
-                backgroundColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.primary
-            )
         }
     }
 }
@@ -265,7 +244,8 @@ private fun TransactionList(
         itemsIndexed(
             items = state.transactions,
             key = { _, transaction ->
-                "${transaction.transactionEntity.cardIdm}_${transaction.transactionEntity.dateTime}"
+                // Use all primary key fields to ensure uniqueness
+                "${transaction.transactionEntity.cardIdm}_${transaction.transactionEntity.scanId}_${transaction.transactionEntity.fromStation}_${transaction.transactionEntity.toStation}"
             }
         ) { index, transaction ->
             TransactionItem(transaction)
