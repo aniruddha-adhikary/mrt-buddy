@@ -27,6 +27,7 @@
 - [x] 3.1 Update `TransactionHistoryList.kt` to use header-based type detection
 - [x] 3.2 Update `TransactionListScreen.kt` to use header-based type detection
 - [x] 3.3 Update transaction display logic to handle all transaction types
+- [ ] 3.4 Remove outdated FIXME comment in `TransactionHistoryList.kt:67` (issue now solved by header detection)
 
 ## 4. Verification
 - [ ] 4.1 Test with Dhaka Metro card transactions

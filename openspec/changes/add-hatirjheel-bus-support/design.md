@@ -27,6 +27,8 @@ The `fixedHeader` field (first 4 bytes of transaction block) reliably identifies
 2. These refunds appeared as positive amounts, incorrectly showing as "Balance Update"
 3. Header bytes are deterministic and set by the card system
 
+**Result**: With header-based detection, Hatirjheel Bus refunds now correctly display as `CommuteHatirjheelBusEnd` showing the route, not as "Balance Update".
+
 **Known headers**:
 
 | Header | Meaning |
@@ -55,7 +57,10 @@ This allows future UI differentiation (icons, colors) per transit type.
 - **Risk**: Station codes may conflict between systems → **Mitigation**: Currently codes don't overlap; if they do, header detection would determine system
 - **Trade-off**: More complex enum vs. simpler boolean → Accepted for future extensibility
 
+## Resolved Issues
+- **Hatirjheel refund showing as "Balance Update"**: Fixed by header-based detection. Bus exit (`42 D6 30 00`) now shows as `CommuteHatirjheelBusEnd` with route display.
+
 ## Open Questions
 - What are the remaining Hatirjheel station codes? (Modhubag, Bou bazar, Kunipara are unknown)
 - Should Hatirjheel stations have Bengali translations?
-- Should the UI visually distinguish Metro vs. Bus trips?
+- Should the UI visually distinguish Metro vs. Bus trips (icons, colors)?
