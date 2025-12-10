@@ -82,12 +82,12 @@ class TransactionListViewModel(
      * Load more transactions when the user scrolls near the end of the list
      */
     fun loadMoreTransactions() {
-        // Skip if we can't load more or if we're already loading
-        if (!state.value.canLoadMore || state.value.isLoadingMore) return
-
         viewModelScope.launch {
             // Use mutex to prevent concurrent load operations
             loadMoreLock.withLock {
+                // Skip if we can't load more or if we're already loading
+                if (!state.value.canLoadMore || state.value.isLoadingMore) return@withLock
+
                 _state.update { it.copy(isLoadingMore = true, error = null) }
 
                 try {
