@@ -1,7 +1,7 @@
 # nfc-state-management Specification
 
 ## Purpose
-TBD - created by archiving change fix-fare-calculator-card-state-persistence. Update Purpose after archive.
+Manages NFC card state transitions and persistence across the application lifecycle. This capability ensures that successfully read card balance information persists during screen navigation and recomposition, while properly handling NFC hardware states (enabled, disabled, unsupported) on both Android and iOS platforms.
 ## Requirements
 ### Requirement: Card State Persistence Across Scan Initialization
 The NFC manager SHALL preserve the `CardState.Balance` state when `startScan()` is invoked, preventing unnecessary resets of successfully read card information.
