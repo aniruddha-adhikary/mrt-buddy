@@ -165,5 +165,7 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
 
 @Composable
 actual fun getNFCManager(): NFCManager {
-    return NFCManager()
+    return androidx.compose.runtime.remember {
+        NFCManager()
+    }
 }
