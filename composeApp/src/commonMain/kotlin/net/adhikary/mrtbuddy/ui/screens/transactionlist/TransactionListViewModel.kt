@@ -106,7 +106,7 @@ class TransactionListViewModel(
 
                     // Optionally trim list if it gets too large
                     val trimmedTransactions = if (combinedTransactions.size > MAX_IN_MEMORY) {
-                        combinedTransactions.takeLast(MAX_IN_MEMORY)
+                        combinedTransactions.take(MAX_IN_MEMORY)
                     } else {
                         combinedTransactions
                     }
