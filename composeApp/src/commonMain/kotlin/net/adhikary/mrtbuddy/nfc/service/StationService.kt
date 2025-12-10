@@ -38,11 +38,22 @@ object StationService {
         75 to "Pallabi",
         80 to "Uttara South",
         85 to "Uttara Center",
-        90 to "Uttara North"
+        90 to "Uttara North",
+
+        // Hatirjheel Bus Stations
+        13 to "Mohanagar (HJ)",
+        16 to "Rampura (HJ)",
+        17 to "Badda (HJ)",
+        19 to "Police Plaza (HJ)",
+        28 to "FDC (HJ)",
+
+        // ?? to "Modhubag (HJ)"
+        // ?? to "Bou bazar (HJ)",
+        // ?? to "Kunipara (HJ)",
     )
 
     fun getStationName(code: Int): String =
-        stationMap.getOrElse(code) { "Unknown Station ($code)" }
+        stationMap.getOrElse(code) { "Unknown ($code)" }
 
     @Composable
     fun translate(stationName: String): String {
@@ -66,7 +77,7 @@ object StationService {
             "Uttara South" -> stringResource(Res.string.uttaraSouth)
             "Uttara Center" -> stringResource(Res.string.uttaraCenter)
             "Uttara North" -> stringResource(Res.string.uttaraNorth)
-            else -> "" // Default to English if no match is found
+            else -> stationName
         }
     }
 }

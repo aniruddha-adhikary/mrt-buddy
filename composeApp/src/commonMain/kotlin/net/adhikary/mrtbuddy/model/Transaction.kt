@@ -18,8 +18,28 @@ data class TransactionWithAmount(
 )
 
 sealed class TransactionType {
-    data object Commute : TransactionType()
+    data object CommuteHatirjheelBusStart : TransactionType()
+    data object CommuteHatirjheelBusEnd : TransactionType()
+    data object CommuteDhakaMetro : TransactionType()
+    data object CommuteUnknown : TransactionType()
     data object BalanceUpdate : TransactionType()
+
+
+    companion object {
+        fun fromHeader(fixedHeader: String): TransactionType {
+            return when (fixedHeader) {
+                "42 D6 30 00" -> CommuteHatirjheelBusEnd // Rapid
+                "08 D2 20 00" -> CommuteHatirjheelBusStart // Rapid
+                
+                "08 52 10 00" -> CommuteDhakaMetro // MRT and Rapid
+
+                "1D 60 02 01" -> BalanceUpdate // MRT
+                "42 60 02 00" -> BalanceUpdate // Rapid
+
+                else -> CommuteUnknown
+            }
+        }
+    }
 }
 
 sealed class CardState {

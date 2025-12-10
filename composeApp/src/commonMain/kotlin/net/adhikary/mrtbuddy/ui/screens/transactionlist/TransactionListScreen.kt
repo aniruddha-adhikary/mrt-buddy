@@ -318,11 +318,8 @@ private fun TransactionList(
 fun TransactionItem(trxEntity: TransactionEntityWithAmount) {
     val transaction = trxEntity.transactionEntity;
     val isDarkTheme = isSystemInDarkTheme()
-    val transactionType = if (trxEntity.amount != null && trxEntity.amount > 0) {
-        TransactionType.BalanceUpdate
-    } else {
-        TransactionType.Commute
-    }
+
+    val transactionType = TransactionType.fromHeader(trxEntity.transactionEntity.fixedHeader)
 
     val amountText = if (trxEntity.amount != null) {
         "৳ ${translateNumber(trxEntity.amount)}"
@@ -347,13 +344,12 @@ fun TransactionItem(trxEntity: TransactionEntityWithAmount) {
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = if (transactionType == TransactionType.Commute)
-                    "${StationService.translate(transaction.fromStation)} → ${
-                        StationService.translate(
-                            transaction.toStation
-                        )
+                text = when (transactionType) {
+                    TransactionType.BalanceUpdate -> stringResource(Res.string.balanceUpdate)
+                    else -> "${StationService.translate(transaction.fromStation)} → ${
+                        StationService.translate(transaction.toStation)
                     }"
-                else stringResource(Res.string.balanceUpdate),
+                },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
