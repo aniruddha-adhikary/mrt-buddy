@@ -13,6 +13,7 @@ data class TransactionListState(
     val balance: Int? = null,
     val cardName: String? = null,
     val error: String? = null,
+    val exportError: String? = null,
     val canLoadMore: Boolean = true,
     val currentOffset: Int = 0
 )

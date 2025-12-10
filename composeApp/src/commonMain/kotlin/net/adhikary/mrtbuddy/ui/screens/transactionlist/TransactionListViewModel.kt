@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import io.github.aakira.napier.Napier
 import kotlinx.datetime.Clock
 import net.adhikary.mrtbuddy.repository.TransactionRepository
 import net.adhikary.mrtbuddy.utils.CsvExportService
@@ -162,7 +163,7 @@ class TransactionListViewModel(
         if (state.value.isExporting) return
 
         viewModelScope.launch {
-            _state.update { it.copy(isExporting = true) }
+            _state.update { it.copy(isExporting = true, exportError = null) }
 
             try {
                 val allTransactions = transactionRepository.getAllTransactionsForExport(cardIdm)
@@ -182,8 +183,21 @@ class TransactionListViewModel(
 
                 _state.update { it.copy(isExporting = false) }
             } catch (e: Exception) {
-                _state.update { it.copy(isExporting = false) }
+                Napier.e("Failed to export transactions", e)
+                _state.update {
+                    it.copy(
+                        isExporting = false,
+                        exportError = e.message ?: "Export failed"
+                    )
+                }
             }
         }
+    }
+
+    /**
+     * Clear the export error after it has been shown to the user
+     */
+    fun clearExportError() {
+        _state.update { it.copy(exportError = null) }
     }
 }
