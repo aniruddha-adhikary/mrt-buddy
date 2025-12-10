@@ -97,6 +97,10 @@
 
     <!-- Settings screen -->
     <string name="settings">সেটিংস</string>
+    <string name="dark_mode_preference">ডার্ক থিম</string>
+    <string name="dark_mode_config_system_default">সিস্টেম ডিফল্ট</string>
+    <string name="dark_mode_config_dark">ডার্ক</string>
+    <string name="dark_mode_config_light">লাইট</string>
     <string name="autoSaveCardDetails">স্বয়ংক্রিয় কার্ড সংরক্ষণ</string>
     <string name="autoSaveCardDetailsDescription">স্ক্যান করার সময় স্বয়ংক্রিয়ভাবে কার্ডের তথ্য সংরক্ষণ করুন</string>
 

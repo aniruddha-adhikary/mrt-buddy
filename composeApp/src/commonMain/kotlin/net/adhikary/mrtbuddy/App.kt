@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.managers.RescanManager
 import net.adhikary.mrtbuddy.nfc.getNFCManager
+import net.adhikary.mrtbuddy.settings.model.DarkThemeConfig
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreen
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenAction
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreenEvent
@@ -22,7 +23,6 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 @Preview
 fun App(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean
 ) {
     val mainVm = koinViewModel<MainScreenViewModel>()
@@ -63,11 +63,16 @@ fun App(
 
     nfcManager.startScan()
 
+    val state: MainScreenState by mainVm.state.collectAsState()
+
     MRTBuddyTheme(
-        darkTheme = darkTheme,
-        dynamicColor = dynamicColor
+        darkTheme = when (state.darkThemeConfig) {
+            DarkThemeConfig.FOLLOW_SYSTEM -> isSystemInDarkTheme()
+            DarkThemeConfig.DARK -> true
+            DarkThemeConfig.LIGHT -> false
+        },
+        dynamicColor = dynamicColor,
     ) {
-        val state: MainScreenState by mainVm.state.collectAsState()
 
         LocalizedApp(
             language = state.currentLanguage

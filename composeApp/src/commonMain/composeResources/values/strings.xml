@@ -97,6 +97,10 @@
     
     <!-- Settings screen -->
     <string name="settings">Settings</string>
+    <string name="dark_mode_preference">Dark Theme</string>
+    <string name="dark_mode_config_system_default">System Default</string>
+    <string name="dark_mode_config_dark">Dark</string>
+    <string name="dark_mode_config_light">Light</string>
     <string name="autoSaveCardDetails">Auto-save card details</string>
     <string name="autoSaveCardDetailsDescription">Automatically save card details when scanning</string>
 
