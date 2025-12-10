@@ -10,11 +10,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import io.github.aakira.napier.Napier
+import kotlinx.datetime.Clock
 import net.adhikary.mrtbuddy.repository.TransactionRepository
+import net.adhikary.mrtbuddy.utils.CsvExportService
+import net.adhikary.mrtbuddy.utils.FileSharer
 
 class TransactionListViewModel(
     private val cardIdm: String,
     private val transactionRepository: TransactionRepository,
+    private val fileSharer: FileSharer,
     private val savedStateHandle: SavedStateHandle = SavedStateHandle()
 ) : ViewModel() {
 
@@ -149,5 +154,50 @@ class TransactionListViewModel(
         currentOffset = 0
         savedStateHandle[KEY_OFFSET] = 0
         loadInitialTransactions()
+    }
+
+    /**
+     * Export all transactions to CSV and share via platform share sheet
+     */
+    fun exportTransactions() {
+        if (state.value.isExporting) return
+
+        viewModelScope.launch {
+            _state.update { it.copy(isExporting = true, exportError = null) }
+
+            try {
+                val allTransactions = transactionRepository.getAllTransactionsForExport(cardIdm)
+
+                if (allTransactions.isEmpty()) {
+                    _state.update { it.copy(isExporting = false) }
+                    return@launch
+                }
+
+                val csvContent = CsvExportService.generateCsv(allTransactions, cardIdm)
+                val filename = CsvExportService.generateFilename(
+                    state.value.cardName,
+                    Clock.System.now().toEpochMilliseconds()
+                )
+
+                fileSharer.share(csvContent, filename, "text/csv")
+
+                _state.update { it.copy(isExporting = false) }
+            } catch (e: Exception) {
+                Napier.e("Failed to export transactions", e)
+                _state.update {
+                    it.copy(
+                        isExporting = false,
+                        exportError = e.message ?: "Export failed"
+                    )
+                }
+            }
+        }
+    }
+
+    /**
+     * Clear the export error after it has been shown to the user
+     */
+    fun clearExportError() {
+        _state.update { it.copy(exportError = null) }
     }
 }

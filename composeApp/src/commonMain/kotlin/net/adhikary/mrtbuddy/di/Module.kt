@@ -31,10 +31,11 @@ val appModule = module {
         transactionDao = get()
     ) }
 
-    viewModel { parameters -> 
+    viewModel { parameters ->
         TransactionListViewModel(
             cardIdm = parameters.get(),
-            transactionRepository = get()
+            transactionRepository = get(),
+            fileSharer = get()
         )
     }
     

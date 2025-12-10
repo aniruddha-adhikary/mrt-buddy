@@ -11,6 +11,7 @@ actual class DatabaseProvider(private val context: Context) {
             context = context.applicationContext,
             name = dbFile.absolutePath
         )
+            .addMigrations(MIGRATION_2_3)
             .setDriver(BundledSQLiteDriver())
             .build()
     }

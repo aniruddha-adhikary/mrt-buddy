@@ -15,7 +15,9 @@ actual class DatabaseProvider {
         val builder = Room.databaseBuilder<AppDatabase>(
             name = dbFilePath,
         )
-        return builder.setDriver(BundledSQLiteDriver())
+        return builder
+            .addMigrations(MIGRATION_2_3)
+            .setDriver(BundledSQLiteDriver())
             .build()
     }
 
