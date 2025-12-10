@@ -8,10 +8,10 @@ import net.adhikary.mrtbuddy.data.TransactionEntity
 
 @Dao
 interface TransactionDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTransaction(transaction: TransactionEntity)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTransactions(transactions: List<TransactionEntity>)
 
     @Query("SELECT * FROM transactions WHERE cardIdm = :cardIdm ORDER BY `order` DESC LIMIT 1")
