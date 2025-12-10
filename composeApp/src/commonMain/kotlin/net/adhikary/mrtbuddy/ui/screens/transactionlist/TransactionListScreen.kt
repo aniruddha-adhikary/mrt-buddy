@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
@@ -125,6 +126,23 @@ fun TransactionListScreen(
             ),
             windowInsets = WindowInsets.statusBars,
             actions = {
+                // Export button
+                IconButton(
+                    onClick = { viewModel.exportTransactions() },
+                    enabled = !state.isExporting && state.transactions.isNotEmpty()
+                ) {
+                    if (state.isExporting) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Export CSV"
+                        )
+                    }
+                }
                 // Refresh button
                 IconButton(onClick = { viewModel.refresh() }) {
                     Icon(
