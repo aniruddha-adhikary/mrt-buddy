@@ -86,7 +86,11 @@ actual class NFCManager actual constructor() {
                     when (state) {
                         NfcAdapter.STATE_ON -> {
                             scope.launch {
-                                _cardState.emit(CardState.WaitingForTap)
+                                // Preserve Balance state when NFC is re-enabled
+                                val currentState = _cardState.replayCache.firstOrNull()
+                                if (currentState !is CardState.Balance) {
+                                    _cardState.emit(CardState.WaitingForTap)
+                                }
                             }
                             activity?.let {
                                 nfcAdapter?.enableReaderMode(
@@ -147,15 +151,16 @@ actual class NFCManager actual constructor() {
                 )
             }
 
-            // Update initial state
+            // Update initial state (preserve Balance state if already set)
             scope.launch {
-                _cardState.emit(
-                    when {
-                        nfcAdapter == null -> CardState.NoNfcSupport
-                        !nfcAdapter!!.isEnabled -> CardState.NfcDisabled
-                        else -> CardState.WaitingForTap
-                    }
-                )
+                val currentState = _cardState.replayCache.firstOrNull()
+                val newState = when {
+                    nfcAdapter == null -> CardState.NoNfcSupport
+                    !nfcAdapter!!.isEnabled -> CardState.NfcDisabled
+                    currentState is CardState.Balance -> currentState // Preserve balance
+                    else -> CardState.WaitingForTap
+                }
+                _cardState.emit(newState)
             }
 
             // Enable reader mode only if supported and enabled
@@ -248,13 +253,7 @@ actual class NFCManager actual constructor() {
 @Composable
 actual fun getNFCManager(): NFCManager {
     val context = LocalContext.current
-    DisposableEffect(Unit) {
-        val nfcManager = NFCManager()
-        // Setup NFC manager with context if needed
-
-        onDispose {
-            // Cleanup NFC resources if needed
-        }
+    return androidx.compose.runtime.remember {
+        NFCManager()
     }
-    return NFCManager()
 }

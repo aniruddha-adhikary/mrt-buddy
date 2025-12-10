@@ -244,8 +244,8 @@ private fun TransactionList(
         itemsIndexed(
             items = state.transactions,
             key = { _, transaction ->
-                // Use all primary key fields to ensure uniqueness
-                "${transaction.transactionEntity.cardIdm}_${transaction.transactionEntity.scanId}_${transaction.transactionEntity.fromStation}_${transaction.transactionEntity.toStation}"
+                // Use all fields including dateTime and order to ensure uniqueness
+                "${transaction.transactionEntity.cardIdm}_${transaction.transactionEntity.scanId}_${transaction.transactionEntity.fromStation}_${transaction.transactionEntity.toStation}_${transaction.transactionEntity.dateTime}_${transaction.transactionEntity.order}"
             }
         ) { index, transaction ->
             TransactionItem(transaction)
