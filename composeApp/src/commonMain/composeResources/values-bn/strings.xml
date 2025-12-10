@@ -94,6 +94,9 @@
     <string name="unnamedCard">নামহীন কার্ড</string>
     <string name="cardId">কার্ড আইডি</string>
     <string name="lastScan">সর্বশেষ স্ক্যান</string>
+    <string name="endOfTransactionHistory">লেনদেনের ইতিহাসের শেষ</string>
+    <string name="errorLoadingTransactions">লেনদেন লোড করতে ত্রুটি</string>
+    <string name="retry">পুনরায় চেষ্টা করুন</string>
 
     <!-- Settings screen -->
     <string name="settings">সেটিংস</string>
