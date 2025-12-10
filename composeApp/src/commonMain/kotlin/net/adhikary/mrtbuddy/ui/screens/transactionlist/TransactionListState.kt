@@ -8,6 +8,7 @@ import net.adhikary.mrtbuddy.data.TransactionEntityWithAmount
 data class TransactionListState(
     val isLoading: Boolean = false,
     val isLoadingMore: Boolean = false,
+    val isExporting: Boolean = false,
     val transactions: List<TransactionEntityWithAmount> = emptyList(),
     val balance: Int? = null,
     val cardName: String? = null,

@@ -159,6 +159,25 @@ class TransactionRepository(
     }
 
     /**
+     * Get ALL transactions for a card (for export purposes).
+     * This bypasses pagination and returns the complete history with calculated amounts.
+     */
+    suspend fun getAllTransactionsForExport(cardIdm: String): List<TransactionEntityWithAmount> {
+        val transactions = transactionDao.getTransactionsByCardIdm(cardIdm)
+        if (transactions.isEmpty()) return emptyList()
+
+        val sortedTransactions = transactions.sortedByDescending { it.order }
+        return sortedTransactions.mapIndexed { index, transaction ->
+            val amount = if (index + 1 < sortedTransactions.size) {
+                transaction.balance - sortedTransactions[index + 1].balance
+            } else {
+                null
+            }
+            TransactionEntityWithAmount(transactionEntity = transaction, amount = amount)
+        }
+    }
+
+    /**
      * Data class to return batched results for lazy loading
      */
     data class LazyLoadResult(
