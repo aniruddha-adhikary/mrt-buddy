@@ -1,0 +1,6 @@
+- **CSV Export:** Export transaction history for individual cards to CSV format.
+- **Dark Theme:** Added dark theme setting for a comfortable viewing experience.
+- **Lazy Loading:** Improved performance with lazy loading for transaction history.
+- **New Station Data:** Added partial Hatirjheel Station entries.
+- **NFC Settings Access:** Open NFC settings directly from within the app.
+- **Bug Fixes:** Fixed incorrect balance display and random WaitingForTap activation.
