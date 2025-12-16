@@ -1,0 +1,4 @@
+- **Improved CSV Export:** Added visible loading overlay during export with progress indicator.
+- **Better Performance:** CSV generation now runs in background to keep UI responsive.
+- **Error Handling:** Export errors are now displayed to users via dialog.
+- **Localization:** Added Bengali translations for export status messages.
