@@ -126,4 +126,9 @@
     <string name="yearsAgo">years ago</string>
     <string name="contributors">Contributors</string>
     <string name="openSourceLicenses">Open Source Licenses</string>
+
+    <!-- Export strings -->
+    <string name="exportingTransactions">Exporting transactions...</string>
+    <string name="exportError">Export failed</string>
+    <string name="ok">OK</string>
 </resources>
