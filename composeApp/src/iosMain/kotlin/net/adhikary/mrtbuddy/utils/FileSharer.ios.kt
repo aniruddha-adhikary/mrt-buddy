@@ -8,7 +8,6 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import platform.Foundation.NSError
-import platform.Foundation.NSErrorPointer
 import platform.Foundation.NSString
 import platform.Foundation.NSURL
 import platform.Foundation.NSUTF8StringEncoding
@@ -72,7 +71,7 @@ actual class FileSharer {
 
     private fun getTopViewController(): UIViewController? {
         val keyWindow = UIApplication.sharedApplication.keyWindow
-            ?: UIApplication.sharedApplication.windows.firstOrNull { (it as? UIWindow)?.isKeyWindow == true } as? UIWindow
+            ?: UIApplication.sharedApplication.windows.firstOrNull { (it as? UIWindow)?.isKeyWindow() == true } as? UIWindow
             ?: UIApplication.sharedApplication.delegate?.window
 
         val rootViewController = keyWindow?.rootViewController ?: return null

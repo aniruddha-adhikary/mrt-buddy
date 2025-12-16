@@ -3,6 +3,7 @@ package net.adhikary.mrtbuddy.ui.screens.transactionlist
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import io.github.aakira.napier.Napier
 import kotlinx.datetime.Clock
 import net.adhikary.mrtbuddy.repository.TransactionRepository
@@ -166,18 +168,23 @@ class TransactionListViewModel(
             _state.update { it.copy(isExporting = true, exportError = null) }
 
             try {
-                val allTransactions = transactionRepository.getAllTransactionsForExport(cardIdm)
+                val (csvContent, filename) = withContext(Dispatchers.Default) {
+                    val allTransactions = transactionRepository.getAllTransactionsForExport(cardIdm)
 
-                if (allTransactions.isEmpty()) {
+                    if (allTransactions.isEmpty()) {
+                        return@withContext null
+                    }
+
+                    val csv = CsvExportService.generateCsv(allTransactions, cardIdm)
+                    val name = CsvExportService.generateFilename(
+                        state.value.cardName,
+                        Clock.System.now().toEpochMilliseconds()
+                    )
+                    Pair(csv, name)
+                } ?: run {
                     _state.update { it.copy(isExporting = false) }
                     return@launch
                 }
-
-                val csvContent = CsvExportService.generateCsv(allTransactions, cardIdm)
-                val filename = CsvExportService.generateFilename(
-                    state.value.cardName,
-                    Clock.System.now().toEpochMilliseconds()
-                )
 
                 fileSharer.share(csvContent, filename, "text/csv")
 

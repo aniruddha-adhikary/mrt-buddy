@@ -126,4 +126,9 @@
     <string name="yearsAgo">বছর আগে</string>
     <string name="contributors">অবদানকারীগণ</string>
     <string name="openSourceLicenses">ওপেন সোর্স লাইসেন্স</string>
+
+    <!-- Export strings -->
+    <string name="exportingTransactions">লেনদেন এক্সপোর্ট হচ্ছে...</string>
+    <string name="exportError">এক্সপোর্ট ব্যর্থ হয়েছে</string>
+    <string name="ok">ঠিক আছে</string>
 </resources>

@@ -1,5 +1,6 @@
 package net.adhikary.mrtbuddy.ui.screens.transactionlist
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,16 +16,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,7 +54,10 @@ import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.balanceUpdate
 import mrtbuddy.composeapp.generated.resources.endOfTransactionHistory
 import mrtbuddy.composeapp.generated.resources.errorLoadingTransactions
+import mrtbuddy.composeapp.generated.resources.exportError
+import mrtbuddy.composeapp.generated.resources.exportingTransactions
 import mrtbuddy.composeapp.generated.resources.noTransactionsFound
+import mrtbuddy.composeapp.generated.resources.ok
 import mrtbuddy.composeapp.generated.resources.retry
 import mrtbuddy.composeapp.generated.resources.transactionsAppearPrompt
 import mrtbuddy.composeapp.generated.resources.unnamedCard
@@ -103,139 +108,154 @@ fun TransactionListScreen(
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        // Top app bar with card info
-        TopAppBar(
-            title = {
-                val cardName = state.cardName?.takeIf { it.isNotBlank() } ?: stringResource(Res.string.unnamedCard)
-                val balanceText = state.balance?.let { " (৳ ${translateNumber(it)})" } ?: ""
-                Text("$cardName$balanceText")
-            },
-            navigationIcon = {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back"
-                    )
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            ),
-            windowInsets = WindowInsets.statusBars,
-            actions = {
-                // Export button
-                IconButton(
-                    onClick = { viewModel.exportTransactions() },
-                    enabled = !state.isExporting && state.transactions.isNotEmpty()
-                ) {
-                    if (state.isExporting) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = "Export CSV"
-                        )
-                    }
-                }
-                // Refresh button
-                IconButton(onClick = { viewModel.refresh() }) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = "Refresh"
-                    )
-                }
-            }
-        )
-
-        // Main content
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
         ) {
-            when {
-                // Initial loading
-                state.isLoading && state.transactions.isEmpty() -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-
-                // Error with empty list
-                state.error != null && state.transactions.isEmpty() -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(32.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
+            // Top app bar with card info
+            TopAppBar(
+                title = {
+                    val cardName = state.cardName?.takeIf { it.isNotBlank() } ?: stringResource(Res.string.unnamedCard)
+                    val balanceText = state.balance?.let { " (৳ ${translateNumber(it)})" } ?: ""
+                    Text("$cardName$balanceText")
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
                         Icon(
-                            imageVector = Icons.Filled.Warning,
-                            contentDescription = null,
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.error
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = state.error ?: stringResource(Res.string.errorLoadingTransactions),
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(modifier = Modifier.height(24.dp))
-                        Button(onClick = { viewModel.retry() }) {
-                            Text(stringResource(Res.string.retry))
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                ),
+                windowInsets = WindowInsets.statusBars,
+                actions = {
+                    // Export button
+                    IconButton(
+                        onClick = { viewModel.exportTransactions() },
+                        enabled = !state.isExporting && state.transactions.isNotEmpty()
+                    ) {
+                        if (state.isExporting) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = "Export CSV"
+                            )
                         }
                     }
+                    // Refresh button
+                    IconButton(onClick = { viewModel.refresh() }) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Refresh"
+                        )
+                    }
                 }
+            )
 
-                // Empty transaction list
-                state.transactions.isEmpty() -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(24.dp)
-                            .padding(bottom = paddingValues.calculateBottomPadding()),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
+            // Main content
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                when {
+                    // Initial loading
+                    state.isLoading && state.transactions.isEmpty() -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text = stringResource(Res.string.noTransactionsFound),
-                                style = MaterialTheme.typography.titleLarge,
-                                modifier = Modifier.padding(bottom = 8.dp)
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    // Error with empty list
+                    state.error != null && state.transactions.isEmpty() -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(32.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Warning,
+                                contentDescription = null,
+                                modifier = Modifier.size(48.dp),
+                                tint = MaterialTheme.colorScheme.error
                             )
+                            Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = stringResource(Res.string.transactionsAppearPrompt),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                                modifier = Modifier.padding(horizontal = 32.dp),
+                                text = state.error ?: stringResource(Res.string.errorLoadingTransactions),
+                                style = MaterialTheme.typography.bodyLarge,
                                 textAlign = TextAlign.Center
                             )
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Button(onClick = { viewModel.retry() }) {
+                                Text(stringResource(Res.string.retry))
+                            }
                         }
                     }
-                }
 
-                // Transaction list
-                else -> {
-                    TransactionList(
-                        state = state,
-                        lazyListState = lazyListState,
-                        paddingValues = paddingValues,
-                        onRetry = { viewModel.retry() }
-                    )
+                    // Empty transaction list
+                    state.transactions.isEmpty() -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(24.dp)
+                                .padding(bottom = paddingValues.calculateBottomPadding()),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = stringResource(Res.string.noTransactionsFound),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                                Text(
+                                    text = stringResource(Res.string.transactionsAppearPrompt),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                    modifier = Modifier.padding(horizontal = 32.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+
+                    // Transaction list
+                    else -> {
+                        TransactionList(
+                            state = state,
+                            lazyListState = lazyListState,
+                            paddingValues = paddingValues,
+                            onRetry = { viewModel.retry() }
+                        )
+                    }
                 }
             }
+        }
+
+        // Export loading overlay
+        if (state.isExporting) {
+            ExportLoadingOverlay()
+        }
+
+        // Export error dialog
+        state.exportError?.let { error ->
+            ExportErrorDialog(
+                errorMessage = error,
+                onDismiss = { viewModel.clearExportError() }
+            )
         }
     }
 }
@@ -397,4 +417,48 @@ fun TransactionItem(trxEntity: TransactionEntityWithAmount) {
             )
         }
     }
+}
+
+@Composable
+private fun ExportLoadingOverlay() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f)),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CircularProgressIndicator()
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(Res.string.exportingTransactions),
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+    }
+}
+
+@Composable
+private fun ExportErrorDialog(
+    errorMessage: String,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(Res.string.exportError)) },
+        text = { Text(errorMessage) },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(Res.string.ok))
+            }
+        }
+    )
 }
