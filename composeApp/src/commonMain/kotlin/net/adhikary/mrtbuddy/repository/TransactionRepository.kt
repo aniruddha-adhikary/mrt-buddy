@@ -159,23 +159,57 @@ class TransactionRepository(
     }
 
     /**
-     * Get ALL transactions for a card (for export purposes).
-     * This bypasses pagination and returns the complete history with calculated amounts.
+     * Get total transaction count for a card (for progress tracking)
      */
-    suspend fun getAllTransactionsForExport(cardIdm: String): List<TransactionEntityWithAmount> {
-        val transactions = transactionDao.getTransactionsByCardIdm(cardIdm)
-        if (transactions.isEmpty()) return emptyList()
-
-        val sortedTransactions = transactions.sortedByDescending { it.order }
-        return sortedTransactions.mapIndexed { index, transaction ->
-            val amount = if (index + 1 < sortedTransactions.size) {
-                transaction.balance - sortedTransactions[index + 1].balance
-            } else {
-                null
-            }
-            TransactionEntityWithAmount(transactionEntity = transaction, amount = amount)
-        }
+    suspend fun getTransactionCount(cardIdm: String): Int {
+        return transactionDao.getTransactionCountByCardIdm(cardIdm)
     }
+
+    /**
+     * Get a batch of transactions for export with calculated amounts.
+     * Uses pagination to avoid loading all data into memory.
+     *
+     * @param cardIdm The card identifier
+     * @param limit Batch size
+     * @param offset Starting position
+     * @return Batch of transactions with amounts, plus the next transaction for amount calculation
+     */
+    suspend fun getTransactionBatchForExport(
+        cardIdm: String,
+        limit: Int,
+        offset: Int
+    ): ExportBatchResult {
+        // Fetch one extra to calculate amount for last item in batch
+        val fetchLimit = limit + 1
+        val transactions = transactionDao.getTransactionsByCardIdmPaginated(cardIdm, fetchLimit, offset)
+
+        if (transactions.isEmpty()) {
+            return ExportBatchResult(emptyList(), hasMore = false)
+        }
+
+        val hasMore = transactions.size > limit
+        val batchTransactions = if (hasMore) transactions.take(limit) else transactions
+        val nextTransaction = if (hasMore) transactions[limit] else null
+
+        // Calculate amounts
+        val result = ArrayList<TransactionEntityWithAmount>(batchTransactions.size)
+        for (i in batchTransactions.indices) {
+            val transaction = batchTransactions[i]
+            val amount = when {
+                i + 1 < batchTransactions.size -> transaction.balance - batchTransactions[i + 1].balance
+                nextTransaction != null -> transaction.balance - nextTransaction.balance
+                else -> null
+            }
+            result.add(TransactionEntityWithAmount(transactionEntity = transaction, amount = amount))
+        }
+
+        return ExportBatchResult(result, hasMore)
+    }
+
+    data class ExportBatchResult(
+        val transactions: List<TransactionEntityWithAmount>,
+        val hasMore: Boolean
+    )
 
     /**
      * Data class to return batched results for lazy loading

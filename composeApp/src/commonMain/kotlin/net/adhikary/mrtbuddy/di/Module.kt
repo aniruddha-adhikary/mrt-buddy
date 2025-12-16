@@ -35,7 +35,7 @@ val appModule = module {
         TransactionListViewModel(
             cardIdm = parameters.get(),
             transactionRepository = get(),
-            fileSharer = get()
+            csvFileWriter = get()
         )
     }
     

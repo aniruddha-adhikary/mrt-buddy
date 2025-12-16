@@ -42,6 +42,9 @@ interface TransactionDao {
     @Query("SELECT MAX(`order`) FROM transactions")
     suspend fun getLastOrder(): Int?
 
+    @Query("SELECT COUNT(*) FROM transactions WHERE cardIdm = :cardIdm")
+    suspend fun getTransactionCountByCardIdm(cardIdm: String): Int
+
     @Query("DELETE FROM transactions WHERE cardIdm = :cardIdm")
     suspend fun deleteTransactionsByCardIdm(cardIdm: String)
 }
