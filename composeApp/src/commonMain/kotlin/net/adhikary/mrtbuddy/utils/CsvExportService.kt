@@ -10,30 +10,84 @@ object CsvExportService {
 
     private const val CSV_HEADER = "Date,Time,From Station,To Station,Amount,Balance,Card ID,Transaction Type"
 
+    /**
+     * Writes CSV header to the file writer
+     */
+    fun writeHeader(writer: CsvFileWriter) {
+        writer.appendLine(CSV_HEADER)
+    }
+
+    /**
+     * Writes a batch of transactions to the file writer (streaming mode)
+     */
+    fun writeBatch(
+        writer: CsvFileWriter,
+        transactions: List<TransactionEntityWithAmount>,
+        cardIdm: String
+    ) {
+        for (txnWithAmount in transactions) {
+            val line = formatTransactionLine(txnWithAmount, cardIdm)
+            writer.appendLine(line)
+        }
+    }
+
+    private fun formatTransactionLine(txnWithAmount: TransactionEntityWithAmount, cardIdm: String): String {
+        val txn = txnWithAmount.transactionEntity
+        val dateTime = Instant.fromEpochMilliseconds(txn.dateTime)
+            .toLocalDateTime(TimeZone.of("Asia/Dhaka"))
+
+        return buildString {
+            append(formatDate(dateTime.year, dateTime.monthNumber, dateTime.dayOfMonth))
+            append(',')
+            append(formatTime(dateTime.hour, dateTime.minute))
+            append(',')
+            append(escapeCsvField(txn.fromStation))
+            append(',')
+            append(escapeCsvField(txn.toStation))
+            append(',')
+            append(txnWithAmount.amount?.toString() ?: "")
+            append(',')
+            append(txn.balance)
+            append(',')
+            append(cardIdm)
+            append(',')
+            append(getTransactionTypeName(txn.fixedHeader))
+        }
+    }
+
     fun generateCsv(
         transactions: List<TransactionEntityWithAmount>,
         cardIdm: String
     ): String {
-        val rows = transactions.map { txnWithAmount ->
-            val txn = txnWithAmount.transactionEntity
-            val dateTime = Instant.fromEpochMilliseconds(txn.dateTime)
-                .toLocalDateTime(TimeZone.of("Asia/Dhaka"))
+        // Pre-calculate capacity to avoid StringBuilder resizing
+        val estimatedSize = CSV_HEADER.length + 2 + (transactions.size * 100)
 
-            val date = formatDate(dateTime.year, dateTime.monthNumber, dateTime.dayOfMonth)
-            val time = formatTime(dateTime.hour, dateTime.minute)
-            val fromStation = escapeCsvField(txn.fromStation)
-            val toStation = escapeCsvField(txn.toStation)
-            val amount = txnWithAmount.amount?.toString() ?: ""
-            val balance = txn.balance.toString()
-            val transactionType = getTransactionTypeName(txn.fixedHeader)
-
-            "$date,$time,$fromStation,$toStation,$amount,$balance,$cardIdm,$transactionType"
-        }
-
-        return buildString {
+        return StringBuilder(estimatedSize).apply {
             appendLine(CSV_HEADER)
-            rows.forEach { appendLine(it) }
-        }
+
+            // Process each transaction directly without intermediate list
+            for (txnWithAmount in transactions) {
+                val txn = txnWithAmount.transactionEntity
+                val dateTime = Instant.fromEpochMilliseconds(txn.dateTime)
+                    .toLocalDateTime(TimeZone.of("Asia/Dhaka"))
+
+                append(formatDate(dateTime.year, dateTime.monthNumber, dateTime.dayOfMonth))
+                append(',')
+                append(formatTime(dateTime.hour, dateTime.minute))
+                append(',')
+                append(escapeCsvField(txn.fromStation))
+                append(',')
+                append(escapeCsvField(txn.toStation))
+                append(',')
+                append(txnWithAmount.amount?.toString() ?: "")
+                append(',')
+                append(txn.balance)
+                append(',')
+                append(cardIdm)
+                append(',')
+                appendLine(getTransactionTypeName(txn.fixedHeader))
+            }
+        }.toString()
     }
 
     fun generateFilename(cardName: String?, timestamp: Long): String {

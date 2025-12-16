@@ -16,12 +16,12 @@ import io.github.aakira.napier.Napier
 import kotlinx.datetime.Clock
 import net.adhikary.mrtbuddy.repository.TransactionRepository
 import net.adhikary.mrtbuddy.utils.CsvExportService
-import net.adhikary.mrtbuddy.utils.FileSharer
+import net.adhikary.mrtbuddy.utils.CsvFileWriter
 
 class TransactionListViewModel(
     private val cardIdm: String,
     private val transactionRepository: TransactionRepository,
-    private val fileSharer: FileSharer,
+    private val csvFileWriter: CsvFileWriter,
     private val savedStateHandle: SavedStateHandle = SavedStateHandle()
 ) : ViewModel() {
 
@@ -29,6 +29,7 @@ class TransactionListViewModel(
         private const val PAGE_SIZE = 20
         private const val KEY_OFFSET = "offset"
         private const val MAX_IN_MEMORY = 100  // Maximum number of transactions to keep in memory
+        private const val EXPORT_BATCH_SIZE = 50  // Batch size for CSV export
     }
 
     // Restored from saved state or default to 0
@@ -159,7 +160,8 @@ class TransactionListViewModel(
     }
 
     /**
-     * Export all transactions to CSV and share via platform share sheet
+     * Export all transactions to CSV and share via platform share sheet.
+     * Uses streaming approach to avoid loading all transactions into memory.
      */
     fun exportTransactions() {
         if (state.value.isExporting) return
@@ -168,25 +170,45 @@ class TransactionListViewModel(
             _state.update { it.copy(isExporting = true, exportError = null) }
 
             try {
-                val (csvContent, filename) = withContext(Dispatchers.Default) {
-                    val allTransactions = transactionRepository.getAllTransactionsForExport(cardIdm)
-
-                    if (allTransactions.isEmpty()) {
-                        return@withContext null
-                    }
-
-                    val csv = CsvExportService.generateCsv(allTransactions, cardIdm)
-                    val name = CsvExportService.generateFilename(
-                        state.value.cardName,
-                        Clock.System.now().toEpochMilliseconds()
-                    )
-                    Pair(csv, name)
-                } ?: run {
+                // Check if there are any transactions
+                val totalCount = transactionRepository.getTransactionCount(cardIdm)
+                if (totalCount == 0) {
                     _state.update { it.copy(isExporting = false) }
                     return@launch
                 }
 
-                fileSharer.share(csvContent, filename, "text/csv")
+                // Generate filename
+                val filename = CsvExportService.generateFilename(
+                    state.value.cardName,
+                    Clock.System.now().toEpochMilliseconds()
+                )
+
+                // Stream export in batches
+                withContext(Dispatchers.Default) {
+                    csvFileWriter.createFile(filename)
+                    CsvExportService.writeHeader(csvFileWriter)
+
+                    var offset = 0
+                    var hasMore = true
+
+                    while (hasMore) {
+                        val batch = transactionRepository.getTransactionBatchForExport(
+                            cardIdm = cardIdm,
+                            limit = EXPORT_BATCH_SIZE,
+                            offset = offset
+                        )
+
+                        CsvExportService.writeBatch(csvFileWriter, batch.transactions, cardIdm)
+
+                        hasMore = batch.hasMore
+                        offset += batch.transactions.size
+                    }
+
+                    csvFileWriter.close()
+                }
+
+                // Share on main thread
+                csvFileWriter.share("text/csv")
 
                 _state.update { it.copy(isExporting = false) }
             } catch (e: Exception) {
