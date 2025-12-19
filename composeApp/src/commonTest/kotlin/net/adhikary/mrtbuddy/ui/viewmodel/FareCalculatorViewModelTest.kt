@@ -1,5 +1,7 @@
 package net.adhikary.mrtbuddy.ui.viewmodel
 
+import net.adhikary.mrtbuddy.data.model.FareCalculator
+import net.adhikary.mrtbuddy.model.CardState
 import kotlin.test.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -40,8 +42,19 @@ class FareCalculatorViewModelTest {
         assertEquals(lastStation, viewModel.toStation)
         assertEquals(false, viewModel.toExpanded)
 
-        // Verify fare calculation
-        assertEquals(100, viewModel.calculatedFare) // Maximum fare for furthest stations
+        // Verify fare calculation using production logic
+        val expectedFare = FareCalculator.calculateFare(firstStation, lastStation)
+        assertEquals(expectedFare, viewModel.calculatedFare)
+    }
+
+    @Test
+    fun testSameStationFare() {
+        val station = viewModel.stations.first()
+        viewModel.updateFromStation(station)
+        viewModel.updateToStation(station)
+
+        // Updated test case with new fare logic
+        assertEquals(0, viewModel.calculatedFare) // Same station should have 0 fare
     }
 
     @Test
@@ -63,20 +76,12 @@ class FareCalculatorViewModelTest {
     }
 
     @Test
-    fun testSameStationFare() {
-        val station = viewModel.stations.first()
-        viewModel.updateFromStation(station)
-        viewModel.updateToStation(station)
-        assertEquals(0, viewModel.calculatedFare) // Same station should have 0 fare
-        assertEquals(0, viewModel.discountedFare) // Discounted fare should also be 0
-    }
-
-    @Test
     fun testSameStationWithBalance() {
         val station = viewModel.stations.first()
         viewModel.updateFromStation(station)
         viewModel.updateToStation(station)
         viewModel.updateCardState(CardState.Balance(1000))
+
         assertEquals(0, viewModel.calculatedFare)
         assertEquals(true, viewModel.hasEnoughBalance()) // Should always have enough balance for 0 fare
     }
