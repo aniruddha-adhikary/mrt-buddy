@@ -2,6 +2,7 @@ package net.adhikary.mrtbuddy.nfc.parser
 
 import kotlinx.datetime.LocalDateTime
 import net.adhikary.mrtbuddy.model.Transaction
+import net.adhikary.mrtbuddy.model.TransactionType
 import net.adhikary.mrtbuddy.nfc.service.StationService
 import net.adhikary.mrtbuddy.nfc.service.TimestampService
 
@@ -69,9 +70,11 @@ object TransactionParser {
         val trailingBytes = block.copyOfRange(14, 16)
         val trailing = ByteParser.toHexString(trailingBytes)
 
+        val type = TransactionType.fromHeader(fixedHeaderStr)
+
         val timestamp = TimestampService.decodeTimestamp(timestampValue)
-        val fromStation = StationService.getStationName(fromStationCode)
-        val toStation = StationService.getStationName(toStationCode)
+        val fromStation = StationService.getStationName(fromStationCode, type)
+        val toStation = StationService.getStationName(toStationCode, type)
 
         return Transaction(
             fixedHeader = fixedHeaderStr,
