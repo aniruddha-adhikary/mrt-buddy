@@ -6,13 +6,13 @@
 
 <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
     <a href="https://apps.apple.com/us/app/mrt-buddy/id6737849667">
-        <img src="https://i.postimg.cc/7ZkzYWg2/Download-on-the-App-Store-Badge-svg.png" width="200" />
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Get it on App Store" width="200" />
     </a>
     <a href="https://play.google.com/store/apps/details?id=net.adhikary.mrtbuddy">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/2560px-Google_Play_Store_badge_EN.svg.png" width="200" height="60" />
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" width="200" />
     </a>
     <a href="https://f-droid.org/en/packages/net.adhikary.mrtbuddy/">
-       <img src="https://i.ibb.co.com/RvKJRjF/get-it-on-en.webp" alt="Get it on F-Droid" width="200" height=60">
+       <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Get_it_on_F-Droid_(material_design).svg" alt="Get it on F-Droid" width="200">
     </a>
 </div>
 
