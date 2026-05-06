@@ -19,10 +19,11 @@ import mrtbuddy.composeapp.generated.resources.shewrapara
 import mrtbuddy.composeapp.generated.resources.uttaraCenter
 import mrtbuddy.composeapp.generated.resources.uttaraNorth
 import mrtbuddy.composeapp.generated.resources.uttaraSouth
+import net.adhikary.mrtbuddy.model.TransactionType
 import org.jetbrains.compose.resources.stringResource
 
 object StationService {
-    private val stationMap = mapOf(
+    private val dhakaMetroStationMap = mapOf(
         10 to "Motijheel",
         20 to "Bangladesh Secretariat",
         25 to "Dhaka University",
@@ -39,21 +40,29 @@ object StationService {
         80 to "Uttara South",
         85 to "Uttara Center",
         90 to "Uttara North",
+    )
 
-        // Hatirjheel Bus Stations
+
+    // Hatirjheel Bus Stations
+    private val hatirJheelBusStationMap = mapOf(
         13 to "Mohanagar (HJ)",
         16 to "Rampura (HJ)",
         17 to "Badda (HJ)",
         19 to "Police Plaza (HJ)",
         28 to "FDC (HJ)",
-
-        // ?? to "Modhubag (HJ)"
-        // ?? to "Bou bazar (HJ)",
-        // ?? to "Kunipara (HJ)",
+        10 to "Modhubag (HJ)",
+        25 to "Bou bazar (HJ)",
+        22 to "Kunipara (HJ)",
     )
 
-    fun getStationName(code: Int): String =
-        stationMap.getOrElse(code) { "Unknown ($code)" }
+    fun getStationName(code: Int, type: TransactionType): String {
+        return when (type) {
+            TransactionType.CommuteHatirjheelBusStart -> hatirJheelBusStationMap[code]
+            TransactionType.CommuteHatirjheelBusEnd -> hatirJheelBusStationMap[code]
+            TransactionType.CommuteDhakaMetro -> dhakaMetroStationMap[code]
+            else -> null
+        } ?: "Unknown ($code)"
+    }
 
     @Composable
     fun translate(stationName: String): String {
