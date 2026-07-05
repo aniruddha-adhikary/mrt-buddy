@@ -7,7 +7,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class FareCalculatorTest {
-    private val calculator = FareCalculator.getInstance()
+    private val calculator = FareCalculator
 
     @Test
     fun testStationList() {
@@ -19,34 +19,30 @@ class FareCalculatorTest {
 
     @Test
     fun testFareCalculation() {
-        val uttaraNorth = calculator.getStation(0)!!
-        val kamalapur = calculator.getStation(16)!!
-        val farmgate = calculator.getStation(10)!!
-
+        val stations = calculator.getAllStations().associateBy { it.name }
+        
         // Test maximum fare
-        assertEquals(100, calculator.calculateFare(uttaraNorth, kamalapur))
-        // Test reverse direction (should be same due to symmetry)
-        assertEquals(100, calculator.calculateFare(kamalapur, uttaraNorth))
+        assertEquals(100, calculator.calculateFare(stations["Uttara North"]!!, stations["Motijheel"]!!))
+        // Test reverse direction
+        assertEquals(100, calculator.calculateFare(stations["Motijheel"]!!, stations["Uttara North"]!!))
         // Test intermediate station fare
-        assertEquals(70, calculator.calculateFare(uttaraNorth, farmgate))
+        assertEquals(20, calculator.calculateFare(stations["Karwan Bazar"]!!, stations["Bangladesh Secretariat"]!!))
+        assertEquals(30, calculator.calculateFare(stations["Mirpur 10"]!!, stations["Farmgate"]!!))
         // Test same station (should be free)
-        assertEquals(0, calculator.calculateFare(uttaraNorth, uttaraNorth))
+        assertEquals(0, calculator.calculateFare(stations["Farmgate"]!!, stations["Farmgate"]!!))
+        // Test Kamalapur station
+        assertEquals(100, calculator.calculateFare(stations["Uttara North"]!!, stations["Kamalapur"]!!))
     }
 
     @Test
     fun testStationLookup() {
-        // Test lookup by name
-        val stationByName = calculator.getStation("Farmgate")
-        assertNotNull(stationByName)
-        assertEquals(10, stationByName.id)
+        val stations = calculator.getAllStations().associateBy { it.name }
 
-        // Test lookup by ID
-        val stationById = calculator.getStation(10)
-        assertNotNull(stationById)
-        assertEquals("Farmgate", stationById.name)
+        // Test lookup by name
+        val stationByName = stations["Farmgate"]
+        assertNotNull(stationByName)
 
         // Test invalid lookups
-        assertNull(calculator.getStation("Invalid Station"))
-        assertNull(calculator.getStation(99))
+        assertNull(stations["Invalid Station"])
     }
 }
