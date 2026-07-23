@@ -25,7 +25,7 @@ import org.jetbrains.compose.resources.stringResource
 fun RenameDialog(
     currentName: String?,
     onDismiss: () -> Unit,
-    onConfirm: (String) -> Unit
+    onConfirm: (String) -> Unit,
 ) {
     var newName by remember { mutableStateOf(currentName ?: "") }
     val focusRequester = remember { FocusRequester() }
@@ -33,7 +33,7 @@ fun RenameDialog(
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
-    
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(Res.string.renameCard)) },
@@ -41,10 +41,11 @@ fun RenameDialog(
             TextField(
                 value = newName,
                 onValueChange = { newName = it },
-                keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Words
-                ),
-                modifier = Modifier.focusRequester(focusRequester)
+                keyboardOptions =
+                    KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Words,
+                    ),
+                modifier = Modifier.focusRequester(focusRequester),
             )
         },
         confirmButton = {
@@ -52,7 +53,7 @@ fun RenameDialog(
                 onClick = {
                     onConfirm(newName)
                     onDismiss()
-                }
+                },
             ) {
                 Text(stringResource(Res.string.rename))
             }
@@ -61,6 +62,6 @@ fun RenameDialog(
             TextButton(onClick = onDismiss) {
                 Text(stringResource(Res.string.cancel))
             }
-        }
+        },
     )
 }

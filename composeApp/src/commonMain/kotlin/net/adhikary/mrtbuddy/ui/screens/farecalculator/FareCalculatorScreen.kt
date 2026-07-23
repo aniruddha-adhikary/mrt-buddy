@@ -22,7 +22,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun FareCalculatorScreen(
     modifier: Modifier = Modifier,
     viewModel: FareCalculatorViewModel = koinViewModel(),
-    cardState: CardState
+    cardState: CardState,
 ) {
     val uiState = viewModel.state.collectAsState()
 
@@ -48,12 +48,13 @@ fun FareCalculatorScreen(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .then(modifier),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         FareDisplayCard(uiState.value, viewModel)
         Spacer(modifier = Modifier.height(4.dp))

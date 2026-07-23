@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:BalanceCard.kt$@Composable fun BalanceCard( cardState: CardState, cardIdm: String? = null, cardName: String? = null, modifier: Modifier = Modifier, )</ID>
+    <ID>CyclomaticComplexMethod:CardItem.kt$@Composable fun CardItem( card: CardEntity, balance: Int?, onCardSelected: () -&gt; Unit, onRenameClick: () -&gt; Unit, onDeleteClick: () -&gt; Unit, )</ID>
+    <ID>CyclomaticComplexMethod:MoreScreenViewModel.kt$MoreScreenViewModel$fun onAction(action: MoreScreenAction)</ID>
+    <ID>CyclomaticComplexMethod:StationService.kt$StationService$@Composable fun translate(stationName: String): String</ID>
+    <ID>CyclomaticComplexMethod:TransactionListScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun TransactionListScreen( modifier: Modifier = Modifier, cardIdm: String, onBack: () -&gt; Unit, paddingValues: PaddingValues, )</ID>
+    <ID>EmptyFunctionBlock:NFCManager.ios.kt$NFCManager${ }</ID>
+    <ID>ForbiddenComment:TransactionHistoryList.kt$// FIXME: Hatirjheel charges 40 and then refunds the change (shows as balance update)</ID>
+    <ID>FunctionNaming:MainViewController.kt$fun MainViewController()</ID>
+    <ID>LongMethod:BalanceCard.kt$@Composable fun BalanceCard( cardState: CardState, cardIdm: String? = null, cardName: String? = null, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:CardItem.kt$@Composable fun CardItem( card: CardEntity, balance: Int?, onCardSelected: () -&gt; Unit, onRenameClick: () -&gt; Unit, onDeleteClick: () -&gt; Unit, )</ID>
+    <ID>LongMethod:FareCalculatorComponents.kt$@Composable fun FareDisplayCard( uiState: FareCalculatorState, viewModel: FareCalculatorViewModel, )</ID>
+    <ID>LongMethod:FareCalculatorComponents.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun StationSelectionSection( uiState: FareCalculatorState, viewModel: FareCalculatorViewModel, )</ID>
+    <ID>LongMethod:HistoryScreen.kt$@Composable fun HistoryScreen( modifier: Modifier = Modifier, onCardSelected: (String) -&gt; Unit, viewModel: HistoryScreenViewModel = koinViewModel(), )</ID>
+    <ID>LongMethod:MainScreen.kt$@Composable fun MainScreen( viewModel: MainScreenViewModel = koinViewModel(), navController: NavHostController = rememberNavController(), )</ID>
+    <ID>LongMethod:MoreScreen.kt$@Composable fun MoreScreen( onNavigateToStationMap: () -&gt; Unit, onNavigateToLicenses: () -&gt; Unit, modifier: Modifier = Modifier, viewModel: MoreScreenViewModel = koinViewModel(), )</ID>
+    <ID>LongMethod:MoreScreenViewModel.kt$MoreScreenViewModel$fun onAction(action: MoreScreenAction)</ID>
+    <ID>LongMethod:NFCManager.ios.kt$NFCManager$@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class) override fun tagReaderSession( session: NFCTagReaderSession, didDetectTags: List&lt;*&gt;, )</ID>
+    <ID>LongMethod:OpenSourceLicensesScreen.kt$@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class) @Composable fun OpenSourceLicensesScreen( modifier: Modifier = Modifier, onBack: () -&gt; Unit = {}, paddingValues: PaddingValues, )</ID>
+    <ID>LongMethod:TransactionListScreen.kt$@Composable fun TransactionItem(trxEntity: TransactionEntityWithAmount)</ID>
+    <ID>LongMethod:TransactionListScreen.kt$@Composable private fun TransactionList( state: TransactionListState, lazyListState: LazyListState, paddingValues: PaddingValues, onRetry: () -&gt; Unit, )</ID>
+    <ID>LongMethod:TransactionListScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun TransactionListScreen( modifier: Modifier = Modifier, cardIdm: String, onBack: () -&gt; Unit, paddingValues: PaddingValues, )</ID>
+    <ID>MatchingDeclarationName:AndroidDatabase.kt$DatabaseProvider</ID>
+    <ID>MatchingDeclarationName:CsvFileWriter.android.kt$CsvFileWriter</ID>
+    <ID>MatchingDeclarationName:CsvFileWriter.ios.kt$CsvFileWriter</ID>
+    <ID>MatchingDeclarationName:Dao.kt$DemoDao</ID>
+    <ID>MatchingDeclarationName:FileSharer.android.kt$FileSharer</ID>
+    <ID>MatchingDeclarationName:FileSharer.ios.kt$FileSharer</ID>
+    <ID>MatchingDeclarationName:IosDatabase.kt$DatabaseProvider</ID>
+    <ID>MatchingDeclarationName:MainScreen.kt$Screen</ID>
+    <ID>MatchingDeclarationName:MrtApp.kt$MRTApp : Application</ID>
+    <ID>MatchingDeclarationName:NfcManager.android.kt$NFCManager</ID>
+    <ID>MatchingDeclarationName:Platform.android.kt$AndroidPlatform : Platform</ID>
+    <ID>MatchingDeclarationName:Platform.ios.kt$IOSPlatform : Platform</ID>
+    <ID>MaxLineLength:TransactionListScreen.kt$"${transaction.transactionEntity.cardIdm}_${transaction.transactionEntity.scanId}_${transaction.transactionEntity.fromStation}_${transaction.transactionEntity.toStation}_${transaction.transactionEntity.dateTime}_${transaction.transactionEntity.order}"</ID>
+    <ID>MayBeConst:ByteParser.kt$ByteParser$private val hexChars = "0123456789ABCDEF"</ID>
+    <ID>SwallowedException:MainViewController.kt$e: org.koin.core.error.KoinApplicationAlreadyStartedException</ID>
+    <ID>SwallowedException:NfcManager.android.kt$NFCManager$e: IllegalArgumentException</ID>
+    <ID>TooGenericExceptionCaught:FileSharer.android.kt$FileSharer$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:HistoryScreenViewModel.kt$HistoryScreenViewModel$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:MoreScreenViewModel.kt$MoreScreenViewModel$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:NfcManager.android.kt$NFCManager$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:TransactionListViewModel.kt$TransactionListViewModel$e: Exception</ID>
+    <ID>TooGenericExceptionThrown:FileSharer.ios.kt$FileSharer$throw RuntimeException("Failed to present share sheet: no valid view controller found")</ID>
+    <ID>TooGenericExceptionThrown:FileSharer.ios.kt$FileSharer$throw RuntimeException("Failed to write CSV file: $errorMessage")</ID>
+    <ID>TooManyFunctions:TransactionRepository.kt$TransactionRepository</ID>
+    <ID>UnusedParameter:TransactionHistoryList.kt$balance: String</ID>
+    <ID>UnusedParameter:TransactionListScreen.kt$modifier: Modifier = Modifier</ID>
+    <ID>UnusedPrivateProperty:NfcManager.android.kt$NFCManager$private var pendingIntent: PendingIntent? = null</ID>
+    <ID>UseRequire:TransactionParser.kt$TransactionParser$throw IllegalArgumentException("Invalid block size")</ID>
+    <ID>VariableNaming:FareCalculatorViewModel.kt$FareCalculatorViewModel$private val MRT_PASS_DISCOUNT = 0.10f // 10% discount for MRT/Rapid Pass</ID>
+    <ID>WildcardImport:TimestampService.kt$import mrtbuddy.composeapp.generated.resources.*</ID>
+  </CurrentIssues>
+</SmellBaseline>

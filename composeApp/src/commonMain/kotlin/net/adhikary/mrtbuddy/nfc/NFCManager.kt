@@ -10,12 +10,13 @@ expect class NFCManager() {
     val cardState: SharedFlow<CardState>
     val cardReadResults: SharedFlow<CardReadResult?>
 
-@Composable
+    @Composable
     fun startScan()
 
     fun stopScan()
 
     fun isEnabled(): Boolean
+
     fun isSupported(): Boolean
 }
 

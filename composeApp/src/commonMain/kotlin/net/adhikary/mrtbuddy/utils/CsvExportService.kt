@@ -7,7 +7,6 @@ import net.adhikary.mrtbuddy.data.TransactionEntityWithAmount
 import net.adhikary.mrtbuddy.model.TransactionType
 
 object CsvExportService {
-
     private const val CSV_HEADER = "Date,Time,From Station,To Station,Amount,Balance,Card ID,Transaction Type"
 
     /**
@@ -23,7 +22,7 @@ object CsvExportService {
     fun writeBatch(
         writer: CsvFileWriter,
         transactions: List<TransactionEntityWithAmount>,
-        cardIdm: String
+        cardIdm: String,
     ) {
         for (txnWithAmount in transactions) {
             val line = formatTransactionLine(txnWithAmount, cardIdm)
@@ -31,10 +30,14 @@ object CsvExportService {
         }
     }
 
-    private fun formatTransactionLine(txnWithAmount: TransactionEntityWithAmount, cardIdm: String): String {
+    private fun formatTransactionLine(
+        txnWithAmount: TransactionEntityWithAmount,
+        cardIdm: String,
+    ): String {
         val txn = txnWithAmount.transactionEntity
-        val dateTime = Instant.fromEpochMilliseconds(txn.dateTime)
-            .toLocalDateTime(TimeZone.of("Asia/Dhaka"))
+        val dateTime =
+            Instant.fromEpochMilliseconds(txn.dateTime)
+                .toLocalDateTime(TimeZone.of("Asia/Dhaka"))
 
         return buildString {
             append(formatDate(dateTime.year, dateTime.monthNumber, dateTime.dayOfMonth))
@@ -57,7 +60,7 @@ object CsvExportService {
 
     fun generateCsv(
         transactions: List<TransactionEntityWithAmount>,
-        cardIdm: String
+        cardIdm: String,
     ): String {
         // Pre-calculate capacity to avoid StringBuilder resizing
         val estimatedSize = CSV_HEADER.length + 2 + (transactions.size * 100)
@@ -68,8 +71,9 @@ object CsvExportService {
             // Process each transaction directly without intermediate list
             for (txnWithAmount in transactions) {
                 val txn = txnWithAmount.transactionEntity
-                val dateTime = Instant.fromEpochMilliseconds(txn.dateTime)
-                    .toLocalDateTime(TimeZone.of("Asia/Dhaka"))
+                val dateTime =
+                    Instant.fromEpochMilliseconds(txn.dateTime)
+                        .toLocalDateTime(TimeZone.of("Asia/Dhaka"))
 
                 append(formatDate(dateTime.year, dateTime.monthNumber, dateTime.dayOfMonth))
                 append(',')
@@ -90,25 +94,37 @@ object CsvExportService {
         }.toString()
     }
 
-    fun generateFilename(cardName: String?, timestamp: Long): String {
-        val dateTime = Instant.fromEpochMilliseconds(timestamp)
-            .toLocalDateTime(TimeZone.of("Asia/Dhaka"))
+    fun generateFilename(
+        cardName: String?,
+        timestamp: Long,
+    ): String {
+        val dateTime =
+            Instant.fromEpochMilliseconds(timestamp)
+                .toLocalDateTime(TimeZone.of("Asia/Dhaka"))
         val date = formatDate(dateTime.year, dateTime.monthNumber, dateTime.dayOfMonth)
 
-        val sanitizedName = if (cardName.isNullOrBlank()) {
-            "Card"
-        } else {
-            sanitizeFilename(cardName)
-        }
+        val sanitizedName =
+            if (cardName.isNullOrBlank()) {
+                "Card"
+            } else {
+                sanitizeFilename(cardName)
+            }
 
         return "MRT_${sanitizedName}_$date.csv"
     }
 
-    private fun formatDate(year: Int, month: Int, day: Int): String {
+    private fun formatDate(
+        year: Int,
+        month: Int,
+        day: Int,
+    ): String {
         return "$year-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}"
     }
 
-    private fun formatTime(hour: Int, minute: Int): String {
+    private fun formatTime(
+        hour: Int,
+        minute: Int,
+    ): String {
         return "${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}"
     }
 

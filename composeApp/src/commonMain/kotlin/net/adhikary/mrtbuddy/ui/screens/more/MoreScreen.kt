@@ -62,7 +62,7 @@ fun MoreScreen(
     onNavigateToStationMap: () -> Unit,
     onNavigateToLicenses: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: MoreScreenViewModel = koinViewModel()
+    viewModel: MoreScreenViewModel = koinViewModel(),
 ) {
     val uriHandler = LocalUriHandler.current
     val uiState by viewModel.state.collectAsState()
@@ -88,12 +88,13 @@ fun MoreScreen(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .then(modifier)
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Top
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .then(modifier)
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+        verticalArrangement = Arrangement.Top,
     ) {
         Column {
             SectionHeader(text = stringResource(Res.string.settings))
@@ -106,11 +107,11 @@ fun MoreScreen(
                         checked = uiState.autoSaveEnabled,
                         onCheckedChange = { enabled ->
                             viewModel.onAction(MoreScreenAction.SetAutoSave(enabled))
-                        }
+                        },
                     )
-                }
+                },
             )
-            
+
             RoundedButton(
                 text = stringResource(Res.string.language),
                 painter = painterResource(Res.drawable.language),
@@ -124,32 +125,36 @@ fun MoreScreen(
                 trailing = {
                     Text(
                         text = if (uiState.currentLanguage == Language.English.isoFormat) "English" else "বাংলা",
-                        modifier = Modifier.padding(end = 8.dp)
+                        modifier = Modifier.padding(end = 8.dp),
                     )
-                })
-
+                },
+            )
 
             RoundedButton(
                 text = stringResource(Res.string.dark_mode_preference),
                 painter = painterResource(Res.drawable.dark_mode),
                 onClick = {
                     val currentConfig = uiState.darkThemeConfig
-                    val nextConfig = when (currentConfig) {
-                        DarkThemeConfig.FOLLOW_SYSTEM -> DarkThemeConfig.DARK
-                        DarkThemeConfig.DARK -> DarkThemeConfig.LIGHT
-                        DarkThemeConfig.LIGHT -> DarkThemeConfig.FOLLOW_SYSTEM
-                    }
+                    val nextConfig =
+                        when (currentConfig) {
+                            DarkThemeConfig.FOLLOW_SYSTEM -> DarkThemeConfig.DARK
+                            DarkThemeConfig.DARK -> DarkThemeConfig.LIGHT
+                            DarkThemeConfig.LIGHT -> DarkThemeConfig.FOLLOW_SYSTEM
+                        }
                     viewModel.onAction(MoreScreenAction.SetDarkThemeConfig(nextConfig))
                 },
                 trailing = {
                     Text(
-                        text = when (uiState.darkThemeConfig) {
-                            DarkThemeConfig.FOLLOW_SYSTEM -> stringResource(Res.string.dark_mode_config_system_default)
-                            DarkThemeConfig.DARK ->  stringResource(Res.string.dark_mode_config_dark)
-                            DarkThemeConfig.LIGHT ->  stringResource(Res.string.dark_mode_config_light)
-                        }, modifier = Modifier.padding(end = 8.dp)
+                        text =
+                            when (uiState.darkThemeConfig) {
+                                DarkThemeConfig.FOLLOW_SYSTEM -> stringResource(Res.string.dark_mode_config_system_default)
+                                DarkThemeConfig.DARK -> stringResource(Res.string.dark_mode_config_dark)
+                                DarkThemeConfig.LIGHT -> stringResource(Res.string.dark_mode_config_light)
+                            },
+                        modifier = Modifier.padding(end = 8.dp),
                     )
-                })
+                },
+            )
 
             SectionHeader(text = stringResource(Res.string.others))
             RoundedButton(
@@ -157,7 +162,7 @@ fun MoreScreen(
                 painter = painterResource(Res.drawable.station_map),
                 onClick = {
                     viewModel.onAction(MoreScreenAction.StationMap)
-                }
+                },
             )
 
             SectionHeader(text = stringResource(Res.string.aboutHeader))
@@ -166,28 +171,28 @@ fun MoreScreen(
                 painter = painterResource(Res.drawable.policy),
                 onClick = {
                     uriHandler.openUri("https://mrtbuddy.com/privacy-policy")
-                }
+                },
             )
             RoundedButton(
                 text = stringResource(Res.string.helpAndSupportButton),
                 painter = painterResource(Res.drawable.help),
                 onClick = {
                     uriHandler.openUri("https://mrtbuddy.com/support")
-                }
+                },
             )
             RoundedButton(
                 text = stringResource(Res.string.contributors),
                 painter = painterResource(Res.drawable.contributors),
                 onClick = {
                     uriHandler.openUri("https://mrtbuddy.com/contributors.html")
-                }
+                },
             )
             RoundedButton(
                 text = stringResource(Res.string.openSourceLicenses),
                 painter = painterResource(Res.drawable.license), // Ensure you have a 'license' drawable
                 onClick = {
                     viewModel.onAction(MoreScreenAction.OpenLicenses)
-                }
+                },
             )
         }
 
@@ -197,7 +202,7 @@ fun MoreScreen(
                 fontSize = 12.sp,
                 lineHeight = 16.sp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 8.dp),
             )
 
             Text(
@@ -205,7 +210,7 @@ fun MoreScreen(
                 fontSize = 12.sp,
                 lineHeight = 16.sp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 8.dp),
             )
 
             Text(
@@ -213,7 +218,7 @@ fun MoreScreen(
                 fontSize = 12.sp,
                 lineHeight = 16.sp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 8.dp),
             )
         }
     }
@@ -225,7 +230,7 @@ private fun SectionHeader(text: String) {
         text = text,
         fontSize = 14.sp,
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-        modifier = Modifier.padding(vertical = 8.dp)
+        modifier = Modifier.padding(vertical = 8.dp),
     )
 }
 
@@ -236,44 +241,47 @@ private fun RoundedButton(
     painter: Painter? = null,
     iconTint: Color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
     onClick: () -> Unit,
-    trailing: @Composable (() -> Unit)? = null
+    trailing: @Composable (() -> Unit)? = null,
 ) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
         contentColor = MaterialTheme.colorScheme.onSurface,
-        onClick = onClick
+        onClick = onClick,
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             ) {
                 if (painter != null) {
                     Icon(
                         painter = painter,
                         contentDescription = null,
                         tint = iconTint,
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                            .size(24.dp)
+                        modifier =
+                            Modifier
+                                .padding(end = 16.dp)
+                                .size(24.dp),
                     )
                 }
                 Column {
                     Text(
                         text = text,
                         fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     if (subtitle != null) {
                         Text(
@@ -281,7 +289,7 @@ private fun RoundedButton(
                             fontSize = 14.sp,
                             lineHeight = 18.sp,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                            modifier = Modifier.padding(top = 4.dp)
+                            modifier = Modifier.padding(top = 4.dp),
                         )
                     }
                 }

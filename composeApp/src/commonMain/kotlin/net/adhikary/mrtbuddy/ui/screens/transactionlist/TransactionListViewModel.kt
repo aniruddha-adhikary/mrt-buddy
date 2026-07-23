@@ -3,6 +3,7 @@ package net.adhikary.mrtbuddy.ui.screens.transactionlist
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +13,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import io.github.aakira.napier.Napier
 import kotlinx.datetime.Clock
 import net.adhikary.mrtbuddy.repository.TransactionRepository
 import net.adhikary.mrtbuddy.utils.CsvExportService
@@ -22,14 +22,13 @@ class TransactionListViewModel(
     private val cardIdm: String,
     private val transactionRepository: TransactionRepository,
     private val csvFileWriter: CsvFileWriter,
-    private val savedStateHandle: SavedStateHandle = SavedStateHandle()
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
 ) : ViewModel() {
-
     companion object {
         private const val PAGE_SIZE = 20
         private const val KEY_OFFSET = "offset"
-        private const val MAX_IN_MEMORY = 100  // Maximum number of transactions to keep in memory
-        private const val EXPORT_BATCH_SIZE = 50  // Batch size for CSV export
+        private const val MAX_IN_MEMORY = 100 // Maximum number of transactions to keep in memory
+        private const val EXPORT_BATCH_SIZE = 50 // Batch size for CSV export
     }
 
     // Restored from saved state or default to 0
@@ -55,11 +54,12 @@ class TransactionListViewModel(
 
                 // Load first batch with larger initial size for smoother experience
                 val initialBatchSize = PAGE_SIZE * 2
-                val result = transactionRepository.getTransactionsByCardIdmLazy(
-                    cardIdm = cardIdm,
-                    limit = initialBatchSize,
-                    offset = 0
-                )
+                val result =
+                    transactionRepository.getTransactionsByCardIdmLazy(
+                        cardIdm = cardIdm,
+                        limit = initialBatchSize,
+                        offset = 0,
+                    )
 
                 // Update state with results
                 currentOffset = result.nextOffset
@@ -72,14 +72,14 @@ class TransactionListViewModel(
                         balance = balance,
                         cardName = cardEntity?.name,
                         canLoadMore = !result.isEndReached,
-                        currentOffset = currentOffset
+                        currentOffset = currentOffset,
                     )
                 }
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        error = e.message ?: "Error loading transactions"
+                        error = e.message ?: "Error loading transactions",
                     )
                 }
             }
@@ -99,11 +99,12 @@ class TransactionListViewModel(
                 _state.update { it.copy(isLoadingMore = true, error = null) }
 
                 try {
-                    val result = transactionRepository.getTransactionsByCardIdmLazy(
-                        cardIdm = cardIdm,
-                        limit = PAGE_SIZE,
-                        offset = currentOffset
-                    )
+                    val result =
+                        transactionRepository.getTransactionsByCardIdmLazy(
+                            cardIdm = cardIdm,
+                            limit = PAGE_SIZE,
+                            offset = currentOffset,
+                        )
 
                     // Update offset for next load
                     currentOffset = result.nextOffset
@@ -113,25 +114,26 @@ class TransactionListViewModel(
                     val combinedTransactions = _state.value.transactions + result.transactions
 
                     // Optionally trim list if it gets too large
-                    val trimmedTransactions = if (combinedTransactions.size > MAX_IN_MEMORY) {
-                        combinedTransactions.take(MAX_IN_MEMORY)
-                    } else {
-                        combinedTransactions
-                    }
+                    val trimmedTransactions =
+                        if (combinedTransactions.size > MAX_IN_MEMORY) {
+                            combinedTransactions.take(MAX_IN_MEMORY)
+                        } else {
+                            combinedTransactions
+                        }
 
                     _state.update {
                         it.copy(
                             isLoadingMore = false,
                             transactions = trimmedTransactions,
                             canLoadMore = !result.isEndReached,
-                            currentOffset = currentOffset
+                            currentOffset = currentOffset,
                         )
                     }
                 } catch (e: Exception) {
                     _state.update {
                         it.copy(
                             isLoadingMore = false,
-                            error = e.message ?: "Error loading more transactions"
+                            error = e.message ?: "Error loading more transactions",
                         )
                     }
                 }
@@ -178,10 +180,11 @@ class TransactionListViewModel(
                 }
 
                 // Generate filename
-                val filename = CsvExportService.generateFilename(
-                    state.value.cardName,
-                    Clock.System.now().toEpochMilliseconds()
-                )
+                val filename =
+                    CsvExportService.generateFilename(
+                        state.value.cardName,
+                        Clock.System.now().toEpochMilliseconds(),
+                    )
 
                 // Stream export in batches
                 withContext(Dispatchers.Default) {
@@ -192,11 +195,12 @@ class TransactionListViewModel(
                     var hasMore = true
 
                     while (hasMore) {
-                        val batch = transactionRepository.getTransactionBatchForExport(
-                            cardIdm = cardIdm,
-                            limit = EXPORT_BATCH_SIZE,
-                            offset = offset
-                        )
+                        val batch =
+                            transactionRepository.getTransactionBatchForExport(
+                                cardIdm = cardIdm,
+                                limit = EXPORT_BATCH_SIZE,
+                                offset = offset,
+                            )
 
                         CsvExportService.writeBatch(csvFileWriter, batch.transactions, cardIdm)
 
@@ -216,7 +220,7 @@ class TransactionListViewModel(
                 _state.update {
                     it.copy(
                         isExporting = false,
-                        exportError = e.message ?: "Export failed"
+                        exportError = e.message ?: "Export failed",
                     )
                 }
             }

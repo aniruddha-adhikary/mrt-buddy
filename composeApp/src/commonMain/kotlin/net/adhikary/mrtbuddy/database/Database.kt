@@ -12,7 +12,6 @@ import net.adhikary.mrtbuddy.data.CardEntity
 import net.adhikary.mrtbuddy.data.DemoLocal
 import net.adhikary.mrtbuddy.data.ScanEntity
 import net.adhikary.mrtbuddy.data.TransactionEntity
-import net.adhikary.mrtbuddy.repository.TransactionRepository
 
 expect class DatabaseProvider {
     fun getDatabase(): AppDatabase
@@ -22,8 +21,11 @@ expect class DatabaseProvider {
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getDao(): DemoDao
+
     abstract fun getCardDao(): CardDao
+
     abstract fun getScanDao(): ScanDao
+
     abstract fun getTransactionDao(): TransactionDao
 }
 

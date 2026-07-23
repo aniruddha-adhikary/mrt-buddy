@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class CardEntity(
     @PrimaryKey val idm: String,
     val name: String?,
-    val lastScanTime: Long? = null
+    val lastScanTime: Long? = null,
 )

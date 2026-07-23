@@ -8,7 +8,7 @@ import net.adhikary.mrtbuddy.nfc.service.TimestampService
 object TransactionParser {
     private fun isValidTransaction(transaction: Transaction): Boolean {
         val cutoffDate = LocalDateTime(2020, 1, 1, 0, 0)
-        return transaction.timestamp > cutoffDate;
+        return transaction.timestamp > cutoffDate
     }
 
     fun parseTransactionResponse(response: ByteArray): List<Transaction> {
@@ -80,7 +80,7 @@ object TransactionParser {
             fromStation = fromStation,
             toStation = toStation,
             balance = balance,
-            trailing = trailing
+            trailing = trailing,
         )
     }
 }

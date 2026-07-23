@@ -22,38 +22,36 @@ import mrtbuddy.composeapp.generated.resources.uttaraSouth
 import org.jetbrains.compose.resources.stringResource
 
 object StationService {
-    private val stationMap = mapOf(
-        10 to "Motijheel",
-        20 to "Bangladesh Secretariat",
-        25 to "Dhaka University",
-        30 to "Shahbagh",
-        35 to "Karwan Bazar",
-        40 to "Farmgate",
-        45 to "Bijoy Sarani",
-        50 to "Agargaon",
-        55 to "Shewrapara",
-        60 to "Kazipara",
-        65 to "Mirpur 10",
-        70 to "Mirpur 11",
-        75 to "Pallabi",
-        80 to "Uttara South",
-        85 to "Uttara Center",
-        90 to "Uttara North",
+    private val stationMap =
+        mapOf(
+            10 to "Motijheel",
+            20 to "Bangladesh Secretariat",
+            25 to "Dhaka University",
+            30 to "Shahbagh",
+            35 to "Karwan Bazar",
+            40 to "Farmgate",
+            45 to "Bijoy Sarani",
+            50 to "Agargaon",
+            55 to "Shewrapara",
+            60 to "Kazipara",
+            65 to "Mirpur 10",
+            70 to "Mirpur 11",
+            75 to "Pallabi",
+            80 to "Uttara South",
+            85 to "Uttara Center",
+            90 to "Uttara North",
+            // Hatirjheel Bus Stations
+            13 to "Mohanagar (HJ)",
+            16 to "Rampura (HJ)",
+            17 to "Badda (HJ)",
+            19 to "Police Plaza (HJ)",
+            28 to "FDC (HJ)",
+            // ?? to "Modhubag (HJ)"
+            // ?? to "Bou bazar (HJ)",
+            // ?? to "Kunipara (HJ)",
+        )
 
-        // Hatirjheel Bus Stations
-        13 to "Mohanagar (HJ)",
-        16 to "Rampura (HJ)",
-        17 to "Badda (HJ)",
-        19 to "Police Plaza (HJ)",
-        28 to "FDC (HJ)",
-
-        // ?? to "Modhubag (HJ)"
-        // ?? to "Bou bazar (HJ)",
-        // ?? to "Kunipara (HJ)",
-    )
-
-    fun getStationName(code: Int): String =
-        stationMap.getOrElse(code) { "Unknown ($code)" }
+    fun getStationName(code: Int): String = stationMap.getOrElse(code) { "Unknown ($code)" }
 
     @Composable
     fun translate(stationName: String): String {

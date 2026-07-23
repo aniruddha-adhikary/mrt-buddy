@@ -53,7 +53,6 @@ actual class NFCManager actual constructor() {
             scope.launch {
                 _cardState.emit(CardState.NoNfcSupport)
                 _cardState.emit(CardState.Error("Device does not support NFC"))
-
             }
             Log.d("NFCManager", "Device does not have NFC hardware")
             return false
@@ -75,55 +74,62 @@ actual class NFCManager actual constructor() {
         return true
     }
 
-    private val nfcStateReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-                NfcAdapter.ACTION_ADAPTER_STATE_CHANGED -> {
-                    val state = intent.getIntExtra(
-                        NfcAdapter.EXTRA_ADAPTER_STATE,
-                        NfcAdapter.STATE_OFF
-                    )
-                    when (state) {
-                        NfcAdapter.STATE_ON -> {
-                            scope.launch {
-                                // Preserve Balance state when NFC is re-enabled
-                                val currentState = _cardState.replayCache.firstOrNull()
-                                if (currentState !is CardState.Balance) {
-                                    _cardState.emit(CardState.WaitingForTap)
+    private val nfcStateReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context?,
+                intent: Intent?,
+            ) {
+                when (intent?.action) {
+                    NfcAdapter.ACTION_ADAPTER_STATE_CHANGED -> {
+                        val state =
+                            intent.getIntExtra(
+                                NfcAdapter.EXTRA_ADAPTER_STATE,
+                                NfcAdapter.STATE_OFF,
+                            )
+                        when (state) {
+                            NfcAdapter.STATE_ON -> {
+                                scope.launch {
+                                    // Preserve Balance state when NFC is re-enabled
+                                    val currentState = _cardState.replayCache.firstOrNull()
+                                    if (currentState !is CardState.Balance) {
+                                        _cardState.emit(CardState.WaitingForTap)
+                                    }
+                                }
+                                activity?.let {
+                                    nfcAdapter?.enableReaderMode(
+                                        it,
+                                        readerCallback,
+                                        NfcAdapter.FLAG_READER_NFC_F,
+                                        null,
+                                    )
                                 }
                             }
-                            activity?.let {
-                                nfcAdapter?.enableReaderMode(
-                                    it,
-                                    readerCallback,
-                                    NfcAdapter.FLAG_READER_NFC_F,
-                                    null
-                                )
-                            }
-                        }
-                        NfcAdapter.STATE_OFF -> {
-                            scope.launch {
-                                _cardState.emit(CardState.NfcDisabled)
+                            NfcAdapter.STATE_OFF -> {
+                                scope.launch {
+                                    _cardState.emit(CardState.NfcDisabled)
 //                                _cardState.emit(CardState.Error("No nfc card detected"))
-                            }
-                            activity?.let {
-                                nfcAdapter?.disableReaderMode(it)
+                                }
+                                activity?.let {
+                                    nfcAdapter?.disableReaderMode(it)
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
 
-    private val readerCallback = NfcAdapter.ReaderCallback { tag ->
-        scope.launch {
-            _cardState.emit(CardState.Reading)
+    private val readerCallback =
+        NfcAdapter.ReaderCallback { tag ->
+            scope.launch {
+                _cardState.emit(CardState.Reading)
+            }
+            readFelicaCard(tag)
         }
-        readFelicaCard(tag)
-    }
 
     actual fun isEnabled(): Boolean = nfcAdapter?.isEnabled == true
+
     actual fun isSupported(): Boolean = nfcAdapter != null
 
     @Composable
@@ -131,7 +137,7 @@ actual class NFCManager actual constructor() {
         val context = LocalContext.current as Activity
 
         DisposableEffect(context) {
-            activity = context  // Store the activity
+            activity = context // Store the activity
             // Check NFC support first
             if (!checkNfcSupport(context)) {
                 return@DisposableEffect onDispose { }
@@ -142,7 +148,7 @@ actual class NFCManager actual constructor() {
                 context.registerReceiver(
                     nfcStateReceiver,
                     IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED),
-                    Context.RECEIVER_EXPORTED
+                    Context.RECEIVER_EXPORTED,
                 )
             } else {
                 context.registerReceiver(
@@ -154,12 +160,13 @@ actual class NFCManager actual constructor() {
             // Update initial state (preserve Balance state if already set)
             scope.launch {
                 val currentState = _cardState.replayCache.firstOrNull()
-                val newState = when {
-                    nfcAdapter == null -> CardState.NoNfcSupport
-                    !nfcAdapter!!.isEnabled -> CardState.NfcDisabled
-                    currentState is CardState.Balance -> currentState // Preserve balance
-                    else -> CardState.WaitingForTap
-                }
+                val newState =
+                    when {
+                        nfcAdapter == null -> CardState.NoNfcSupport
+                        !nfcAdapter!!.isEnabled -> CardState.NfcDisabled
+                        currentState is CardState.Balance -> currentState // Preserve balance
+                        else -> CardState.WaitingForTap
+                    }
                 _cardState.emit(newState)
             }
 
@@ -169,7 +176,7 @@ actual class NFCManager actual constructor() {
                     context,
                     readerCallback,
                     NfcAdapter.FLAG_READER_NFC_F,
-                    null
+                    null,
                 )
             }
 
@@ -187,10 +194,9 @@ actual class NFCManager actual constructor() {
     actual fun stopScan() {
         activity?.let {
             nfcAdapter?.disableReaderMode(it)
-            activity = null  // Reset the activity reference
+            activity = null // Reset the activity reference
         }
     }
-
 
     fun onNewIntent(intent: Intent) {
         // First check if device supports NFC
@@ -238,7 +244,6 @@ actual class NFCManager actual constructor() {
                     _cardState.emit(CardState.Balance(it))
                 } ?: run {
                     _cardState.emit(CardState.Error("Balance not found. You moved the card too fast."))
-
                 }
             }
         } catch (e: Exception) {

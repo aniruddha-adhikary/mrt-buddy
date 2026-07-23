@@ -38,12 +38,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.card
-import mrtbuddy.composeapp.generated.resources.enableNfc
 import mrtbuddy.composeapp.generated.resources.hold
 import mrtbuddy.composeapp.generated.resources.keepCardSteady
 import mrtbuddy.composeapp.generated.resources.latestBalance
 import mrtbuddy.composeapp.generated.resources.lowBalance
-import mrtbuddy.composeapp.generated.resources.nfcDisabled
 import mrtbuddy.composeapp.generated.resources.noNfcSupport
 import mrtbuddy.composeapp.generated.resources.readingCard
 import mrtbuddy.composeapp.generated.resources.requiredNfc
@@ -69,14 +67,15 @@ fun BalanceCard(
     cardState: CardState,
     cardIdm: String? = null,
     cardName: String? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(240.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(240.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
-        shape = RoundedCornerShape(24.dp) // Increased corner radius
+        shape = RoundedCornerShape(24.dp), // Increased corner radius
     ) {
         Box(Modifier.fillMaxSize()) {
             // Card name at the top with rounded background only in Balance state
@@ -84,49 +83,57 @@ fun BalanceCard(
                 val isRapidPass = cardIdm?.let { isRapidPassIdm(it) } ?: false
                 val isDarkTheme = isSystemInDarkTheme()
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            if (isRapidPass) {
-                                if (isDarkTheme) DarkRapidPass else LightRapidPass
-                            } else {
-                                if (isDarkTheme) DarkMRTPass else LightMRTPass
-                            }
-                        )
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .background(
+                                if (isRapidPass) {
+                                    if (isDarkTheme) DarkRapidPass else LightRapidPass
+                                } else {
+                                    if (isDarkTheme) DarkMRTPass else LightMRTPass
+                                },
+                            )
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
                 ) {
                     Text(
                         text = cardName,
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier.align(Alignment.Center),
                     )
                 }
             }
 
             if (getPlatform().name != "android") {
                 Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(16.dp)
+                    modifier =
+                        Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(16.dp),
                 ) {
                     Text(
                         stringResource(Res.string.rescan),
-                        modifier = Modifier
-                            .clickable { RescanManager.requestRescan() },
+                        modifier =
+                            Modifier
+                                .clickable { RescanManager.requestRescan() },
                         style = MaterialTheme.typography.bodyLarge,
-                        color = if (!cardName.isNullOrBlank()) MaterialTheme.colorScheme.onPrimary
-                               else MaterialTheme.colorScheme.onSurface
+                        color =
+                            if (!cardName.isNullOrBlank()) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            },
                     )
                 }
             }
 
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
             ) {
                 when (cardState) {
                     is CardState.Balance -> BalanceContent(amount = cardState.amount)
@@ -147,10 +154,11 @@ private fun PulsingCircle(iconSize: Dp) {
     val pulseAlpha by infiniteTransition.animateFloat(
         initialValue = 0.5f,
         targetValue = 0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        )
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(durationMillis = 1200, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart,
+            ),
     )
     val density = LocalDensity.current
     val initialRadiusPx = with(density) { iconSize.toPx() / 2 }
@@ -159,22 +167,23 @@ private fun PulsingCircle(iconSize: Dp) {
     val pulseRadius by infiniteTransition.animateFloat(
         initialValue = initialRadiusPx,
         targetValue = targetRadiusPx,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        )
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(durationMillis = 1200, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart,
+            ),
     )
 
     // Retrieve the color outside the Canvas lambda
     val circleColor = MaterialTheme.colorScheme.primary.copy(alpha = pulseAlpha)
 
     Canvas(
-        modifier = Modifier.size(iconSize * 2)
+        modifier = Modifier.size(iconSize * 2),
     ) {
         drawCircle(
             color = circleColor,
             radius = pulseRadius,
-            center = center
+            center = center,
         )
     }
 }
@@ -184,19 +193,21 @@ private fun BalanceContent(amount: Int) {
     Text(
         text = stringResource(Res.string.latestBalance),
         style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
     )
     Spacer(modifier = Modifier.height(12.dp))
     Text(
         text = "৳ ${translateNumber(amount)}",
-        style = MaterialTheme.typography.displaySmall.copy(
-            fontWeight = FontWeight.SemiBold
-        ),
-        color = when {
-            amount <= 50 -> MaterialTheme.colorScheme.error
-            amount <= 70 -> if (isSystemInDarkTheme()) Alert_yellow_D else Alert_yellow_L
-            else -> MaterialTheme.colorScheme.onSurface
-        }
+        style =
+            MaterialTheme.typography.displaySmall.copy(
+                fontWeight = FontWeight.SemiBold,
+            ),
+        color =
+            when {
+                amount <= 50 -> MaterialTheme.colorScheme.error
+                amount <= 70 -> if (isSystemInDarkTheme()) Alert_yellow_D else Alert_yellow_L
+                else -> MaterialTheme.colorScheme.onSurface
+            },
     )
     Spacer(modifier = Modifier.height(4.dp))
     if (amount <= 20) {
@@ -205,7 +216,7 @@ private fun BalanceContent(amount: Int) {
             text = stringResource(Res.string.lowBalance),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -214,26 +225,26 @@ private fun BalanceContent(amount: Int) {
 private fun ReadingContent() {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
             imageVector = Icons.Default.Info,
             contentDescription = "Reading",
             modifier = Modifier.height(48.dp),
-            tint = MaterialTheme.colorScheme.primary
+            tint = MaterialTheme.colorScheme.primary,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.readingCard),
             style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.keepCardSteady),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
         )
     }
 }
@@ -242,7 +253,7 @@ private fun ReadingContent() {
 private fun WaitingContent() {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(contentAlignment = Alignment.Center) {
             if (getPlatform().name == "android") {
@@ -252,14 +263,14 @@ private fun WaitingContent() {
                 painter = painterResource(Res.drawable.card),
                 contentDescription = "Tap Card",
                 modifier = Modifier.height(48.dp),
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.primary,
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = stringResource(Res.string.tap),
             style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(8.dp))
         if (getPlatform().name != "android") {
@@ -268,14 +279,14 @@ private fun WaitingContent() {
                 text = stringResource(Res.string.tapRescanToStart),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
             )
         } else {
             Text(
                 text = stringResource(Res.string.hold),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
             )
         }
     }
@@ -285,26 +296,26 @@ private fun WaitingContent() {
 private fun ErrorContent(message: String) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
             imageVector = Icons.Default.Info,
             contentDescription = "Error",
             modifier = Modifier.height(48.dp),
-            tint = MaterialTheme.colorScheme.error
+            tint = MaterialTheme.colorScheme.error,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Error",
             style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
         )
         if (getPlatform().name != "android") {
             Spacer(modifier = Modifier.height(16.dp))
@@ -312,7 +323,7 @@ private fun ErrorContent(message: String) {
                 text = stringResource(Res.string.rescan),
                 modifier = Modifier.clickable { RescanManager.requestRescan() },
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
             )
         }
     }
@@ -322,26 +333,26 @@ private fun ErrorContent(message: String) {
 private fun NoNfcSupportContent() {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
             imageVector = Icons.Default.Info,
             contentDescription = "No NFC",
             modifier = Modifier.height(48.dp),
-            tint = MaterialTheme.colorScheme.error
+            tint = MaterialTheme.colorScheme.error,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.noNfcSupport),
             style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.requiredNfc),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
         )
     }
 }

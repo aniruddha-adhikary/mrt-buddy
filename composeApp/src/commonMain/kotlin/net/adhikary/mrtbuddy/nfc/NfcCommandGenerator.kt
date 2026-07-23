@@ -5,13 +5,14 @@ class NfcCommandGenerator {
         idm: ByteArray,
         serviceCode: Int = 0x220F,
         numberOfBlocksToRead: Int = 10,
-        startBlockNumber: Int = 0
+        startBlockNumber: Int = 0,
     ): ByteArray {
         // Convert the service code into a byte array (little-endian)
-        val serviceCodeList = byteArrayOf(
-            (serviceCode and 0xFF).toByte(),
-            ((serviceCode shr 8) and 0xFF).toByte()
-        )
+        val serviceCodeList =
+            byteArrayOf(
+                (serviceCode and 0xFF).toByte(),
+                ((serviceCode shr 8) and 0xFF).toByte(),
+            )
 
         // Prepare the block list elements
         val blockListElements = ByteArray(numberOfBlocksToRead * 2)
@@ -26,16 +27,16 @@ class NfcCommandGenerator {
         var idx = 0
 
         // Populate the command array step by step
-        command[idx++] = commandLength.toByte()      // Command length
-        command[idx++] = 0x06.toByte()              // Command code
+        command[idx++] = commandLength.toByte() // Command length
+        command[idx++] = 0x06.toByte() // Command code
 
         // Copy the IDM into the command array
         idm.copyInto(destination = command, destinationOffset = idx)
         idx += idm.size
 
-        command[idx++] = 0x01.toByte()              // Some fixed byte (e.g., command type)
-        command[idx++] = serviceCodeList[0]         // Service code low byte
-        command[idx++] = serviceCodeList[1]         // Service code high byte
+        command[idx++] = 0x01.toByte() // Some fixed byte (e.g., command type)
+        command[idx++] = serviceCodeList[0] // Service code low byte
+        command[idx++] = serviceCodeList[1] // Service code high byte
         command[idx++] = numberOfBlocksToRead.toByte() // Number of blocks to read
 
         // Copy the block list elements into the command array

@@ -7,11 +7,11 @@ import androidx.compose.runtime.Composable
 actual fun MRTBuddyTheme(
     darkTheme: Boolean,
     dynamicColor: Boolean,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     MaterialTheme(
         colorScheme = if (darkTheme) darkScheme else lightScheme,
         typography = Typography,
-        content = content
+        content = content,
     )
 }

@@ -15,16 +15,16 @@ class SettingsRepository(private val settings: Settings) {
         MutableStateFlow(settings.getString(LANGUAGE_KEY, Language.English.isoFormat))
     val currentLanguage: StateFlow<String> = _currentLanguage.asStateFlow()
 
-
-    private val _darkThemeConfig = MutableStateFlow(
-        settings.getString(
-            DARK_THEME_CONFIG_KEY,
-            DarkThemeConfig.FOLLOW_SYSTEM.name
-        ).let { stored ->
-            DarkThemeConfig.entries.firstOrNull { it.name == stored }
-                ?: DarkThemeConfig.FOLLOW_SYSTEM
-        }
-    )
+    private val _darkThemeConfig =
+        MutableStateFlow(
+            settings.getString(
+                DARK_THEME_CONFIG_KEY,
+                DarkThemeConfig.FOLLOW_SYSTEM.name,
+            ).let { stored ->
+                DarkThemeConfig.entries.firstOrNull { it.name == stored }
+                    ?: DarkThemeConfig.FOLLOW_SYSTEM
+            },
+        )
     val darkThemeConfig: StateFlow<DarkThemeConfig> = _darkThemeConfig.asStateFlow()
 
     fun setAutoSave(enabled: Boolean) {
@@ -36,7 +36,6 @@ class SettingsRepository(private val settings: Settings) {
         settings.putString(LANGUAGE_KEY, language)
         _currentLanguage.value = language
     }
-
 
     fun setDarkThemeConfig(darkThemeConfig: DarkThemeConfig) {
         settings.putString(DARK_THEME_CONFIG_KEY, darkThemeConfig.name)

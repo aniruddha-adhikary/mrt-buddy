@@ -23,26 +23,26 @@ import org.jetbrains.compose.resources.stringResource
 internal actual fun NfcDisabledContent() {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
             imageVector = Icons.Default.Info,
             contentDescription = "NFC Disabled",
             modifier = Modifier.height(48.dp),
-            tint = MaterialTheme.colorScheme.error
+            tint = MaterialTheme.colorScheme.error,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.nfcDisabled),
             style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.enableNfc),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
         )
     }
 }

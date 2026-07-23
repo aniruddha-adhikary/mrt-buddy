@@ -12,5 +12,5 @@ data class FareCalculatorState(
     val fromExpanded: Boolean = false,
     val toExpanded: Boolean = false,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
 )

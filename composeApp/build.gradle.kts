@@ -24,7 +24,7 @@ kotlin {
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
@@ -73,6 +73,13 @@ kotlin {
             implementation(kotlin("test-common"))
             implementation(kotlin("test-annotations-common"))
         }
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+                implementation(libs.junit)
+                implementation(libs.konsist)
+            }
+        }
     }
 }
 
@@ -84,8 +91,8 @@ android {
         applicationId = "net.adhikary.mrtbuddy"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 25
-        versionName = "0.0.25"
+        versionCode = 26
+        versionName = "0.0.26"
     }
     packaging {
         resources {
@@ -110,7 +117,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -128,7 +135,6 @@ android {
     }
 }
 
-
 dependencies {
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
@@ -143,37 +149,39 @@ room {
 
 licenseReport {
     unionParentPomLicenses = false
-    renderers = arrayOf(
-        InventoryMarkdownReportRenderer(
-            "open-source-licenses.md",
-            "Open Source Libraries"
+    renderers =
+        arrayOf(
+            InventoryMarkdownReportRenderer(
+                "open-source-licenses.md",
+                "Open Source Libraries",
+            ),
         )
-    )
 }
 
 tasks.register("processLicenseReport") {
     dependsOn("generateLicenseReport")
-    
+
     doLast {
         val reportPath = file("build/reports/dependency-license/open-source-licenses.md")
         val processedPath = file("build/reports/dependency-license/processed-open-source-licenses.md")
-        
+
         if (!reportPath.exists()) {
             throw GradleException("License report not found at $reportPath")
         }
-        
+
         val content = reportPath.readText()
-        val processedContent = content.replace(
-            Regex("_\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} [A-Z]+_"),
-            ""
-        )
+        val processedContent =
+            content.replace(
+                Regex("_\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} [A-Z]+_"),
+                "",
+            )
         processedPath.writeText(processedContent)
     }
 }
 
 tasks.register("copyLicenseReportToAssets") {
     dependsOn("processLicenseReport")
-    
+
     doLast {
         val processedPath = file("build/reports/dependency-license/processed-open-source-licenses.md")
         val commonAssetsPath = file("src/commonMain/composeResources/files")

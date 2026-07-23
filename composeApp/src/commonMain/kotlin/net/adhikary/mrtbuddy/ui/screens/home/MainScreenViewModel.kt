@@ -1,6 +1,5 @@
 package net.adhikary.mrtbuddy.ui.screens.home
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
@@ -21,9 +20,8 @@ import net.adhikary.mrtbuddy.repository.TransactionRepository
 class MainScreenViewModel(
     private val transactionRepository: TransactionRepository,
     private val initialState: MainScreenState,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
-
     private var autoSaveEnabled: Boolean = true
 
     private val _state: MutableStateFlow<MainScreenState> = MutableStateFlow(initialState)
@@ -53,8 +51,6 @@ class MainScreenViewModel(
 
     fun onAction(action: MainScreenAction) {
         when (action) {
-
-
             is MainScreenAction.OnInit -> {
                 viewModelScope.launch {
                     val savedLanguage = settingsRepository.currentLanguage.value
@@ -63,19 +59,17 @@ class MainScreenViewModel(
                     _state.update {
                         it.copy(
                             currentLanguage = savedLanguage,
-                            darkThemeConfig = darkThemeConfig
+                            darkThemeConfig = darkThemeConfig,
                         )
                     }
                 }
             }
 
             is MainScreenAction.UpdateCardState -> {
-
                 // here state has been copied over new state
                 _state.update {
                     it.copy(cardState = action.newState)
                 }
-
             }
 
             is MainScreenAction.UpdateCardReadResult -> {
@@ -91,7 +85,7 @@ class MainScreenViewModel(
                             cardIdm = action.cardReadResult.idm,
                             cardName = card?.name,
                             transaction = action.cardReadResult.transactions,
-                            transactionWithAmount = transactionsWithAmount
+                            transactionWithAmount = transactionsWithAmount,
                         )
                     }
                 }
@@ -107,17 +101,16 @@ class MainScreenViewModel(
 
     private fun transactionMapper(transactions: List<Transaction>): List<TransactionWithAmount> {
         return transactions.mapIndexed { index, transaction ->
-            val amount = if (index + 1 < transactions.size) {
-                transaction.balance - transactions[index + 1].balance
-            } else {
-                null
-            }
+            val amount =
+                if (index + 1 < transactions.size) {
+                    transaction.balance - transactions[index + 1].balance
+                } else {
+                    null
+                }
             TransactionWithAmount(
                 transaction = transaction,
-                amount = amount
+                amount = amount,
             )
         }
     }
-
-
 }

@@ -5,5 +5,6 @@ package net.adhikary.mrtbuddy.ui.navigation
  */
 sealed class Screen {
     object CardScan : Screen()
+
     object FareCalculator : Screen()
 }

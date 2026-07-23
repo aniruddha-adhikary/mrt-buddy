@@ -41,23 +41,24 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
-        shape = RoundedCornerShape(24.dp)
+        shape = RoundedCornerShape(24.dp),
     ) {
         LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item {
                 Text(
                     text = stringResource(Res.string.recentJourneys),
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
                 )
                 HorizontalDivider(
                     modifier = Modifier.padding(top = 12.dp, bottom = 16.dp),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
                 )
             }
 
@@ -71,16 +72,16 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
                     fromStation = transactionWithAmount.transaction.fromStation,
                     toStation = transactionWithAmount.transaction.toStation,
                     balance = "৳ ${transactionWithAmount.transaction.balance}",
-                    amount = transactionWithAmount.amount?.let { "৳ ${translateNumber(it)}" }
-                        ?: "N/A",
-                    amountValue = transactionWithAmount.amount
+                    amount =
+                        transactionWithAmount.amount?.let { "৳ ${translateNumber(it)}" }
+                            ?: "N/A",
+                    amountValue = transactionWithAmount.amount,
                 )
-
 
                 if (transactionWithAmount != validTransactions.last()) {
                     HorizontalDivider(
                         modifier = Modifier.padding(top = 12.dp),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
                     )
                 }
             }
@@ -96,15 +97,16 @@ fun TransactionItem(
     toStation: String,
     balance: String,
     amount: String,
-    amountValue: Int?
+    amountValue: Int?,
 ) {
     val isDarkTheme = isSystemInDarkTheme()
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 4.dp, bottom = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Bottom
+        verticalAlignment = Alignment.Bottom,
     ) {
         Column(
             modifier = Modifier.weight(1f),
@@ -112,38 +114,40 @@ fun TransactionItem(
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = when (type) {
-                    TransactionType.BalanceUpdate -> stringResource(Res.string.balanceUpdate)
-                    else -> "${StationService.translate(fromStation)} → ${
-                        StationService.translate(toStation)
-                    }"
-                },
+                text =
+                    when (type) {
+                        TransactionType.BalanceUpdate -> stringResource(Res.string.balanceUpdate)
+                        else -> "${StationService.translate(fromStation)} → ${
+                            StationService.translate(toStation)
+                        }"
+                    },
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = TimestampService.formatDateTime(date),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
             )
         }
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(start = 8.dp)
+            modifier = Modifier.padding(start = 8.dp),
         ) {
-            val amountColor = when {
-                amountValue == null -> MaterialTheme.colorScheme.onSurface
-                amountValue > 0 -> if (isDarkTheme) DarkPositiveGreen else LightPositiveGreen
-                else -> if (isDarkTheme) DarkNegativeRed else LightNegativeRed
-            }
+            val amountColor =
+                when {
+                    amountValue == null -> MaterialTheme.colorScheme.onSurface
+                    amountValue > 0 -> if (isDarkTheme) DarkPositiveGreen else LightPositiveGreen
+                    else -> if (isDarkTheme) DarkNegativeRed else LightNegativeRed
+                }
 
             Text(
                 text = amount,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = amountColor
+                color = amountColor,
             )
         }
     }

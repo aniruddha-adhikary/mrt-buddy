@@ -4,7 +4,7 @@ import platform.UIKit.UIDevice
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.Platform as kotlinPlatform
 
-class IOSPlatform: Platform {
+class IOSPlatform : Platform {
     override val name: String = UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
 }
 

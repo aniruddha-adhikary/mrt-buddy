@@ -5,11 +5,10 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSFileHandle
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSString
+import platform.Foundation.NSTemporaryDirectory
 import platform.Foundation.NSURL
 import platform.Foundation.NSUTF8StringEncoding
-import platform.Foundation.NSTemporaryDirectory
 import platform.Foundation.closeFile
-import platform.Foundation.create
 import platform.Foundation.dataUsingEncoding
 import platform.Foundation.fileHandleForWritingAtPath
 import platform.Foundation.seekToEndOfFile
@@ -63,10 +62,11 @@ actual class CsvFileWriter {
         val path = filePath ?: return
         val fileUrl = NSURL.fileURLWithPath(path)
 
-        val activityViewController = UIActivityViewController(
-            activityItems = listOf(fileUrl),
-            applicationActivities = null
-        )
+        val activityViewController =
+            UIActivityViewController(
+                activityItems = listOf(fileUrl),
+                applicationActivities = null,
+            )
 
         val presentingViewController = getTopViewController() ?: return
 
@@ -74,15 +74,16 @@ actual class CsvFileWriter {
             presentingViewController.presentViewController(
                 activityViewController,
                 animated = true,
-                completion = null
+                completion = null,
             )
         }
     }
 
     private fun getTopViewController(): UIViewController? {
-        val keyWindow = UIApplication.sharedApplication.keyWindow
-            ?: UIApplication.sharedApplication.windows.firstOrNull { (it as? UIWindow)?.isKeyWindow() == true } as? UIWindow
-            ?: UIApplication.sharedApplication.delegate?.window
+        val keyWindow =
+            UIApplication.sharedApplication.keyWindow
+                ?: UIApplication.sharedApplication.windows.firstOrNull { (it as? UIWindow)?.isKeyWindow() == true } as? UIWindow
+                ?: UIApplication.sharedApplication.delegate?.window
 
         val rootViewController = keyWindow?.rootViewController ?: return null
         return findTopViewController(rootViewController)

@@ -28,7 +28,11 @@ interface TransactionDao {
      * @return Paginated list of transactions
      */
     @Query("SELECT * FROM transactions WHERE cardIdm = :cardIdm ORDER BY `order` DESC LIMIT :limit OFFSET :offset")
-    suspend fun getTransactionsByCardIdmPaginated(cardIdm: String, limit: Int, offset: Int): List<TransactionEntity>
+    suspend fun getTransactionsByCardIdmPaginated(
+        cardIdm: String,
+        limit: Int,
+        offset: Int,
+    ): List<TransactionEntity>
 
     /**
      * Get a single transaction at a specific position for a card
@@ -37,7 +41,10 @@ interface TransactionDao {
      * @return The transaction at that position or null if none exists
      */
     @Query("SELECT * FROM transactions WHERE cardIdm = :cardIdm ORDER BY `order` DESC LIMIT 1 OFFSET :position")
-    suspend fun getTransactionAtPosition(cardIdm: String, position: Int): TransactionEntity?
+    suspend fun getTransactionAtPosition(
+        cardIdm: String,
+        position: Int,
+    ): TransactionEntity?
 
     @Query("SELECT MAX(`order`) FROM transactions")
     suspend fun getLastOrder(): Int?

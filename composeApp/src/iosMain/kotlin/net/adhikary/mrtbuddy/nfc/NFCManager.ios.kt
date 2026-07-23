@@ -26,13 +26,14 @@ import platform.darwin.nil
 import platform.posix.memcpy
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-fun ByteArray.toNSData(): NSData = this.usePinned { pinned ->
-    NSData.create(bytes = pinned.addressOf(0), length = this.size.toULong())
-}
+fun ByteArray.toNSData(): NSData =
+    this.usePinned { pinned ->
+        NSData.create(bytes = pinned.addressOf(0), length = this.size.toULong())
+    }
 
 private fun NSData.toHexString(): String {
     val bytes = this.toByteArray()
-    return ByteParser.toHexString(bytes);
+    return ByteParser.toHexString(bytes)
 }
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
@@ -63,6 +64,7 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
     }
 
     actual fun isEnabled(): Boolean = NFCTagReaderSession.readingAvailable()
+
     actual fun isSupported(): Boolean = NFCTagReaderSession.readingAvailable()
 
     @Composable
@@ -82,12 +84,18 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
     override fun tagReaderSessionDidBecomeActive(session: NFCTagReaderSession) {
     }
 
-    override fun tagReaderSession(session: NFCTagReaderSession, didInvalidateWithError: NSError) {
+    override fun tagReaderSession(
+        session: NFCTagReaderSession,
+        didInvalidateWithError: NSError,
+    ) {
         this.session = null
     }
 
     @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-    override fun tagReaderSession(session: NFCTagReaderSession, didDetectTags: List<*>) {
+    override fun tagReaderSession(
+        session: NFCTagReaderSession,
+        didDetectTags: List<*>,
+    ) {
         val tag = didDetectTags.firstOrNull() as? NFCFeliCaTagProtocol ?: return
 
         session.connectToTag(tag) { error ->
@@ -134,8 +142,13 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
                             }
 
                             // Combine data from both reads
-                            val allData = ((dataList ?: emptyList<Any>()) + (dataList2
-                                ?: emptyList<Any>())).map { (it as NSData).toByteArray() }
+                            val allData =
+                                (
+                                    (dataList ?: emptyList<Any>()) + (
+                                        dataList2
+                                            ?: emptyList<Any>()
+                                    )
+                                ).map { (it as NSData).toByteArray() }
                             val entries =
                                 allData.map { TransactionParser.parseTransactionBlock(it) }
 
@@ -154,14 +167,13 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
                                 }
                             }
                             session.invalidateSession()
-                        }
+                        },
                     )
-                }
+                },
             )
         }
     }
 }
-
 
 @Composable
 actual fun getNFCManager(): NFCManager {

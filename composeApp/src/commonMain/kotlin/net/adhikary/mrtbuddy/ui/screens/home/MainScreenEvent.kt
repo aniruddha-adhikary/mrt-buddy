@@ -6,5 +6,6 @@ package net.adhikary.mrtbuddy.ui.screens.home
 
 sealed interface MainScreenEvent {
     data class Error(val error: String) : MainScreenEvent
+
     data object ShowMessage : MainScreenEvent
 }

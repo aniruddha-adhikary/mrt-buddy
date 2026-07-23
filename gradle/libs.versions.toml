@@ -30,6 +30,9 @@ sqlite = "2.5.0-SNAPSHOT"
 napier = "2.7.1"
 coilCompose = "3.0.4"
 zoomimageComposeCoil3 = "1.1.0-rc01"
+ktlintGradle = "12.1.2"
+detekt = "1.23.7"
+konsist = "0.17.3"
 
 [libraries]
 compose-webview-multiplatform = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "composeWebviewMultiplatform" }
@@ -62,6 +65,7 @@ sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sql
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 zoomimage-compose-coil3 = { module = "io.github.panpf.zoomimage:zoomimage-compose-coil3", version.ref = "zoomimageComposeCoil3" }
+konsist = { module = "com.lemonappdev:konsist", version.ref = "konsist" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -72,3 +76,5 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "androidx-room" }
 jaredsburrowsLicense = { id = "com.github.jk1.dependency-license-report", version.ref = "dependency-license-report" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintGradle" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

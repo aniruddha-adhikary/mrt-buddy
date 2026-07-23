@@ -9,24 +9,30 @@ import java.io.IOException
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class FileSharer(private val context: Context) {
-    actual fun share(content: String, filename: String, mimeType: String) {
+    actual fun share(
+        content: String,
+        filename: String,
+        mimeType: String,
+    ) {
         try {
             val file = File(context.cacheDir, filename)
             file.parentFile?.mkdirs()
             file.writeText(content)
             file.setReadable(true, false)
 
-            val uri = FileProvider.getUriForFile(
-                context,
-                "${context.packageName}.fileprovider",
-                file
-            )
+            val uri =
+                FileProvider.getUriForFile(
+                    context,
+                    "${context.packageName}.fileprovider",
+                    file,
+                )
 
-            val intent = Intent(Intent.ACTION_SEND).apply {
-                type = mimeType
-                putExtra(Intent.EXTRA_STREAM, uri)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
+            val intent =
+                Intent(Intent.ACTION_SEND).apply {
+                    type = mimeType
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
 
             val shareIntent = Intent.createChooser(intent, "Export Transactions")
             shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
