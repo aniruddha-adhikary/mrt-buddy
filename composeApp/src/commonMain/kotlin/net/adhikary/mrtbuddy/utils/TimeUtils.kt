@@ -21,7 +21,7 @@ object TimeUtils {
     fun getTimeAgoString(timestamp: Long): String {
         val now = Clock.System.now().toEpochMilliseconds()
         val diff = now - timestamp
-        
+
         val seconds = diff / 1000
         val minutes = seconds / 60
         val hours = minutes / 60

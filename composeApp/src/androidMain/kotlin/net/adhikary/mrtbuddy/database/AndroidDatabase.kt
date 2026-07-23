@@ -9,7 +9,7 @@ actual class DatabaseProvider(private val context: Context) {
         val dbFile = context.getDatabasePath("mrt_buddy.db")
         return Room.databaseBuilder<AppDatabase>(
             context = context.applicationContext,
-            name = dbFile.absolutePath
+            name = dbFile.absolutePath,
         )
             .addMigrations(MIGRATION_2_3)
             .setDriver(BundledSQLiteDriver())

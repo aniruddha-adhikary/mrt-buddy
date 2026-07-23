@@ -46,16 +46,18 @@ class FareCalculatorViewModel : ViewModel() {
                 _state.value = _state.value.copy(cardState = action.cardState)
             }
             FareCalculatorAction.ToggleFromExpanded -> {
-                _state.value = _state.value.copy(
-                    fromExpanded = !_state.value.fromExpanded,
-                    toExpanded = false
-                )
+                _state.value =
+                    _state.value.copy(
+                        fromExpanded = !_state.value.fromExpanded,
+                        toExpanded = false,
+                    )
             }
             FareCalculatorAction.ToggleToExpanded -> {
-                _state.value = _state.value.copy(
-                    toExpanded = !_state.value.toExpanded,
-                    fromExpanded = false
-                )
+                _state.value =
+                    _state.value.copy(
+                        toExpanded = !_state.value.toExpanded,
+                        fromExpanded = false,
+                    )
             }
             FareCalculatorAction.DismissDropdowns -> {
                 _state.value = _state.value.copy(fromExpanded = false, toExpanded = false)
@@ -63,23 +65,26 @@ class FareCalculatorViewModel : ViewModel() {
         }
     }
 
-    private fun calculateFares() = viewModelScope.launch {
-        val fromStation = _state.value.fromStation
-        val toStation = _state.value.toStation
-        if (fromStation != null && toStation != null) {
-            val fare = FareCalculator.calculateFare(fromStation, toStation)
-            val discountedFare = (fare * (1 - MRT_PASS_DISCOUNT)).toInt()
-            _state.value = _state.value.copy(
-                calculatedFare = fare,
-                discountedFare = discountedFare
-            )
-        } else {
-            _state.value = _state.value.copy(
-                calculatedFare = 0,
-                discountedFare = 0
-            )
+    private fun calculateFares() =
+        viewModelScope.launch {
+            val fromStation = _state.value.fromStation
+            val toStation = _state.value.toStation
+            if (fromStation != null && toStation != null) {
+                val fare = FareCalculator.calculateFare(fromStation, toStation)
+                val discountedFare = (fare * (1 - MRT_PASS_DISCOUNT)).toInt()
+                _state.value =
+                    _state.value.copy(
+                        calculatedFare = fare,
+                        discountedFare = discountedFare,
+                    )
+            } else {
+                _state.value =
+                    _state.value.copy(
+                        calculatedFare = 0,
+                        discountedFare = 0,
+                    )
+            }
         }
-    }
 
     val stations = FareCalculator.getAllStations()
 }

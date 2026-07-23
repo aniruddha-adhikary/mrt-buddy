@@ -32,13 +32,12 @@ import com.mikepenz.markdown.model.DefaultMarkdownTypography
 import mrtbuddy.composeapp.generated.resources.Res
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
 fun OpenSourceLicensesScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
 ) {
     Column(modifier.fillMaxSize()) {
         TopAppBar(
@@ -47,43 +46,46 @@ fun OpenSourceLicensesScreen(
                 IconButton(onClick = onBack) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back"
+                        contentDescription = "Back",
                     )
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            ),
-            windowInsets = WindowInsets.statusBars
+            colors =
+                TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                ),
+            windowInsets = WindowInsets.statusBars,
         )
         var content by remember { mutableStateOf("") }
 
-        val mdColors = DefaultMarkdownColors(
-            text = MaterialTheme.colorScheme.onSurface,
-            codeText = MaterialTheme.colorScheme.onSurface,
-            inlineCodeText = MaterialTheme.colorScheme.onSurface,
-            linkText = MaterialTheme.colorScheme.primary,
-            codeBackground = MaterialTheme.colorScheme.surface.copy(alpha = 0.1f),
-            inlineCodeBackground = MaterialTheme.colorScheme.surface.copy(alpha = 0.1f),
-            dividerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-        )
-        val mdTypography = DefaultMarkdownTypography(
-            text = MaterialTheme.typography.bodyMedium,
-            code = MaterialTheme.typography.bodyMedium.copy(fontFamily = MaterialTheme.typography.bodyMedium.fontFamily),
-            inlineCode = MaterialTheme.typography.bodyMedium.copy(fontFamily = MaterialTheme.typography.bodyMedium.fontFamily),
-            h1 = MaterialTheme.typography.titleLarge,
-            h2 = MaterialTheme.typography.titleSmall,
-            h3 = MaterialTheme.typography.titleSmall,
-            h4 = MaterialTheme.typography.titleSmall,
-            h5 = MaterialTheme.typography.titleSmall,
-            h6 = MaterialTheme.typography.titleSmall,
-            quote = MaterialTheme.typography.bodyMedium.copy(fontStyle = FontStyle.Italic),
-            paragraph = MaterialTheme.typography.bodyMedium,
-            ordered = MaterialTheme.typography.bodyMedium,
-            bullet = MaterialTheme.typography.bodyMedium,
-            list = MaterialTheme.typography.bodyMedium,
-            link = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.primary)
-        )
+        val mdColors =
+            DefaultMarkdownColors(
+                text = MaterialTheme.colorScheme.onSurface,
+                codeText = MaterialTheme.colorScheme.onSurface,
+                inlineCodeText = MaterialTheme.colorScheme.onSurface,
+                linkText = MaterialTheme.colorScheme.primary,
+                codeBackground = MaterialTheme.colorScheme.surface.copy(alpha = 0.1f),
+                inlineCodeBackground = MaterialTheme.colorScheme.surface.copy(alpha = 0.1f),
+                dividerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+            )
+        val mdTypography =
+            DefaultMarkdownTypography(
+                text = MaterialTheme.typography.bodyMedium,
+                code = MaterialTheme.typography.bodyMedium.copy(fontFamily = MaterialTheme.typography.bodyMedium.fontFamily),
+                inlineCode = MaterialTheme.typography.bodyMedium.copy(fontFamily = MaterialTheme.typography.bodyMedium.fontFamily),
+                h1 = MaterialTheme.typography.titleLarge,
+                h2 = MaterialTheme.typography.titleSmall,
+                h3 = MaterialTheme.typography.titleSmall,
+                h4 = MaterialTheme.typography.titleSmall,
+                h5 = MaterialTheme.typography.titleSmall,
+                h6 = MaterialTheme.typography.titleSmall,
+                quote = MaterialTheme.typography.bodyMedium.copy(fontStyle = FontStyle.Italic),
+                paragraph = MaterialTheme.typography.bodyMedium,
+                ordered = MaterialTheme.typography.bodyMedium,
+                bullet = MaterialTheme.typography.bodyMedium,
+                list = MaterialTheme.typography.bodyMedium,
+                link = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.primary),
+            )
 
         LaunchedEffect(Unit) {
             content = Res.readBytes("files/open-source-licenses.md").decodeToString()
@@ -91,12 +93,13 @@ fun OpenSourceLicensesScreen(
 
         Markdown(
             content = content,
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp)
-                .padding(bottom = paddingValues.calculateBottomPadding()),
+            modifier =
+                Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp)
+                    .padding(bottom = paddingValues.calculateBottomPadding()),
             colors = mdColors,
-            typography = mdTypography
+            typography = mdTypography,
         )
     }
 }

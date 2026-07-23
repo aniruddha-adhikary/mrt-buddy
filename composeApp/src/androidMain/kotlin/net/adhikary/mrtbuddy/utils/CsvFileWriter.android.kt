@@ -13,10 +13,11 @@ actual class CsvFileWriter(private val context: Context) {
     private var writer: BufferedWriter? = null
 
     actual fun createFile(filename: String): String {
-        file = File(context.cacheDir, filename).also {
-            it.parentFile?.mkdirs()
-            writer = BufferedWriter(FileWriter(it))
-        }
+        file =
+            File(context.cacheDir, filename).also {
+                it.parentFile?.mkdirs()
+                writer = BufferedWriter(FileWriter(it))
+            }
         return file!!.absolutePath
     }
 
@@ -38,17 +39,19 @@ actual class CsvFileWriter(private val context: Context) {
 
         currentFile.setReadable(true, false)
 
-        val uri = FileProvider.getUriForFile(
-            context,
-            "${context.packageName}.fileprovider",
-            currentFile
-        )
+        val uri =
+            FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.fileprovider",
+                currentFile,
+            )
 
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = mimeType
-            putExtra(Intent.EXTRA_STREAM, uri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
+        val intent =
+            Intent(Intent.ACTION_SEND).apply {
+                type = mimeType
+                putExtra(Intent.EXTRA_STREAM, uri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
 
         val shareIntent = Intent.createChooser(intent, "Export Transactions")
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

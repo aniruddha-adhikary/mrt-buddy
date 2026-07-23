@@ -19,64 +19,66 @@ import org.koin.dsl.module
 
 expect val platformModule: org.koin.core.module.Module
 
-val appModule = module {
-    single<Settings> { createSettings() }
-    single { SettingsRepository(get()) }
-    single { get<AppDatabase>().getCardDao() }
-    single { get<AppDatabase>().getScanDao() }
-    single { get<AppDatabase>().getTransactionDao() }
-    single { TransactionRepository(
-        cardDao = get(),
-        scanDao = get(),
-        transactionDao = get()
-    ) }
+val appModule =
+    module {
+        single<Settings> { createSettings() }
+        single { SettingsRepository(get()) }
+        single { get<AppDatabase>().getCardDao() }
+        single { get<AppDatabase>().getScanDao() }
+        single { get<AppDatabase>().getTransactionDao() }
+        single {
+            TransactionRepository(
+                cardDao = get(),
+                scanDao = get(),
+                transactionDao = get(),
+            )
+        }
 
-    viewModel { parameters ->
-        TransactionListViewModel(
-            cardIdm = parameters.get(),
-            transactionRepository = get(),
-            csvFileWriter = get()
-        )
-    }
-    
-    viewModel { 
-        HistoryScreenViewModel(
-            transactionRepository = get()
-        )
-    }
-    
-    factory {
-        FareCalculatorViewModel()
-    }
+        viewModel { parameters ->
+            TransactionListViewModel(
+                cardIdm = parameters.get(),
+                transactionRepository = get(),
+                csvFileWriter = get(),
+            )
+        }
 
-    factory {
-        HistoryScreenState()
-    }
+        viewModel {
+            HistoryScreenViewModel(
+                transactionRepository = get(),
+            )
+        }
 
-    viewModel {
-        MoreScreenViewModel(
-            settingsRepository = get()
-        )
-    }
+        factory {
+            FareCalculatorViewModel()
+        }
 
-    factory {
-        MainScreenState()
-    }
+        factory {
+            HistoryScreenState()
+        }
 
-    viewModel { 
-        MainScreenViewModel(
-            transactionRepository = get(),
-            initialState = get(),
-            settingsRepository = get()
-        ).apply {
-            onAction(MainScreenAction.OnInit)
+        viewModel {
+            MoreScreenViewModel(
+                settingsRepository = get(),
+            )
+        }
+
+        factory {
+            MainScreenState()
+        }
+
+        viewModel {
+            MainScreenViewModel(
+                transactionRepository = get(),
+                initialState = get(),
+                settingsRepository = get(),
+            ).apply {
+                onAction(MainScreenAction.OnInit)
+            }
+        }
+
+        viewModel {
+            StationMapViewModel(
+                settingsRepository = get(),
+            )
         }
     }
-
-    viewModel {
-        StationMapViewModel(
-            settingsRepository = get()
-        )
-    }
-}
-

@@ -12,7 +12,10 @@ interface CardDao {
     suspend fun insertCard(card: CardEntity)
 
     @Query("UPDATE cards SET lastScanTime = :scanTime WHERE idm = :cardIdm")
-    suspend fun updateLastScanTime(cardIdm: String, scanTime: Long)
+    suspend fun updateLastScanTime(
+        cardIdm: String,
+        scanTime: Long,
+    )
 
     @Query("SELECT * FROM cards WHERE idm = :idm LIMIT 1")
     suspend fun getCardByIdm(idm: String): CardEntity?
@@ -21,7 +24,10 @@ interface CardDao {
     suspend fun getAllCards(): List<CardEntity>
 
     @Query("UPDATE cards SET name = :newName WHERE idm = :cardIdm")
-    suspend fun updateCardName(cardIdm: String, newName: String)
+    suspend fun updateCardName(
+        cardIdm: String,
+        newName: String,
+    )
 
     @Query("DELETE FROM cards WHERE idm = :cardIdm;")
     suspend fun deleteCard(cardIdm: String)

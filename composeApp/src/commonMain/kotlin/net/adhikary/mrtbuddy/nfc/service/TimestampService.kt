@@ -5,7 +5,6 @@ import androidx.compose.ui.text.intl.Locale
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import mrtbuddy.composeapp.generated.resources.*
 import net.adhikary.mrtbuddy.translateNumber
@@ -31,17 +30,18 @@ object TimestampService {
     }
 
     fun getHour(hour: Int): String {
-        val hour12 = when {
-            hour == 0 -> 12
-            hour > 12 -> hour - 12
-            else -> hour
-        }
+        val hour12 =
+            when {
+                hour == 0 -> 12
+                hour > 12 -> hour - 12
+                else -> hour
+            }
         return translateNumber(hour12).padStart(2, translateNumber(0)[0])
     }
 
     @Composable
     fun getMonth(month: Int): String {
-        return when(month) {
+        return when (month) {
             1 -> stringResource(Res.string.jan)
             2 -> stringResource(Res.string.feb)
             3 -> stringResource(Res.string.mar)
@@ -81,7 +81,7 @@ object TimestampService {
             hour = hour % 24,
             minute = 0,
             second = 0,
-            nanosecond = 0
+            nanosecond = 0,
         )
     }
 

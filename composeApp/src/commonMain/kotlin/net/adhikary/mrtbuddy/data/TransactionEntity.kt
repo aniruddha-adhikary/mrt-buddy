@@ -12,8 +12,8 @@ import androidx.room.Index
             entity = ScanEntity::class,
             parentColumns = ["scanId"],
             childColumns = ["scanId"],
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
     indices = [
         Index(value = ["scanId"]),
@@ -21,8 +21,8 @@ import androidx.room.Index
         // Optimized index for pagination queries (combined index)
         Index(value = ["cardIdm", "order"], name = "idx_cardIdm_order"),
         // Index for date-based queries
-        Index(value = ["cardIdm", "dateTime"], name = "idx_cardIdm_dateTime")
-    ]
+        Index(value = ["cardIdm", "dateTime"], name = "idx_cardIdm_dateTime"),
+    ],
 )
 data class TransactionEntity(
     val cardIdm: String,
@@ -32,10 +32,10 @@ data class TransactionEntity(
     val balance: Int,
     val dateTime: Long,
     val fixedHeader: String,
-    val order: Int = 0
+    val order: Int = 0,
 )
 
 data class TransactionEntityWithAmount(
     val transactionEntity: TransactionEntity,
-    val amount: Int?
+    val amount: Int?,
 )

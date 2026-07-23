@@ -3,44 +3,45 @@ package net.adhikary.mrtbuddy.utils
 import io.github.aakira.napier.Napier
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.ObjCObjectVar
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import platform.Foundation.NSError
 import platform.Foundation.NSString
+import platform.Foundation.NSTemporaryDirectory
 import platform.Foundation.NSURL
 import platform.Foundation.NSUTF8StringEncoding
-import platform.Foundation.NSTemporaryDirectory
 import platform.Foundation.writeToURL
 import platform.UIKit.UIActivityViewController
-import platform.UIKit.UIAlertAction
-import platform.UIKit.UIAlertActionStyleDefault
-import platform.UIKit.UIAlertController
-import platform.UIKit.UIAlertControllerStyleAlert
 import platform.UIKit.UIApplication
 import platform.UIKit.UIViewController
 import platform.UIKit.UIWindow
-import kotlinx.cinterop.ObjCObjectVar
 import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class FileSharer {
     @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-    actual fun share(content: String, filename: String, mimeType: String) {
+    actual fun share(
+        content: String,
+        filename: String,
+        mimeType: String,
+    ) {
         val tempDir = NSTemporaryDirectory()
         val filePath = "$tempDir$filename"
         val fileUrl = NSURL.fileURLWithPath(filePath)
 
         memScoped {
             val errorPtr: ObjCObjectVar<NSError?> = alloc()
-            val success = (content as NSString).writeToURL(
-                fileUrl,
-                atomically = true,
-                encoding = NSUTF8StringEncoding,
-                error = errorPtr.ptr
-            )
+            val success =
+                (content as NSString).writeToURL(
+                    fileUrl,
+                    atomically = true,
+                    encoding = NSUTF8StringEncoding,
+                    error = errorPtr.ptr,
+                )
             if (!success) {
                 val error = errorPtr.value
                 val errorMessage = error?.localizedDescription ?: "Unknown error"
@@ -49,10 +50,11 @@ actual class FileSharer {
             }
         }
 
-        val activityViewController = UIActivityViewController(
-            activityItems = listOf(fileUrl),
-            applicationActivities = null
-        )
+        val activityViewController =
+            UIActivityViewController(
+                activityItems = listOf(fileUrl),
+                applicationActivities = null,
+            )
 
         val presentingViewController = getTopViewController()
         if (presentingViewController == null) {
@@ -64,15 +66,16 @@ actual class FileSharer {
             presentingViewController.presentViewController(
                 activityViewController,
                 animated = true,
-                completion = null
+                completion = null,
             )
         }
     }
 
     private fun getTopViewController(): UIViewController? {
-        val keyWindow = UIApplication.sharedApplication.keyWindow
-            ?: UIApplication.sharedApplication.windows.firstOrNull { (it as? UIWindow)?.isKeyWindow() == true } as? UIWindow
-            ?: UIApplication.sharedApplication.delegate?.window
+        val keyWindow =
+            UIApplication.sharedApplication.keyWindow
+                ?: UIApplication.sharedApplication.windows.firstOrNull { (it as? UIWindow)?.isKeyWindow() == true } as? UIWindow
+                ?: UIApplication.sharedApplication.delegate?.window
 
         val rootViewController = keyWindow?.rootViewController ?: return null
 

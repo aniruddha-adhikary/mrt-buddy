@@ -1,6 +1,5 @@
 package net.adhikary.mrtbuddy.repository
 
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import net.adhikary.mrtbuddy.dao.CardDao
 import net.adhikary.mrtbuddy.dao.ScanDao
@@ -15,9 +14,8 @@ import net.adhikary.mrtbuddy.nfc.service.TimestampService
 class TransactionRepository(
     private val cardDao: CardDao,
     private val scanDao: ScanDao,
-    private val transactionDao: TransactionDao
+    private val transactionDao: TransactionDao,
 ) {
-
     suspend fun saveCardReadResult(result: CardReadResult) {
         val currentTime = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
         val cardEntity = CardEntity(idm = result.idm, name = null, lastScanTime = currentTime)
@@ -27,28 +25,31 @@ class TransactionRepository(
         val scanEntity = ScanEntity(cardIdm = result.idm)
         val scanId = scanDao.insertScan(scanEntity)
 
-        val newTransactionEntities = result.transactions.map { txn ->
-            val dateTime = txn.timestamp
-                .toInstant(TimestampService.getDefaultTimezone())
-                .toEpochMilliseconds()
+        val newTransactionEntities =
+            result.transactions.map { txn ->
+                val dateTime =
+                    txn.timestamp
+                        .toInstant(TimestampService.getDefaultTimezone())
+                        .toEpochMilliseconds()
 
-            TransactionEntity(
-                cardIdm = result.idm,
-                scanId = scanId,
-                fromStation = txn.fromStation,
-                toStation = txn.toStation,
-                balance = txn.balance,
-                dateTime = dateTime,
-                fixedHeader = txn.fixedHeader
-            )
-        }
+                TransactionEntity(
+                    cardIdm = result.idm,
+                    scanId = scanId,
+                    fromStation = txn.fromStation,
+                    toStation = txn.toStation,
+                    balance = txn.balance,
+                    dateTime = dateTime,
+                    fixedHeader = txn.fixedHeader,
+                )
+            }
 
         val lastOrder = transactionDao.getLastOrder() ?: 0
-        val transactionsToInsert = newTransactionEntities
-            .reversed()
-            .mapIndexed { index, entity ->
-                entity.copy(order = lastOrder + index + 1)
-            }
+        val transactionsToInsert =
+            newTransactionEntities
+                .reversed()
+                .mapIndexed { index, entity ->
+                    entity.copy(order = lastOrder + index + 1)
+                }
 
         transactionDao.insertTransactions(transactionsToInsert)
     }
@@ -66,11 +67,12 @@ class TransactionRepository(
 
         val sortedTransactions = transactions.sortedByDescending { it.order }
         return sortedTransactions.mapIndexed { index, transaction ->
-            val amount = if (index + 1 < sortedTransactions.size) {
-                transaction.balance - sortedTransactions[index + 1].balance
-            } else {
-                null
-            }
+            val amount =
+                if (index + 1 < sortedTransactions.size) {
+                    transaction.balance - sortedTransactions[index + 1].balance
+                } else {
+                    null
+                }
             TransactionEntityWithAmount(transactionEntity = transaction, amount = amount)
         }.filter { transaction -> transaction.amount != null }
     }
@@ -85,7 +87,7 @@ class TransactionRepository(
     suspend fun getTransactionsByCardIdmLazy(
         cardIdm: String,
         limit: Int = 20,
-        offset: Int = 0
+        offset: Int = 0,
     ): LazyLoadResult {
         // Fetch one extra transaction to help calculate the amount for the last visible transaction
         val fetchLimit = limit + 1
@@ -95,11 +97,12 @@ class TransactionRepository(
         val isEndReached = transactions.size < fetchLimit
 
         // Process transactions for display (excluding the extra one if present)
-        val displayTransactions = if (transactions.size > limit) {
-            transactions.take(limit)
-        } else {
-            transactions
-        }
+        val displayTransactions =
+            if (transactions.size > limit) {
+                transactions.take(limit)
+            } else {
+                transactions
+            }
 
         // Calculate amounts with special handling for batch boundaries
         val transactionsWithAmount = calculateAmounts(displayTransactions, transactions.getOrNull(limit))
@@ -107,7 +110,7 @@ class TransactionRepository(
         return LazyLoadResult(
             transactions = transactionsWithAmount,
             isEndReached = isEndReached,
-            nextOffset = offset + displayTransactions.size
+            nextOffset = offset + displayTransactions.size,
         )
     }
 
@@ -116,7 +119,7 @@ class TransactionRepository(
      */
     private fun calculateAmounts(
         transactions: List<TransactionEntity>,
-        nextTransaction: TransactionEntity?
+        nextTransaction: TransactionEntity?,
     ): List<TransactionEntityWithAmount> {
         if (transactions.isEmpty()) return emptyList()
 
@@ -133,11 +136,12 @@ class TransactionRepository(
 
         // Process the last transaction using the extra transaction if available
         val lastTransaction = transactions.last()
-        val lastAmount = if (nextTransaction != null) {
-            lastTransaction.balance - nextTransaction.balance
-        } else {
-            null
-        }
+        val lastAmount =
+            if (nextTransaction != null) {
+                lastTransaction.balance - nextTransaction.balance
+            } else {
+                null
+            }
 
         result.add(TransactionEntityWithAmount(lastTransaction, lastAmount))
 
@@ -148,7 +152,10 @@ class TransactionRepository(
         return transactionDao.getLatestTransactionByCardIdm(cardIdm)?.balance
     }
 
-    suspend fun renameCard(cardIdm: String, newName: String) {
+    suspend fun renameCard(
+        cardIdm: String,
+        newName: String,
+    ) {
         cardDao.updateCardName(cardIdm, newName)
     }
 
@@ -177,7 +184,7 @@ class TransactionRepository(
     suspend fun getTransactionBatchForExport(
         cardIdm: String,
         limit: Int,
-        offset: Int
+        offset: Int,
     ): ExportBatchResult {
         // Fetch one extra to calculate amount for last item in batch
         val fetchLimit = limit + 1
@@ -195,11 +202,12 @@ class TransactionRepository(
         val result = ArrayList<TransactionEntityWithAmount>(batchTransactions.size)
         for (i in batchTransactions.indices) {
             val transaction = batchTransactions[i]
-            val amount = when {
-                i + 1 < batchTransactions.size -> transaction.balance - batchTransactions[i + 1].balance
-                nextTransaction != null -> transaction.balance - nextTransaction.balance
-                else -> null
-            }
+            val amount =
+                when {
+                    i + 1 < batchTransactions.size -> transaction.balance - batchTransactions[i + 1].balance
+                    nextTransaction != null -> transaction.balance - nextTransaction.balance
+                    else -> null
+                }
             result.add(TransactionEntityWithAmount(transactionEntity = transaction, amount = amount))
         }
 
@@ -208,7 +216,7 @@ class TransactionRepository(
 
     data class ExportBatchResult(
         val transactions: List<TransactionEntityWithAmount>,
-        val hasMore: Boolean
+        val hasMore: Boolean,
     )
 
     /**
@@ -217,6 +225,6 @@ class TransactionRepository(
     data class LazyLoadResult(
         val transactions: List<TransactionEntityWithAmount>,
         val isEndReached: Boolean,
-        val nextOffset: Int
+        val nextOffset: Int,
     )
 }

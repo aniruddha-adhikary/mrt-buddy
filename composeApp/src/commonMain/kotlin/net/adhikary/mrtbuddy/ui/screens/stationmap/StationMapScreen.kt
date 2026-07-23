@@ -43,27 +43,29 @@ fun StationMapScreen(
                 IconButton(onClick = onBack) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back"
+                        contentDescription = "Back",
                     )
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            ),
-            windowInsets = WindowInsets.statusBars
+            colors =
+                TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                ),
+            windowInsets = WindowInsets.statusBars,
         )
 
         CoilZoomAsyncImage(
             modifier = Modifier.fillMaxSize(),
-            model = if (uiState.currentLanguage == Language.English.isoFormat) {
-                Res.getUri("files/map_en.webp")
-            } else {
-                Res.getUri("files/map_bn.webp")
-            },
+            model =
+                if (uiState.currentLanguage == Language.English.isoFormat) {
+                    Res.getUri("files/map_en.webp")
+                } else {
+                    Res.getUri("files/map_bn.webp")
+                },
             contentDescription = "Station Map",
             contentScale = ContentScale.FillHeight,
             filterQuality = FilterQuality.High,
-            scrollBar = null
+            scrollBar = null,
         )
     }
 }

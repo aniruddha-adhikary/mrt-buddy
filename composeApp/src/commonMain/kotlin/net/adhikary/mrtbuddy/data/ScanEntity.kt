@@ -13,13 +13,13 @@ import kotlinx.datetime.Clock
             entity = CardEntity::class,
             parentColumns = ["idm"],
             childColumns = ["cardIdm"],
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
-    indices = [Index(value = ["cardIdm"])]
+    indices = [Index(value = ["cardIdm"])],
 )
 data class ScanEntity(
     @PrimaryKey(autoGenerate = true) val scanId: Long = 0,
     val cardIdm: String,
-    val timestamp: Long = Clock.System.now().toEpochMilliseconds()
+    val timestamp: Long = Clock.System.now().toEpochMilliseconds(),
 )

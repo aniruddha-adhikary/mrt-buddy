@@ -15,5 +15,5 @@ data class TransactionListState(
     val error: String? = null,
     val exportError: String? = null,
     val canLoadMore: Boolean = true,
-    val currentOffset: Int = 0
+    val currentOffset: Int = 0,
 )

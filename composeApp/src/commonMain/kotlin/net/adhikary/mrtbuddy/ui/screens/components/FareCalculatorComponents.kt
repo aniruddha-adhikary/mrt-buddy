@@ -58,47 +58,52 @@ import net.adhikary.mrtbuddy.ui.theme.LightPositiveGreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalculatorViewModel) {
+fun StationSelectionSection(
+    uiState: FareCalculatorState,
+    viewModel: FareCalculatorViewModel,
+) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         // From Station Dropdown
         // From Station Dropdown
         ExposedDropdownMenuBox(
             expanded = uiState.fromExpanded,
-            onExpandedChange = { viewModel.onAction(FareCalculatorAction.ToggleFromExpanded) }
+            onExpandedChange = { viewModel.onAction(FareCalculatorAction.ToggleFromExpanded) },
         ) {
             TextField(
-                value = uiState.fromStation?.let { StationService.translate(it.name) }
-                    ?: stringResource(Res.string.selectOrigin),
+                value =
+                    uiState.fromStation?.let { StationService.translate(it.name) }
+                        ?: stringResource(Res.string.selectOrigin),
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = uiState.fromExpanded) },
-                modifier = Modifier
-                    .menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
-                    .fillMaxWidth(),
-                colors = ExposedDropdownMenuDefaults.textFieldColors(
-                    focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                    unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                    errorContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                    disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                    focusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0f),
-                    unfocusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0f)
-                ),
-                shape = RoundedCornerShape(12.dp)
+                modifier =
+                    Modifier
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
+                        .fillMaxWidth(),
+                colors =
+                    ExposedDropdownMenuDefaults.textFieldColors(
+                        focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                        errorContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                        disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                        focusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0f),
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0f),
+                    ),
+                shape = RoundedCornerShape(12.dp),
             )
 
             ExposedDropdownMenu(
                 expanded = uiState.fromExpanded,
-                onDismissRequest = { viewModel.onAction(FareCalculatorAction.DismissDropdowns) }
+                onDismissRequest = { viewModel.onAction(FareCalculatorAction.DismissDropdowns) },
             ) {
                 viewModel.stations.forEach { station ->
                     DropdownMenuItem(
                         text = { Text(text = StationService.translate(station.name)) },
-                        onClick = { viewModel.onAction(FareCalculatorAction.UpdateFromStation(station)) }
+                        onClick = { viewModel.onAction(FareCalculatorAction.UpdateFromStation(station)) },
                     )
                 }
             }
@@ -107,36 +112,39 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
         // To Station Dropdown
         ExposedDropdownMenuBox(
             expanded = uiState.toExpanded,
-            onExpandedChange = { viewModel.onAction(FareCalculatorAction.ToggleToExpanded) }
+            onExpandedChange = { viewModel.onAction(FareCalculatorAction.ToggleToExpanded) },
         ) {
             TextField(
-                value = uiState.toStation?.let { StationService.translate(it.name) }
-                    ?: stringResource(Res.string.selectDestination),
+                value =
+                    uiState.toStation?.let { StationService.translate(it.name) }
+                        ?: stringResource(Res.string.selectDestination),
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = uiState.toExpanded) },
-                modifier = Modifier
-                    .menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
-                    .fillMaxWidth(),
-                colors = ExposedDropdownMenuDefaults.textFieldColors(
-                    focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                    unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                    errorContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                    disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                    focusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0f),
-                    unfocusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0f)
-                ),
-                shape = RoundedCornerShape(12.dp)
+                modifier =
+                    Modifier
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
+                        .fillMaxWidth(),
+                colors =
+                    ExposedDropdownMenuDefaults.textFieldColors(
+                        focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                        errorContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                        disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                        focusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0f),
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0f),
+                    ),
+                shape = RoundedCornerShape(12.dp),
             )
 
             ExposedDropdownMenu(
                 expanded = uiState.toExpanded,
-                onDismissRequest = { viewModel.onAction(FareCalculatorAction.DismissDropdowns) }
+                onDismissRequest = { viewModel.onAction(FareCalculatorAction.DismissDropdowns) },
             ) {
                 viewModel.stations.forEach { station ->
                     DropdownMenuItem(
                         text = { Text(text = StationService.translate(station.name)) },
-                        onClick = { viewModel.onAction(FareCalculatorAction.UpdateToStation(station)) }
+                        onClick = { viewModel.onAction(FareCalculatorAction.UpdateToStation(station)) },
                     )
                 }
             }
@@ -145,39 +153,43 @@ fun StationSelectionSection(uiState: FareCalculatorState, viewModel: FareCalcula
 }
 
 @Composable
-fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewModel) {
+fun FareDisplayCard(
+    uiState: FareCalculatorState,
+    viewModel: FareCalculatorViewModel,
+) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(240.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(240.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
-        shape = RoundedCornerShape(24.dp)
+        shape = RoundedCornerShape(24.dp),
     ) {
         if (viewModel.state.value.fromStation == null || viewModel.state.value.toStation == null) {
             Column(
                 modifier = Modifier.fillMaxSize().padding(16.dp),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Icon(
                     imageVector = Icons.Default.Info,
                     contentDescription = "Select stations",
                     modifier = Modifier.height(48.dp),
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.primary,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(Res.string.selectStations),
                     style = MaterialTheme.typography.titleLarge,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(Res.string.chooseOrgDest),
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -186,20 +198,21 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                 if (getPlatform().name != "android") {
                     Text(
                         text = stringResource(Res.string.rescan),
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .clickable { RescanManager.requestRescan() },
+                        modifier =
+                            Modifier
+                                .align(Alignment.TopEnd)
+                                .clickable { RescanManager.requestRescan() },
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         if (getPlatform().name != "android") {
                             Spacer(modifier = Modifier.height(24.dp))
@@ -208,17 +221,18 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                         }
                         Text(
                             text = stringResource(Res.string.withMRT),
-                            style = MaterialTheme.typography.titleSmall
+                            style = MaterialTheme.typography.titleSmall,
                         )
                         if (getPlatform().name == "android") {
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                         Text(
                             text = "৳ ${translateNumber(viewModel.state.value.discountedFare)}",
-                            style = MaterialTheme.typography.displaySmall.copy(
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            color = MaterialTheme.colorScheme.onSurface
+                            style =
+                                MaterialTheme.typography.displaySmall.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                ),
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                     }
@@ -232,29 +246,29 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
+                                    horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
                                     Text(
                                         text = "${stringResource(Res.string.balanceAmount)} ৳ ${translateNumber(balance)}",
                                         style = MaterialTheme.typography.bodyMedium,
-                                        color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
+                                        color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen,
                                     )
                                     if (roundTrips > 0) {
                                         Spacer(modifier = Modifier.height(4.dp))
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.Center
+                                            horizontalArrangement = Arrangement.Center,
                                         ) {
                                             Icon(
                                                 painter = painterResource(Res.drawable.two_way_arrows),
                                                 contentDescription = "Round trips",
-                                                tint = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
+                                                tint = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen,
                                             )
                                             Spacer(modifier = Modifier.width(4.dp))
                                             Text(
                                                 text = "${translateNumber(roundTrips)} ${stringResource(Res.string.roundTrips)}",
                                                 style = MaterialTheme.typography.bodyMedium,
-                                                color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen
+                                                color = if (isSystemInDarkTheme()) DarkPositiveGreen else LightPositiveGreen,
                                             )
                                         }
                                     }
@@ -265,7 +279,7 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
                                     textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth(),
                                 )
                             }
                         }
@@ -274,12 +288,12 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                             Text(
                                 text = "${stringResource(Res.string.singleTicket)} ৳ ${
                                     translateNumber(
-                                        uiState.calculatedFare
+                                        uiState.calculatedFare,
                                     )
                                 }",
                                 style = MaterialTheme.typography.titleSmall,
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
@@ -287,7 +301,7 @@ fun FareDisplayCard(uiState: FareCalculatorState, viewModel: FareCalculatorViewM
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             )
                         }
                     }

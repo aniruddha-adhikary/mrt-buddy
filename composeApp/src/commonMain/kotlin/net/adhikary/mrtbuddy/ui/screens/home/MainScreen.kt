@@ -58,30 +58,32 @@ enum class Screen(val title: StringResource) {
     History(title = Res.string.historyTab),
     TransactionList(title = Res.string.transactions),
     StationMap(title = Res.string.stationMap),
-    Licenses(title = Res.string.openSourceLicenses)
+    Licenses(title = Res.string.openSourceLicenses),
 }
 
 @Composable
 fun MainScreen(
     viewModel: MainScreenViewModel = koinViewModel(),
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
 ) {
     val uiState by viewModel.state.collectAsState()
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = Screen.valueOf(
-        backStackEntry?.destination?.route ?: Screen.Home.name
-    )
+    val currentScreen =
+        Screen.valueOf(
+            backStackEntry?.destination?.route ?: Screen.Home.name,
+        )
     var selectedCardIdm by remember { mutableStateOf<String?>(null) }
     val hasTransactions = uiState.transaction.isNotEmpty()
 
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
         bottomBar = {
             if (currentScreen != Screen.StationMap) {
                 NavigationBar(
-                    windowInsets = WindowInsets.navigationBars
+                    windowInsets = WindowInsets.navigationBars,
                 ) {
                     NavigationBarItem(
                         icon = { CalculatorIcon() },
@@ -96,7 +98,7 @@ fun MainScreen(
                                 launchSingleTop = true
                                 restoreState = true
                             }
-                        }
+                        },
                     )
                     NavigationBarItem(
                         icon = { CardIcon() },
@@ -111,7 +113,7 @@ fun MainScreen(
                                 launchSingleTop = true
                                 restoreState = true
                             }
-                        }
+                        },
                     )
                     NavigationBarItem(
                         icon = { HistoryIcon() },
@@ -126,7 +128,7 @@ fun MainScreen(
                                 launchSingleTop = true
                                 restoreState = true
                             }
-                        }
+                        },
                     )
                     NavigationBarItem(
                         icon = { AppsIcon() },
@@ -141,25 +143,26 @@ fun MainScreen(
                                 launchSingleTop = true
                                 restoreState = true
                             }
-                        }
+                        },
                     )
                 }
             }
-        }
+        },
     ) { paddingValues ->
         NavHost(
             navController = navController,
             startDestination = Screen.Home.name,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             composable(route = Screen.Home.name) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(16.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     BalanceCard(
                         cardState = uiState.cardState,
@@ -176,7 +179,7 @@ fun MainScreen(
             composable(route = Screen.Calculator.name) {
                 FareCalculatorScreen(
                     cardState = uiState.cardState,
-                    modifier = Modifier.padding(paddingValues)
+                    modifier = Modifier.padding(paddingValues),
                 )
             }
 
@@ -188,7 +191,7 @@ fun MainScreen(
                     onNavigateToLicenses = {
                         navController.navigate(Screen.Licenses.name)
                     },
-                    modifier = Modifier.padding(paddingValues)
+                    modifier = Modifier.padding(paddingValues),
                 )
             }
 
@@ -198,7 +201,7 @@ fun MainScreen(
                         selectedCardIdm = cardIdm
                         navController.navigate(Screen.TransactionList.name)
                     },
-                    modifier = Modifier.padding(paddingValues)
+                    modifier = Modifier.padding(paddingValues),
                 )
             }
 
@@ -209,7 +212,7 @@ fun MainScreen(
                         onBack = {
                             navController.navigateUp()
                         },
-                        paddingValues = paddingValues
+                        paddingValues = paddingValues,
                     )
                 }
             }
@@ -227,7 +230,7 @@ fun MainScreen(
                     onBack = {
                         navController.navigateUp()
                     },
-                    paddingValues = paddingValues
+                    paddingValues = paddingValues,
                 )
             }
         }

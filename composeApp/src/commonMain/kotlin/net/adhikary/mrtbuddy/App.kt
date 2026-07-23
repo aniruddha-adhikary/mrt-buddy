@@ -20,9 +20,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
-fun App(
-    dynamicColor: Boolean
-) {
+fun App(dynamicColor: Boolean) {
     val mainVm = koinViewModel<MainScreenViewModel>()
     val nfcManager = getNFCManager()
 
@@ -59,16 +57,16 @@ fun App(
     val state: MainScreenState by mainVm.state.collectAsState()
 
     MRTBuddyTheme(
-        darkTheme = when (state.darkThemeConfig) {
-            DarkThemeConfig.FOLLOW_SYSTEM -> isSystemInDarkTheme()
-            DarkThemeConfig.DARK -> true
-            DarkThemeConfig.LIGHT -> false
-        },
+        darkTheme =
+            when (state.darkThemeConfig) {
+                DarkThemeConfig.FOLLOW_SYSTEM -> isSystemInDarkTheme()
+                DarkThemeConfig.DARK -> true
+                DarkThemeConfig.LIGHT -> false
+            },
         dynamicColor = dynamicColor,
     ) {
-
         LocalizedApp(
-            language = state.currentLanguage
+            language = state.currentLanguage,
         ) {
             MainScreen()
         }

@@ -1,0 +1,20 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+
+[*.{kt,kts}]
+indent_size = 4
+indent_style = space
+max_line_length = 140
+
+# Composable functions are PascalCase by convention; ktlint's function-naming rule flags them.
+ktlint_standard_function-naming = disabled
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true
+
+# File names in this project include suffixes like .android/.ios that ktlint's filename rule
+# flags. Skip the "file must match single-class name" check.
+ktlint_standard_filename = disabled

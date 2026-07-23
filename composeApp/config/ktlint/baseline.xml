@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<baseline version="1.0">
+    <file name="src/commonMain/kotlin/net/adhikary/mrtbuddy/nfc/service/TimestampService.kt">
+        <error line="9" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/commonMain/kotlin/net/adhikary/mrtbuddy/ui/components/BalanceCard.kt">
+        <error line="78" column="44" source="standard:discouraged-comment-location" />
+    </file>
+    <file name="src/commonMain/kotlin/net/adhikary/mrtbuddy/ui/screens/farecalculator/FareCalculatorViewModel.kt">
+        <error line="16" column="17" source="standard:property-naming" />
+    </file>
+    <file name="src/commonMain/kotlin/net/adhikary/mrtbuddy/ui/screens/history/HistoryScreen.kt">
+        <error line="119" column="84" source="standard:discouraged-comment-location" />
+    </file>
+    <file name="src/commonMain/kotlin/net/adhikary/mrtbuddy/ui/screens/more/MoreScreen.kt">
+        <error line="192" column="66" source="standard:discouraged-comment-location" />
+    </file>
+    <file name="src/commonMain/kotlin/net/adhikary/mrtbuddy/ui/screens/transactionlist/TransactionListScreen.kt">
+        <error line="292" column="1" source="standard:max-line-length" />
+    </file>
+</baseline>

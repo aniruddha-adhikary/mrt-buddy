@@ -13,9 +13,8 @@ import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.repository.TransactionRepository
 
 class HistoryScreenViewModel(
-    private val transactionRepository: TransactionRepository
+    private val transactionRepository: TransactionRepository,
 ) : ViewModel() {
-
     private val _state: MutableStateFlow<HistoryScreenState> =
         MutableStateFlow(HistoryScreenState())
     val state: StateFlow<HistoryScreenState> get() = _state.asStateFlow()
@@ -30,10 +29,11 @@ class HistoryScreenViewModel(
                     _state.update { it.copy(isLoading = true) }
                     try {
                         val cards = transactionRepository.getAllCards()
-                        val cardsWithBalance = cards.map { card ->
-                            val balance = transactionRepository.getLatestBalanceByCardIdm(card.idm)
-                            CardWithBalance(card, balance)
-                        }
+                        val cardsWithBalance =
+                            cards.map { card ->
+                                val balance = transactionRepository.getLatestBalanceByCardIdm(card.idm)
+                                CardWithBalance(card, balance)
+                            }
                         _state.update { it.copy(isLoading = false, cards = cardsWithBalance) }
                     } catch (e: Exception) {
                         _state.update { it.copy(isLoading = false, error = e.message) }
@@ -58,8 +58,8 @@ class HistoryScreenViewModel(
                     } catch (e: Exception) {
                         _events.send(
                             HistoryScreenEvent.Error(
-                                e.message ?: "Failed to rename card"
-                            )
+                                e.message ?: "Failed to rename card",
+                            ),
                         )
                     }
                 }
@@ -75,8 +75,8 @@ class HistoryScreenViewModel(
                     } catch (e: Exception) {
                         _events.send(
                             HistoryScreenEvent.Error(
-                                e.message ?: "Failed to delete card"
-                            )
+                                e.message ?: "Failed to delete card",
+                            ),
                         )
                     }
                 }

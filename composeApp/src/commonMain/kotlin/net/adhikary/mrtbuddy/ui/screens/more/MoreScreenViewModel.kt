@@ -12,9 +12,8 @@ import net.adhikary.mrtbuddy.changeLang
 import net.adhikary.mrtbuddy.repository.SettingsRepository
 
 class MoreScreenViewModel(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
-
     private val _state = MutableStateFlow(MoreScreenState())
     val state: StateFlow<MoreScreenState> get() = _state.asStateFlow()
 
@@ -33,11 +32,12 @@ class MoreScreenViewModel(
                         val autoSaveEnabled = settingsRepository.autoSaveEnabled.value
                         val currentLanguage = settingsRepository.currentLanguage.value
                         val darkThemeConfig = settingsRepository.darkThemeConfig.value
-                        _state.value = _state.value.copy(
-                            autoSaveEnabled = autoSaveEnabled,
-                            currentLanguage = currentLanguage,
-                            darkThemeConfig = darkThemeConfig,
-                        )
+                        _state.value =
+                            _state.value.copy(
+                                autoSaveEnabled = autoSaveEnabled,
+                                currentLanguage = currentLanguage,
+                                darkThemeConfig = darkThemeConfig,
+                            )
                     } catch (e: Exception) {
                         _state.value = _state.value.copy(error = e.message)
                         _events.send(MoreScreenEvent.Error(e.message ?: "Unknown error"))

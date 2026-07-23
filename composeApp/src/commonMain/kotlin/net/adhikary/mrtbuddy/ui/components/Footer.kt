@@ -10,18 +10,17 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun Footer(
-    modifier: Modifier = Modifier
-) {
+fun Footer(modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current
     return Text(
         text = "Built with ❤️ by Ani and friends",
-        modifier = modifier
-            .clickable {
-                uriHandler.openUri("https://mrtbuddy.com/contributors.html")
-            }
-            .padding(8.dp),
+        modifier =
+            modifier
+                .clickable {
+                    uriHandler.openUri("https://mrtbuddy.com/contributors.html")
+                }
+                .padding(8.dp),
         style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.primary
+        color = MaterialTheme.colorScheme.primary,
     )
 }

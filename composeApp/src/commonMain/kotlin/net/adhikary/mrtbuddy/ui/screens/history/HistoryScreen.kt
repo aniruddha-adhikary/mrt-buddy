@@ -41,7 +41,7 @@ fun HistoryScreen(
     LaunchedEffect(Unit) {
         viewModel.onAction(HistoryScreenAction.OnInit)
     }
-    
+
     var showRenameDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var cardToRename by remember { mutableStateOf<Pair<String, String?>>("" to null) }
@@ -54,7 +54,7 @@ fun HistoryScreen(
                 cardToRename.first?.let { cardIdm ->
                     viewModel.onAction(HistoryScreenAction.RenameCard(cardIdm, newName))
                 }
-            }
+            },
         )
     }
 
@@ -68,7 +68,7 @@ fun HistoryScreen(
                     onClick = {
                         viewModel.onAction(HistoryScreenAction.DeleteCard(cardToDelete))
                         showDeleteDialog = false
-                    }
+                    },
                 ) {
                     Text(stringResource(Res.string.delete))
                 }
@@ -77,10 +77,9 @@ fun HistoryScreen(
                 TextButton(onClick = { showDeleteDialog = false }) {
                     Text(stringResource(Res.string.cancel))
                 }
-            }
+            },
         )
     }
-
 
     if (uiState.isLoading) {
         // Display a loading indicator
@@ -91,22 +90,22 @@ fun HistoryScreen(
     } else if (uiState.cards.isEmpty()) {
         Box(
             modifier = Modifier.fillMaxSize().then(modifier),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     text = stringResource(Res.string.noCardsFound),
                     style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 8.dp),
                 )
                 Text(
                     text = stringResource(Res.string.scanCardPrompt),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     modifier = Modifier.padding(horizontal = 32.dp),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
         }
@@ -125,10 +124,9 @@ fun HistoryScreen(
                     onDeleteClick = {
                         cardToDelete = cardWithBalance.card.idm
                         showDeleteDialog = true
-                    }
+                    },
                 )
             }
         }
     }
-    
 }

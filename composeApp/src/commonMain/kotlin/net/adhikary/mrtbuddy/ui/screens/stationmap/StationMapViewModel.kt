@@ -10,9 +10,8 @@ import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.repository.SettingsRepository
 
 class StationMapViewModel(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
-
     private val _state = MutableStateFlow(StationMapScreenState())
     val state: StateFlow<StationMapScreenState> get() = _state.asStateFlow()
 

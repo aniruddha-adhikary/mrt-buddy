@@ -11,20 +11,31 @@ object ByteParser {
             "$highNibble$lowNibble"
         }
 
-    fun extractInt16(bytes: ByteArray, offset: Int = 0): Int =
+    fun extractInt16(
+        bytes: ByteArray,
+        offset: Int = 0,
+    ): Int =
         ((bytes[offset + 1].toInt() and 0xFF) shl 8) or
-                (bytes[offset].toInt() and 0xFF)
+            (bytes[offset].toInt() and 0xFF)
 
-    fun extractInt24(bytes: ByteArray, offset: Int = 0): Int =
+    fun extractInt24(
+        bytes: ByteArray,
+        offset: Int = 0,
+    ): Int =
         ((bytes[offset + 2].toInt() and 0xFF) shl 16) or
-                ((bytes[offset + 1].toInt() and 0xFF) shl 8) or
-                (bytes[offset].toInt() and 0xFF)
+            ((bytes[offset + 1].toInt() and 0xFF) shl 8) or
+            (bytes[offset].toInt() and 0xFF)
 
-    fun extractByte(bytes: ByteArray, offset: Int): Int =
-        bytes[offset].toInt() and 0xFF
+    fun extractByte(
+        bytes: ByteArray,
+        offset: Int,
+    ): Int = bytes[offset].toInt() and 0xFF
 
-    fun extractInt24BigEndian(bytes: ByteArray, offset: Int = 0): Int =
+    fun extractInt24BigEndian(
+        bytes: ByteArray,
+        offset: Int = 0,
+    ): Int =
         ((bytes[offset].toInt() and 0xFF) shl 16) or
-                ((bytes[offset + 1].toInt() and 0xFF) shl 8) or
-                (bytes[offset + 2].toInt() and 0xFF)
+            ((bytes[offset + 1].toInt() and 0xFF) shl 8) or
+            (bytes[offset + 2].toInt() and 0xFF)
 }

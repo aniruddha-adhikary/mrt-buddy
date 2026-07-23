@@ -7,5 +7,5 @@ data class MoreScreenState(
     val autoSaveEnabled: Boolean = false,
     val currentLanguage: String = "en",
     val darkThemeConfig: DarkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
-    val error: String? = null
+    val error: String? = null,
 )

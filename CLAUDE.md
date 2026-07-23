@@ -91,6 +91,60 @@ Note: For signing release builds, you need to set environment variables:
 ./gradlew generateLicenseReport
 ```
 
+### Android Verification (cheapest first)
+
+```bash
+# 1. Kotlin compile only. Catches source errors without packaging.
+./gradlew :composeApp:compileDebugKotlinAndroid
+
+# 2. Android Lint (built-in AGP linter).
+./gradlew :composeApp:lintDebug
+
+# 3. Full debug APK.
+./gradlew :composeApp:assembleDebug
+```
+
+### Code Quality (ktlint + detekt + Konsist)
+
+```bash
+# Style check + auto-fix
+./gradlew ktlintCheck
+./gradlew ktlintFormat
+
+# Static analysis
+./gradlew detekt
+
+# Architecture tests (Konsist) — currently blocked by pre-existing broken test file
+./gradlew :composeApp:testDebugUnitTest --tests "*ArchitectureTest*"
+```
+
+Baselines are checked in and used to accept legacy violations:
+- `composeApp/config/ktlint/baseline.xml`
+- `composeApp/detekt-baseline.xml`
+
+Regenerate when consciously accepting new violations: `./gradlew ktlintGenerateBaseline detektBaseline`.
+Detekt config lives in `config/detekt/detekt.yml`. Ktlint rule overrides live in `.editorconfig`.
+
+### iOS Verification (from Android/CI or headless)
+
+Three levels of iOS build validation, cheapest first:
+
+```bash
+# 1. Kotlin/Native compile only (~30s warm). Catches KMP source errors.
+./gradlew :composeApp:compileKotlinIosSimulatorArm64
+
+# 2. Framework link (~1m). Produces the .framework Xcode consumes.
+./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64
+
+# 3. Full Xcode app build. End-to-end integration check.
+xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp \
+  -configuration Debug \
+  -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+  build CODE_SIGNING_ALLOWED=NO
+```
+
+Run #1 after any commonMain/iosMain edit. Run #2 before pushing KMP changes. Run #3 before releases.
+
 ## Code Structure and Architecture
 
 ### Overall Architecture
@@ -117,68 +171,15 @@ The UI is implemented using Compose Multiplatform with the following structure:
 - Navigation is managed in `MainScreen.kt` with a `NavHost` and composables
 - Bottom navigation bar with main tabs: Calculator, Balance, History, More
 
-#### Main Screens
+#### Screens
 
-1. **Home Screen** (`MainScreen.kt`):
-   - Entry point for the app
-   - Shows balance card and recent transactions
-   - Bottom navigation controller for the app
+Each screen lives under `composeApp/src/commonMain/kotlin/net/adhikary/mrtbuddy/ui/screens/` and follows the ScreenName / ScreenNameViewModel / State / Action / Event pattern above. Main tabs: Calculator, Balance, History, More. Additional screens include TransactionList and StationMap.
 
-2. **Fare Calculator** (`FareCalculatorScreen.kt`):
-   - Calculates fare between two stations
-   - Uses dropdown selectors for origin and destination
-
-3. **History Screen** (`HistoryScreen.kt`):
-   - Shows list of previously scanned cards
-   - Allows renaming and selecting cards to view transactions
-
-4. **Transaction List** (`TransactionListScreen.kt`):
-   - Shows detailed transactions for a selected card
-
-5. **More Screen** (`MoreScreen.kt`):
-   - Additional options and settings
-   - Language selection
-   - Links to licenses and station map
-
-6. **Station Map Screen** (`StationMapScreen.kt`):
-   - Shows the MRT network map
-
-#### Common UI Components
-
-- `BalanceCard.kt` - Shows the current balance and card state
-- `TransactionHistoryList.kt` - Reusable component for transaction lists
-- `Footer.kt` - Common footer component
-- `Icons.kt` - Custom icons used throughout the app
+Common UI components (BalanceCard, TransactionHistoryList, Footer, Icons) live under `ui/components/`.
 
 ### Data Layer
 
-#### Database
-
-Room database with SQLite storage for both platforms:
-
-- `AppDatabase.kt` - Database configuration
-- Platform-specific implementations:
-  - `AndroidDatabase.kt`
-  - `IosDatabase.kt`
-
-#### Data Access Objects (DAOs)
-
-- `CardDao.kt` - Operations for card entities
-- `ScanDao.kt` - Operations for scan entities
-- `TransactionDao.kt` - Operations for transaction entities
-- `Dao.kt` - Common DAO interface
-
-#### Models and Entities
-
-- `Transaction.kt` - Data model for transactions
-- `CardEntity.kt` - Room entity for cards
-- `ScanEntity.kt` - Room entity for scan events
-- `TransactionEntity.kt` - Room entity for transactions
-
-#### Repositories
-
-- `TransactionRepository.kt` - Business logic for transaction operations
-- `SettingsRepository.kt` - User settings management
+Room database with SQLite storage for both platforms. Platform-specific database builders under `androidMain`/`iosMain` use `expect`/`actual`. Entities (`CardEntity`, `ScanEntity`, `TransactionEntity`) and DAOs (`CardDao`, `ScanDao`, `TransactionDao`) live under `data/` in commonMain. Business logic is abstracted through repositories (`TransactionRepository`, `SettingsRepository`).
 
 ### NFC Implementation
 
@@ -239,6 +240,12 @@ Uses Koin for dependency injection:
 4. **Dependency Injection**:
    - Koin for service location
    - ViewModels injected with `koinViewModel()`
+
+## Gotchas
+
+- **AGP 9.0+ KMP workaround**: `gradle.properties` sets `android.builtInKotlin=false` and `android.newDsl=false` because AGP 9.0 dropped compatibility between `com.android.application` and the Kotlin Multiplatform plugin. Removing these flags will break the build. Proper fix (not yet done): migrate to `com.android.kotlin.multiplatform.library`, but that's a library plugin and the app module needs a different migration path.
+- **compileSdk 37 warning**: `android.suppressUnsupportedCompileSdk=37` silences the "not tested" warning from AGP for SDK 37. Remove once AGP officially lists 37 as supported.
+- **Version bumps**: When releasing, update BOTH `composeApp/build.gradle.kts` (`versionCode`/`versionName`) AND `iosApp/iosApp/Info.plist` (`CFBundleVersion`/`CFBundleShortVersionString`). They are not linked.
 
 ## Contribution Guidelines
 
