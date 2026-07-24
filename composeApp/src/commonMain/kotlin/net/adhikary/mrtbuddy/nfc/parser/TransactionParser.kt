@@ -2,56 +2,47 @@ package net.adhikary.mrtbuddy.nfc.parser
 
 import kotlinx.datetime.LocalDateTime
 import net.adhikary.mrtbuddy.model.Transaction
+import net.adhikary.mrtbuddy.nfc.FelicaFrameDecoder
+import net.adhikary.mrtbuddy.nfc.FelicaReadResult
 import net.adhikary.mrtbuddy.nfc.service.StationService
 import net.adhikary.mrtbuddy.nfc.service.TimestampService
 
 object TransactionParser {
+    private const val BLOCK_SIZE = 16
+
     private fun isValidTransaction(transaction: Transaction): Boolean {
         val cutoffDate = LocalDateTime(2020, 1, 1, 0, 0)
         return transaction.timestamp > cutoffDate
     }
 
-    fun parseTransactionResponse(response: ByteArray): List<Transaction> {
-        val transactions = mutableListOf<Transaction>()
+    fun parseTransactionResponse(
+        response: ByteArray,
+        baseYear: Int = TimestampService.currentBaseYear(),
+    ): List<Transaction> = parseValidTransactions(FelicaFrameDecoder.decode(response), baseYear)
 
-//        Log.d("NFC", "Response: ${ByteParser.toHexString(response)}")
-
-        if (response.size < 13) {
-//            Log.e("NFC", "Response too short")
-            return transactions
+    /**
+     * Parses the blocks of a single read window into valid transactions, honoring the
+     * status flags (a non-success window yields no transactions) and the pre-2020 filter.
+     */
+    fun parseValidTransactions(
+        result: FelicaReadResult,
+        baseYear: Int = TimestampService.currentBaseYear(),
+    ): List<Transaction> {
+        if (!result.isSuccess) {
+            return emptyList()
         }
-
-        val statusFlag1 = response[10]
-        val statusFlag2 = response[11]
-
-        if (statusFlag1 != 0x00.toByte() || statusFlag2 != 0x00.toByte()) {
-//            Log.e("NFC", "Error reading card: Status flags $statusFlag1 $statusFlag2")
-            return transactions
-        }
-
-        val numBlocks = response[12].toInt() and 0xFF
-        val blockData = response.copyOfRange(13, response.size)
-
-        val blockSize = 16
-        if (blockData.size < numBlocks * blockSize) {
-//            Log.e("NFC", "Incomplete block data")
-            return transactions
-        }
-
-        for (i in 0 until numBlocks) {
-            val offset = i * blockSize
-            val block = blockData.copyOfRange(offset, offset + blockSize)
-            val transaction = parseTransactionBlock(block)
-            if (isValidTransaction(transaction)) {
-                transactions.add(transaction)
+        return result.blocks
+            .filter { it.size == BLOCK_SIZE }
+            .mapNotNull { block ->
+                parseTransactionBlock(block, baseYear).takeIf { isValidTransaction(it) }
             }
-        }
-
-        return transactions
     }
 
-    fun parseTransactionBlock(block: ByteArray): Transaction {
-        if (block.size != 16) {
+    fun parseTransactionBlock(
+        block: ByteArray,
+        baseYear: Int = TimestampService.currentBaseYear(),
+    ): Transaction {
+        if (block.size != BLOCK_SIZE) {
             throw IllegalArgumentException("Invalid block size")
         }
 
@@ -69,7 +60,7 @@ object TransactionParser {
         val trailingBytes = block.copyOfRange(14, 16)
         val trailing = ByteParser.toHexString(trailingBytes)
 
-        val timestamp = TimestampService.decodeTimestamp(timestampValue)
+        val timestamp = TimestampService.decodeTimestamp(timestampValue, baseYear)
         val fromStation = StationService.getStationName(fromStationCode)
         val toStation = StationService.getStationName(toStationCode)
 

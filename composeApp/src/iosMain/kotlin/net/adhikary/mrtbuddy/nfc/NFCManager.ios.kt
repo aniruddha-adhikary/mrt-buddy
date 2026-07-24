@@ -12,8 +12,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.model.CardReadResult
 import net.adhikary.mrtbuddy.model.CardState
-import net.adhikary.mrtbuddy.nfc.parser.ByteParser
-import net.adhikary.mrtbuddy.nfc.parser.TransactionParser
 import platform.CoreNFC.NFCFeliCaTagProtocol
 import platform.CoreNFC.NFCPollingISO18092
 import platform.CoreNFC.NFCTagReaderSession
@@ -30,11 +28,6 @@ fun ByteArray.toNSData(): NSData =
     this.usePinned { pinned ->
         NSData.create(bytes = pinned.addressOf(0), length = this.size.toULong())
     }
-
-private fun NSData.toHexString(): String {
-    val bytes = this.toByteArray()
-    return ByteParser.toHexString(bytes)
-}
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 fun NSData.toByteArray(): ByteArray {
@@ -92,6 +85,7 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
     }
 
     @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+    @Suppress("TooGenericExceptionCaught")
     override fun tagReaderSession(
         session: NFCTagReaderSession,
         didDetectTags: List<*>,
@@ -105,72 +99,28 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
             }
 
             scope.launch {
-                _cardState.emit(CardState.Reading)
-            }
+                try {
+                    _cardState.emit(CardState.Reading)
+                    val result = FelicaReader(FelicaTagTransceiver(tag)).readTransactionHistory()
 
-            val idmData = tag.currentIDm()
-            val idm = idmData.toHexString()
-            val serviceCodeList = listOf(byteArrayOf(0x22, 0x0f).reversedArray())
-
-            val blockList = (0 until 10).map { byteArrayOf(0x80.toByte(), it.toByte()) }
-
-            tag.readWithoutEncryptionWithServiceCodeList(
-                serviceCodeList = serviceCodeList.map { it.toNSData() },
-                blockList = blockList.map { it.toNSData() },
-                completionHandler = { statusFlag1, statusFlag2, dataList, error ->
-                    if (error != nil) {
-                        session.invalidateSessionWithErrorMessage("Card reading failed")
-
-                        scope.launch {
-                            _cardState.emit(CardState.Error("Card reading failed"))
+                    if (result.transactions.isEmpty()) {
+                        _cardState.emit(CardState.Error("No transactions found on card"))
+                    } else {
+                        _cardReadResults.emit(result)
+                        val latestBalance = result.transactions.firstOrNull()?.balance
+                        latestBalance?.let {
+                            _cardState.emit(CardState.Balance(it))
+                        } ?: run {
+                            _cardState.emit(CardState.Error("Balance not found. You may have moved the card too fast."))
                         }
-
-                        return@readWithoutEncryptionWithServiceCodeList
                     }
-
-                    // Read next 10 blocks (10-19)
-                    val blockList2 = (10 until 20).map { byteArrayOf(0x80.toByte(), it.toByte()) }
-
-                    tag.readWithoutEncryptionWithServiceCodeList(
-                        serviceCodeList = serviceCodeList.map { it.toNSData() },
-                        blockList = blockList2.map { it.toNSData() },
-                        completionHandler = { statusFlag1, statusFlag2, dataList2, error2 ->
-                            if (error2 != null) {
-                                session.invalidateSessionWithErrorMessage("Card reading failed")
-                                scope.launch { _cardState.emit(CardState.Error("Card reading failed")) }
-                                return@readWithoutEncryptionWithServiceCodeList
-                            }
-
-                            // Combine data from both reads
-                            val allData =
-                                (
-                                    (dataList ?: emptyList<Any>()) + (
-                                        dataList2
-                                            ?: emptyList<Any>()
-                                    )
-                                ).map { (it as NSData).toByteArray() }
-                            val entries =
-                                allData.map { TransactionParser.parseTransactionBlock(it) }
-
-                            if (entries.isEmpty()) {
-                                scope.launch { _cardState.emit(CardState.Error("No transactions found on card")) }
-                            } else {
-                                scope.launch {
-                                    _cardReadResults.emit(CardReadResult(idm, entries))
-                                    val latestBalance = entries.firstOrNull()?.balance
-
-                                    latestBalance?.let {
-                                        _cardState.emit(CardState.Balance(it))
-                                    } ?: run {
-                                        _cardState.emit(CardState.Error("Balance not found. You may have moved the card too fast."))
-                                    }
-                                }
-                            }
-                            session.invalidateSession()
-                        },
-                    )
-                },
-            )
+                } catch (e: Exception) {
+                    _cardState.emit(CardState.Error(e.message ?: "Unknown error occurred"))
+                    _cardReadResults.emit(CardReadResult("", emptyList()))
+                } finally {
+                    session.invalidateSession()
+                }
+            }
         }
     }
 }
