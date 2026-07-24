@@ -25,6 +25,12 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        maven("https://jogamp.org/deployment/maven") {
+            mavenContent {
+                includeGroup("org.jogamp.gluegen")
+                includeGroup("org.jogamp.jogl")
+            }
+        }
     }
 }
 
