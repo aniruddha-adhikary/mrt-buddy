@@ -60,11 +60,29 @@ For running on an Android device:
 ./gradlew :composeApp:installDebug
 ```
 
-For iOS (requires macOS):
+For iOS (requires macOS; the old `iosDeployIPhone*` gradle tasks no longer exist):
 ```bash
-./gradlew :composeApp:iosDeployIPhone # for physical device
-./gradlew :composeApp:iosDeployIPhoneSimulator # for simulator
+# Physical device: signed build, then install + launch via devicectl
+xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug \
+  -destination 'id=<DEVICE_UDID>' -derivedDataPath build/ios-device -allowProvisioningUpdates build
+xcrun devicectl device install app --device <DEVICE_UDID> "build/ios-device/Build/Products/Debug-iphoneos/MRT Buddy.app"
+xcrun devicectl device process launch --device <DEVICE_UDID> net.adhikary.mrtbuddy
+# Find UDIDs with: xcrun xctrace list devices
 ```
+
+### Debugging the running app (mobile-mcp + adb/devicectl)
+
+The `mobile` MCP server (mobile-mcp, configured project-locally in `~/.claude.json`, needs the phone paired via wireless debugging) lets Claude drive a connected Android device directly — prefer it over raw adb for interaction:
+
+- `mobile_list_available_devices` → get the device id, pass it to every other call
+- `mobile_launch_app` / `mobile_terminate_app` with package `net.adhikary.mrtbuddy`
+- `mobile_list_elements_on_screen` → Compose view hierarchy with tap coordinates; then `mobile_click_on_screen_at_coordinates`
+- `mobile_take_screenshot` / `mobile_save_screenshot` to verify UI states visually
+- `mobile_get_crash` / `mobile_list_crashes` after a suspected crash
+
+Fallbacks when mobile-mcp isn't enough:
+- `adb` is NOT on PATH; use `~/Library/Android/sdk/platform-tools/adb`. Live logs: `adb logcat --pid=$(adb shell pidof -s net.adhikary.mrtbuddy) -v time` (run it bare/streaming — never pipe through `tail`). Note: the NFC read success path logs nothing; verify reads via the UI (screenshot), not logcat.
+- Physical iPhone: mobile-mcp doesn't drive it; build + install + launch with the `xcodebuild`/`devicectl` commands above. NFC scanning can't be automated on either platform — a human must tap the card.
 
 ### Testing
 
@@ -114,7 +132,7 @@ Note: For signing release builds, you need to set environment variables:
 # Static analysis
 ./gradlew detekt
 
-# Architecture tests (Konsist) — currently blocked by pre-existing broken test file
+# Architecture tests (Konsist)
 ./gradlew :composeApp:testDebugUnitTest --tests "*ArchitectureTest*"
 ```
 
@@ -183,24 +201,31 @@ Room database with SQLite storage for both platforms. Platform-specific database
 
 ### NFC Implementation
 
-The app uses platform-specific NFC implementations that share a common interface:
+Platform code handles only session lifecycle and raw block I/O; all orchestration and parsing is shared:
 
-#### Common Interface
+#### Shared (commonMain, `nfc/`)
 
-- `NFCManager.kt` - Expect class with common NFC operations
+- `NFCManager.kt` - Expect class with common NFC operations (session lifecycle, state flows)
+- `CardTransceiver.kt` - Seam interface: card IDm + `readBlocks()` returning status flags and raw 16-byte blocks
+- `FelicaReader.kt` - Shared read orchestration (two 10-block windows, status-flag checks, validity filter, partial results on I/O error)
+- `FelicaFrameDecoder.kt` - Pure decoder for raw FeliCa response frames
 - `NfcCommandGenerator.kt` - Generates FeliCa card commands
 
-#### Platform-Specific Implementations
+#### Platform adapters
 
-- **Android**: `NfcManager.android.kt` and `NfcReader.kt`
-- **iOS**: `NFCManager.ios.kt` - Uses CoreNFC for card reading
+- **Android**: `NfcManager.android.kt` (session) and `NfcFTransceiver.kt` (wraps `NfcF.transceive`)
+- **iOS**: `NFCManager.ios.kt` (session) and `FelicaTagTransceiver.kt` (wraps CoreNFC `readWithoutEncryption`)
 
 #### Card Parsing
 
 - `TransactionParser.kt` - Parses raw card data into transaction objects
 - `ByteParser.kt` - Low-level binary parsing utilities
 - `StationService.kt` - Maps station codes to station names
-- `TimestampService.kt` - Converts binary timestamps to DateTime objects
+- `TimestampService.kt` - Converts binary timestamps to DateTime objects (pass explicit `baseYear` in tests for determinism)
+
+#### Testing FeliCa features without hardware
+
+The whole read-parse pipeline runs on JVM: build card data with `FelicaFixtures` (commonTest, `nfc/`) and drive `FelicaReader` with `FakeCardTransceiver` — this exercises the identical production code path. Run with `./gradlew :composeApp:testDebugUnitTest`. The `felica` skill (`.claude/skills/felica/`) documents the full byte layouts. Never hand-roll fixture byte arrays in tests; extend `FelicaFixtures`.
 
 ### Dependency Injection
 
@@ -246,6 +271,7 @@ Uses Koin for dependency injection:
 - **AGP 9.0+ KMP workaround**: `gradle.properties` sets `android.builtInKotlin=false` and `android.newDsl=false` because AGP 9.0 dropped compatibility between `com.android.application` and the Kotlin Multiplatform plugin. Removing these flags will break the build. Proper fix (not yet done): migrate to `com.android.kotlin.multiplatform.library`, but that's a library plugin and the app module needs a different migration path.
 - **compileSdk 37 warning**: `android.suppressUnsupportedCompileSdk=37` silences the "not tested" warning from AGP for SDK 37. Remove once AGP officially lists 37 as supported.
 - **Version bumps**: When releasing, update BOTH `composeApp/build.gradle.kts` (`versionCode`/`versionName`) AND `iosApp/iosApp/Info.plist` (`CFBundleVersion`/`CFBundleShortVersionString`). They are not linked.
+- **JogAmp repository**: `settings.gradle.kts` declares `https://jogamp.org/deployment/maven` (scoped to `org.jogamp.*`) because `compose-webview-multiplatform` transitively needs JOGL artifacts that are absent from Maven Central; without it `:composeApp:lintDebug` fails to resolve `debugLintChecksClasspath`.
 
 ## Contribution Guidelines
 
