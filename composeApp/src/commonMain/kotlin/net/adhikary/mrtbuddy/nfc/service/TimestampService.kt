@@ -60,14 +60,17 @@ object TimestampService {
 
     fun getDefaultTimezone(): TimeZone = TimeZone.of("Asia/Dhaka")
 
-    fun decodeTimestamp(value: Int): LocalDateTime {
+    fun decodeTimestamp(
+        value: Int,
+        baseYear: Int = currentBaseYear(),
+    ): LocalDateTime {
         val hour = (value shr 3) and 0x1F
         val day = (value shr 8) and 0x1F
         val month = (value shr 13) and 0x0F
         val year = (value shr 17) and 0x1F
 
         // Calculate the actual year
-        val fullYear = getBaseYear() + year
+        val fullYear = baseYear + year
 
         // Validate month and day
         val validMonth = if (month in 1..12) month else 1
@@ -85,7 +88,7 @@ object TimestampService {
         )
     }
 
-    private fun getBaseYear(): Int {
+    fun currentBaseYear(): Int {
         val timeZone = getDefaultTimezone()
         val currentYear = Clock.System.now().toLocalDateTime(timeZone).year
         return currentYear - (currentYear % 100)

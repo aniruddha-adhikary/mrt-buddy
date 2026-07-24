@@ -23,13 +23,11 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.model.CardReadResult
 import net.adhikary.mrtbuddy.model.CardState
-import net.adhikary.mrtbuddy.nfc.parser.ByteParser
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class NFCManager actual constructor() {
     private var nfcAdapter: NfcAdapter? = null
     private var activity: Activity? = null
-    private val nfcReader = NfcReader()
     private val scope = CoroutineScope(SupervisorJob())
 
     private val _cardState = MutableSharedFlow<CardState>(replay = 1)
@@ -231,23 +229,20 @@ actual class NFCManager actual constructor() {
 
     private fun readFelicaCard(tag: Tag) {
         val nfcF = NfcF.get(tag)
-        try {
-            nfcF.connect()
-            val idm = ByteParser.toHexString(nfcF.tag.id)
-            val transactions = nfcReader.readTransactionHistory(nfcF)
-            nfcF.close()
+        scope.launch {
+            try {
+                nfcF.connect()
+                val result = FelicaReader(NfcFTransceiver(nfcF)).readTransactionHistory()
+                nfcF.close()
 
-            scope.launch {
-                _cardReadResults.emit(CardReadResult(idm, transactions))
-                val latestBalance = transactions.firstOrNull()?.balance
+                _cardReadResults.emit(result)
+                val latestBalance = result.transactions.firstOrNull()?.balance
                 latestBalance?.let {
                     _cardState.emit(CardState.Balance(it))
                 } ?: run {
                     _cardState.emit(CardState.Error("Balance not found. You moved the card too fast."))
                 }
-            }
-        } catch (e: Exception) {
-            scope.launch {
+            } catch (e: Exception) {
                 _cardState.emit(CardState.Error(e.message ?: "Unknown error occurred"))
                 _cardReadResults.emit(CardReadResult("", emptyList()))
             }
