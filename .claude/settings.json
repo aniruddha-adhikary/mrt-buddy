@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew:*)",
+      "Bash(openspec:*)",
+      "Bash(xcodebuild:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // empty' | grep -qE '(config/ktlint/baseline|detekt-baseline)\\.xml$' && { echo 'Blocked: lint baselines are only regenerated deliberately via ./gradlew ktlintGenerateBaseline detektBaseline — fix the violation instead.' >&2; exit 2; } || exit 0"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -e '(.tool_input.file_path // \"\" | endswith(\"composeApp/build.gradle.kts\")) and ((.tool_input.new_string // .tool_input.content // \"\") | test(\"versionCode|versionName\"))' >/dev/null && { echo 'Reminder: versionCode/versionName changed — iosApp/iosApp/Info.plist (CFBundleVersion/CFBundleShortVersionString) must be bumped too; they are not linked.' >&2; exit 2; } || exit 0"
+          }
+        ]
+      }
+    ]
+  }
+}
