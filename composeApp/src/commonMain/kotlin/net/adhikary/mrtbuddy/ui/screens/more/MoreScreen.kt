@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.collectLatest
@@ -35,6 +36,7 @@ import mrtbuddy.composeapp.generated.resources.dark_mode_config_dark
 import mrtbuddy.composeapp.generated.resources.dark_mode_config_light
 import mrtbuddy.composeapp.generated.resources.dark_mode_config_system_default
 import mrtbuddy.composeapp.generated.resources.dark_mode_preference
+import mrtbuddy.composeapp.generated.resources.developerOptions
 import mrtbuddy.composeapp.generated.resources.help
 import mrtbuddy.composeapp.generated.resources.helpAndSupportButton
 import mrtbuddy.composeapp.generated.resources.language
@@ -49,9 +51,11 @@ import mrtbuddy.composeapp.generated.resources.settings
 import mrtbuddy.composeapp.generated.resources.stationMap
 import mrtbuddy.composeapp.generated.resources.station_map
 import net.adhikary.mrtbuddy.Language
+import net.adhikary.mrtbuddy.isDebug
 import net.adhikary.mrtbuddy.settings.model.DarkThemeConfig
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenAction
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenEvent
+import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenState
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -61,6 +65,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun MoreScreen(
     onNavigateToStationMap: () -> Unit,
     onNavigateToLicenses: () -> Unit,
+    onNavigateToDeveloper: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MoreScreenViewModel = koinViewModel(),
 ) {
@@ -97,130 +102,160 @@ fun MoreScreen(
         verticalArrangement = Arrangement.Top,
     ) {
         Column {
-            SectionHeader(text = stringResource(Res.string.settings))
-            RoundedButton(
-                text = stringResource(Res.string.autoSaveCardDetails),
-                subtitle = stringResource(Res.string.autoSaveCardDetailsDescription),
-                onClick = { },
-                trailing = {
-                    Switch(
-                        checked = uiState.autoSaveEnabled,
-                        onCheckedChange = { enabled ->
-                            viewModel.onAction(MoreScreenAction.SetAutoSave(enabled))
-                        },
-                    )
-                },
-            )
+            SettingsSection(uiState = uiState, onAction = viewModel::onAction)
+            OthersSection(onAction = viewModel::onAction)
+            AboutSection(uriHandler = uriHandler, onAction = viewModel::onAction)
 
-            RoundedButton(
-                text = stringResource(Res.string.language),
-                painter = painterResource(Res.drawable.language),
-                onClick = {
-                    if (uiState.currentLanguage == Language.English.isoFormat) {
-                        viewModel.onAction(MoreScreenAction.SetLanguage(Language.Bangla.isoFormat))
-                    } else {
-                        viewModel.onAction(MoreScreenAction.SetLanguage(Language.English.isoFormat))
-                    }
-                },
-                trailing = {
-                    Text(
-                        text = if (uiState.currentLanguage == Language.English.isoFormat) "English" else "বাংলা",
-                        modifier = Modifier.padding(end = 8.dp),
-                    )
-                },
-            )
-
-            RoundedButton(
-                text = stringResource(Res.string.dark_mode_preference),
-                painter = painterResource(Res.drawable.dark_mode),
-                onClick = {
-                    val currentConfig = uiState.darkThemeConfig
-                    val nextConfig =
-                        when (currentConfig) {
-                            DarkThemeConfig.FOLLOW_SYSTEM -> DarkThemeConfig.DARK
-                            DarkThemeConfig.DARK -> DarkThemeConfig.LIGHT
-                            DarkThemeConfig.LIGHT -> DarkThemeConfig.FOLLOW_SYSTEM
-                        }
-                    viewModel.onAction(MoreScreenAction.SetDarkThemeConfig(nextConfig))
-                },
-                trailing = {
-                    Text(
-                        text =
-                            when (uiState.darkThemeConfig) {
-                                DarkThemeConfig.FOLLOW_SYSTEM -> stringResource(Res.string.dark_mode_config_system_default)
-                                DarkThemeConfig.DARK -> stringResource(Res.string.dark_mode_config_dark)
-                                DarkThemeConfig.LIGHT -> stringResource(Res.string.dark_mode_config_light)
-                            },
-                        modifier = Modifier.padding(end = 8.dp),
-                    )
-                },
-            )
-
-            SectionHeader(text = stringResource(Res.string.others))
-            RoundedButton(
-                text = stringResource(Res.string.stationMap),
-                painter = painterResource(Res.drawable.station_map),
-                onClick = {
-                    viewModel.onAction(MoreScreenAction.StationMap)
-                },
-            )
-
-            SectionHeader(text = stringResource(Res.string.aboutHeader))
-            RoundedButton(
-                text = stringResource(Res.string.privacyPolicy),
-                painter = painterResource(Res.drawable.policy),
-                onClick = {
-                    uriHandler.openUri("https://mrtbuddy.com/privacy-policy")
-                },
-            )
-            RoundedButton(
-                text = stringResource(Res.string.helpAndSupportButton),
-                painter = painterResource(Res.drawable.help),
-                onClick = {
-                    uriHandler.openUri("https://mrtbuddy.com/support")
-                },
-            )
-            RoundedButton(
-                text = stringResource(Res.string.contributors),
-                painter = painterResource(Res.drawable.contributors),
-                onClick = {
-                    uriHandler.openUri("https://mrtbuddy.com/contributors.html")
-                },
-            )
-            RoundedButton(
-                text = stringResource(Res.string.openSourceLicenses),
-                painter = painterResource(Res.drawable.license), // Ensure you have a 'license' drawable
-                onClick = {
-                    viewModel.onAction(MoreScreenAction.OpenLicenses)
-                },
-            )
+            if (isDebug) {
+                RoundedButton(
+                    text = stringResource(Res.string.developerOptions),
+                    onClick = onNavigateToDeveloper,
+                )
+            }
         }
 
-        Column {
-            Text(
-                text = stringResource(Res.string.nonAffiliationDisclaimer),
-                fontSize = 12.sp,
-                lineHeight = 16.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                modifier = Modifier.padding(vertical = 8.dp),
-            )
+        DisclaimerFooter()
+    }
+}
 
-            Text(
-                text = stringResource(Res.string.readOnlyDisclaimer),
-                fontSize = 12.sp,
-                lineHeight = 16.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                modifier = Modifier.padding(vertical = 8.dp),
+@Composable
+private fun SettingsSection(
+    uiState: MoreScreenState,
+    onAction: (MoreScreenAction) -> Unit,
+) {
+    SectionHeader(text = stringResource(Res.string.settings))
+    RoundedButton(
+        text = stringResource(Res.string.autoSaveCardDetails),
+        subtitle = stringResource(Res.string.autoSaveCardDetailsDescription),
+        onClick = { onAction(MoreScreenAction.SetAutoSave(!uiState.autoSaveEnabled)) },
+        trailing = {
+            Switch(
+                checked = uiState.autoSaveEnabled,
+                onCheckedChange = { onAction(MoreScreenAction.SetAutoSave(it)) },
             )
+        },
+    )
+    LanguageRow(uiState = uiState, onAction = onAction)
+    DarkModeRow(uiState = uiState, onAction = onAction)
+}
 
+@Composable
+private fun LanguageRow(
+    uiState: MoreScreenState,
+    onAction: (MoreScreenAction) -> Unit,
+) {
+    val isEnglish = uiState.currentLanguage == Language.English.isoFormat
+    RoundedButton(
+        text = stringResource(Res.string.language),
+        painter = painterResource(Res.drawable.language),
+        onClick = {
+            val next = if (isEnglish) Language.Bangla.isoFormat else Language.English.isoFormat
+            onAction(MoreScreenAction.SetLanguage(next))
+        },
+        trailing = {
             Text(
-                text = "Copyright © 2025 Aniruddha Adhikary.",
-                fontSize = 12.sp,
-                lineHeight = 16.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                modifier = Modifier.padding(bottom = 8.dp),
+                text = if (isEnglish) "English" else "বাংলা",
+                modifier = Modifier.padding(end = 8.dp),
             )
-        }
+        },
+    )
+}
+
+@Composable
+private fun DarkModeRow(
+    uiState: MoreScreenState,
+    onAction: (MoreScreenAction) -> Unit,
+) {
+    RoundedButton(
+        text = stringResource(Res.string.dark_mode_preference),
+        painter = painterResource(Res.drawable.dark_mode),
+        onClick = {
+            val next =
+                when (uiState.darkThemeConfig) {
+                    DarkThemeConfig.FOLLOW_SYSTEM -> DarkThemeConfig.DARK
+                    DarkThemeConfig.DARK -> DarkThemeConfig.LIGHT
+                    DarkThemeConfig.LIGHT -> DarkThemeConfig.FOLLOW_SYSTEM
+                }
+            onAction(MoreScreenAction.SetDarkThemeConfig(next))
+        },
+        trailing = {
+            Text(
+                text =
+                    when (uiState.darkThemeConfig) {
+                        DarkThemeConfig.FOLLOW_SYSTEM -> stringResource(Res.string.dark_mode_config_system_default)
+                        DarkThemeConfig.DARK -> stringResource(Res.string.dark_mode_config_dark)
+                        DarkThemeConfig.LIGHT -> stringResource(Res.string.dark_mode_config_light)
+                    },
+                modifier = Modifier.padding(end = 8.dp),
+            )
+        },
+    )
+}
+
+@Composable
+private fun OthersSection(onAction: (MoreScreenAction) -> Unit) {
+    SectionHeader(text = stringResource(Res.string.others))
+    RoundedButton(
+        text = stringResource(Res.string.stationMap),
+        painter = painterResource(Res.drawable.station_map),
+        onClick = { onAction(MoreScreenAction.StationMap) },
+    )
+}
+
+@Composable
+private fun AboutSection(
+    uriHandler: UriHandler,
+    onAction: (MoreScreenAction) -> Unit,
+) {
+    SectionHeader(text = stringResource(Res.string.aboutHeader))
+    RoundedButton(
+        text = stringResource(Res.string.privacyPolicy),
+        painter = painterResource(Res.drawable.policy),
+        onClick = { uriHandler.openUri("https://mrtbuddy.com/privacy-policy") },
+    )
+    RoundedButton(
+        text = stringResource(Res.string.helpAndSupportButton),
+        painter = painterResource(Res.drawable.help),
+        onClick = { uriHandler.openUri("https://mrtbuddy.com/support") },
+    )
+    RoundedButton(
+        text = stringResource(Res.string.contributors),
+        painter = painterResource(Res.drawable.contributors),
+        onClick = { uriHandler.openUri("https://mrtbuddy.com/contributors.html") },
+    )
+    RoundedButton(
+        text = stringResource(Res.string.openSourceLicenses),
+        painter = painterResource(Res.drawable.license),
+        onClick = { onAction(MoreScreenAction.OpenLicenses) },
+    )
+}
+
+@Composable
+private fun DisclaimerFooter() {
+    Column {
+        Text(
+            text = stringResource(Res.string.nonAffiliationDisclaimer),
+            fontSize = 12.sp,
+            lineHeight = 16.sp,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+            modifier = Modifier.padding(vertical = 8.dp),
+        )
+
+        Text(
+            text = stringResource(Res.string.readOnlyDisclaimer),
+            fontSize = 12.sp,
+            lineHeight = 16.sp,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+            modifier = Modifier.padding(vertical = 8.dp),
+        )
+
+        Text(
+            text = "Copyright © 2025 Aniruddha Adhikary.",
+            fontSize = 12.sp,
+            lineHeight = 16.sp,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+            modifier = Modifier.padding(bottom = 8.dp),
+        )
     }
 }
 

@@ -3,7 +3,9 @@ package net.adhikary.mrtbuddy.ui.screens.stationmap
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,7 +57,10 @@ fun StationMapScreen(
         )
 
         CoilZoomAsyncImage(
-            modifier = Modifier.fillMaxSize(),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.navigationBars),
             model =
                 if (uiState.currentLanguage == Language.English.isoFormat) {
                     Res.getUri("files/map_en.webp")

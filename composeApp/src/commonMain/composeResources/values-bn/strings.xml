@@ -19,7 +19,7 @@
     <string name="openNfcSettings">এনএফসি সেটিংস খুলুন</string>
     <string name="tapRescanToStart">স্ক্যান শুরু করতে 'পুনরায় স্ক্যান' এ ট্যাপ করুন</string>
     <!-- transaction histories -->
-    <string name="recentJourneys">সাম্প্রতিক ভ্রমণ</string>
+    <string name="recentTransactions">সাম্প্রতিক লেনদেন</string>
     <string name="balanceUpdate">ব্যালেন্স আপডেট</string>
     <string name="kamalapur">কমলাপুর</string>
     <string name="motijheel">মতিঝিল</string>
