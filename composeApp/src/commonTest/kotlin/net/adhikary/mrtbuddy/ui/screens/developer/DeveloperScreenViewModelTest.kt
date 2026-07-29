@@ -36,8 +36,7 @@ class DeveloperScreenViewModelTest {
     @AfterTest
     fun tearDown() {
         Dispatchers.resetMain()
-        NfcDumpRecorder.enabled = false
-        NfcDumpRecorder.startSession("")
+        NfcDumpRecorder.resetForTests()
     }
 
     private fun viewModel(sharer: NfcDumpSharer) =
@@ -65,8 +64,7 @@ class DeveloperScreenViewModelTest {
     @Test
     fun shareLastDumpWithNoDumpEmitsSnackbar() =
         runTest(dispatcher) {
-            NfcDumpRecorder.enabled = false
-            NfcDumpRecorder.startSession("")
+            NfcDumpRecorder.resetForTests()
             val sharer = RecordingSharer()
             val vm = viewModel(sharer)
             val events = mutableListOf<DeveloperScreenEvent>()

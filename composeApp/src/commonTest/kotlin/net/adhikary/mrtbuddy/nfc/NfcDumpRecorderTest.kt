@@ -9,8 +9,7 @@ import kotlin.test.assertTrue
 class NfcDumpRecorderTest {
     @AfterTest
     fun reset() {
-        NfcDumpRecorder.enabled = false
-        NfcDumpRecorder.startSession("")
+        NfcDumpRecorder.resetForTests()
     }
 
     private val block0 =
@@ -91,6 +90,64 @@ class NfcDumpRecorderTest {
 
         val text = NfcDumpRecorder.lastDumpText()!!
         assertTrue(text.contains("start=10"))
+        assertTrue(!text.contains("start=0 "))
+    }
+
+    @Test
+    fun failedSessionPreservesPreviousDump() {
+        NfcDumpRecorder.enabled = true
+        NfcDumpRecorder.startSession("android")
+        NfcDumpRecorder.record(NfcDumpRecorder.Window(0x220F, 0, 10, 0, 0, listOf(block0)))
+
+        // A later read starts but fails before recording any window.
+        NfcDumpRecorder.startSession("ios")
+
+        val text = NfcDumpRecorder.lastDumpText()!!
+        assertTrue(text.contains("platform: android"))
+        assertTrue(text.contains("block 00: 08 52 10 00 1A 0D 48 00 5A 00 0A 54 01 00 00 00"))
+    }
+
+    @Test
+    fun captureDisabledSessionPreservesPreviousDump() {
+        NfcDumpRecorder.enabled = true
+        NfcDumpRecorder.startSession("android")
+        NfcDumpRecorder.record(NfcDumpRecorder.Window(0x220F, 0, 10, 0, 0, listOf(block0)))
+
+        // Capture is turned off, then a new read happens: nothing should be recorded or wiped.
+        NfcDumpRecorder.enabled = false
+        NfcDumpRecorder.startSession("ios")
+        NfcDumpRecorder.record(NfcDumpRecorder.Window(0x220F, 10, 10, 0, 0, listOf(block1)))
+
+        val text = NfcDumpRecorder.lastDumpText()!!
+        assertTrue(text.contains("platform: android"))
+        assertTrue(text.contains("start=0 "))
+        assertTrue(!text.contains("start=10"))
+    }
+
+    @Test
+    fun platformStaysWithRecordedSession() {
+        NfcDumpRecorder.enabled = true
+        NfcDumpRecorder.startSession("android")
+        NfcDumpRecorder.record(NfcDumpRecorder.Window(0x220F, 0, 10, 0, 0, listOf(block0)))
+
+        NfcDumpRecorder.startSession("ios")
+
+        assertTrue(NfcDumpRecorder.lastDumpText()!!.contains("platform: android"))
+    }
+
+    @Test
+    fun successfulNewSessionReplacesOld() {
+        NfcDumpRecorder.enabled = true
+        NfcDumpRecorder.startSession("android")
+        NfcDumpRecorder.record(NfcDumpRecorder.Window(0x220F, 0, 10, 0, 0, listOf(block0)))
+
+        NfcDumpRecorder.startSession("ios")
+        NfcDumpRecorder.record(NfcDumpRecorder.Window(0x220F, 10, 10, 0, 0, listOf(block1)))
+
+        val text = NfcDumpRecorder.lastDumpText()!!
+        assertTrue(text.contains("platform: ios"))
+        assertTrue(text.contains("start=10"))
+        assertTrue(!text.contains("platform: android"))
         assertTrue(!text.contains("start=0 "))
     }
 }

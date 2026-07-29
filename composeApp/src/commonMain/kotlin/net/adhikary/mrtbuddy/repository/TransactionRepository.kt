@@ -17,6 +17,12 @@ class TransactionRepository(
     private val transactionDao: TransactionDao,
 ) {
     suspend fun saveCardReadResult(result: CardReadResult) {
+        // Failure sentinels from both platforms carry a blank IDm; persisting one would create a
+        // ghost card with an empty id in History. Guard at the persistence root.
+        if (result.idm.isBlank()) {
+            return
+        }
+
         val currentTime = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
         val cardEntity = CardEntity(idm = result.idm, name = null, lastScanTime = currentTime)
         cardDao.insertCard(cardEntity)

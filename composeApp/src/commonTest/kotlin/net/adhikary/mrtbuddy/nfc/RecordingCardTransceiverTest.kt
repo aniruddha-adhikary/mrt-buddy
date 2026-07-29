@@ -10,8 +10,7 @@ import kotlin.test.assertTrue
 class RecordingCardTransceiverTest {
     @AfterTest
     fun reset() {
-        NfcDumpRecorder.enabled = false
-        NfcDumpRecorder.startSession("")
+        NfcDumpRecorder.resetForTests()
     }
 
     @Test

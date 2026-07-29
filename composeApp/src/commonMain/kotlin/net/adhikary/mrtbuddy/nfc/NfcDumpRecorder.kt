@@ -4,15 +4,19 @@ import net.adhikary.mrtbuddy.nfc.parser.ByteParser
 
 /**
  * Debug-only, in-memory recorder for raw card-read windows. A single card read is one session:
- * [startSession] clears the previous one, [record] appends each window while [enabled], and
- * [lastDumpText] renders the fixture-ready v1 text dump with the IDm anonymized to zeros — the
- * real IDm never enters this buffer. Global mutable state confined to diagnostics: the read
+ * [startSession] marks a new session pending, and the previous dump is discarded only when the
+ * first window of the new session is actually recorded — so a capture-off read or a read that
+ * fails before recording anything leaves the last good dump intact. [record] appends each window
+ * while [enabled]; [lastDumpText] renders the fixture-ready v1 text dump with the IDm anonymized
+ * to zeros (the real IDm never enters this buffer) and always reports the platform of the session
+ * whose windows it currently holds. Global mutable state confined to diagnostics: the read
  * coroutine is the only writer, the share action the only reader after a session ends.
  */
 object NfcDumpRecorder {
     var enabled: Boolean = false
 
     private var platform: String = ""
+    private var pendingPlatform: String? = null
     private val windows = mutableListOf<Window>()
 
     data class Window(
@@ -25,13 +29,26 @@ object NfcDumpRecorder {
     )
 
     fun startSession(platform: String) {
-        this.platform = platform
-        windows.clear()
+        pendingPlatform = platform
     }
 
     fun record(window: Window) {
         if (!enabled) return
+        val pending = pendingPlatform
+        if (pending != null) {
+            windows.clear()
+            platform = pending
+            pendingPlatform = null
+        }
         windows.add(window)
+    }
+
+    /** Test-only hard reset of the shared recorder state. */
+    internal fun resetForTests() {
+        enabled = false
+        platform = ""
+        pendingPlatform = null
+        windows.clear()
     }
 
     fun lastDumpText(): String? {

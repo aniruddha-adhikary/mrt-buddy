@@ -34,4 +34,9 @@
 - [x] 6.3 Demo scan feedback: after `scanDemoCard()` completes, show snackbar "Demo card scanned — ৳<balance>. See the Balance tab." on DeveloperScreen (event via the screen's MVI Event flow)
 - [x] 6.4 "Share last dump" with no dump: snackbar "No dump captured yet — enable capture and scan a card" instead of silent no-op
 - [x] 6.5 Re-run ladder (tests, both compiles, ktlint, detekt) — green
+## 7. PR #145 review findings (augmentcode bot — both verified real)
+- [x] 7.1 `NfcDumpRecorder`: defer clearing to the first `record()` of a new session so capture-off scans and failed reads no longer wipe the last dump; platform label must stay with the recorded session (TDD)
+- [x] 7.2 Guard persistence against blank IDm: `TransactionRepository.saveCardReadResult` returns early when `result.idm` is blank (pre-existing Android exposure via failure sentinel `CardReadResult("", ...)`; widened by iOS alignment). TDD with fake DAOs
+- [x] 7.3 Re-run ladder green
+
 - [x] 6.6 Live re-check via mobile-mcp on the Xiaomi, 2026-07-29: More shows only the single bottom row; DeveloperScreen opens with title flush under the status bar (double-inset regression found live and fixed); share-without-dump snackbar visible above the tab bar (hidden-snackbar bug found live, root-caused to missing outer paddingValues, fixed); demo-scan snackbar shows "Demo card scanned — ৳340"; Balance header reads "Recent Transactions"; StationMap bottom edge clear of the system bar
