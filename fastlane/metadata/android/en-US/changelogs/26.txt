@@ -1,0 +1,4 @@
+- **Hatirjheel Bus Support:** Station names and trip detection for Hatirjheel BRT journeys on Rapid Pass cards.
+- **Accurate Transaction Types:** Metro trips, bus trips, and top-ups are now detected from the card's own records.
+- **iOS Reliability:** Card reads now detect read errors, filter out invalid entries, and report connection failures clearly.
+- **UI Fixes:** Station map is no longer cut off by the navigation bar; history is labeled "Recent Transactions".
