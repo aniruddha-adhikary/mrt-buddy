@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDateTime
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.balanceUpdate
-import mrtbuddy.composeapp.generated.resources.recentJourneys
+import mrtbuddy.composeapp.generated.resources.recentTransactions
 import net.adhikary.mrtbuddy.model.TransactionType
 import net.adhikary.mrtbuddy.model.TransactionWithAmount
 import net.adhikary.mrtbuddy.nfc.service.StationService
@@ -52,7 +52,7 @@ fun TransactionHistoryList(transactions: List<TransactionWithAmount>) {
         ) {
             item {
                 Text(
-                    text = stringResource(Res.string.recentJourneys),
+                    text = stringResource(Res.string.recentTransactions),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
                 )

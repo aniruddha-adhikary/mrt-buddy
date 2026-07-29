@@ -30,6 +30,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.balance
+import mrtbuddy.composeapp.generated.resources.developerSection
 import mrtbuddy.composeapp.generated.resources.fare
 import mrtbuddy.composeapp.generated.resources.historyTab
 import mrtbuddy.composeapp.generated.resources.more
@@ -42,6 +43,7 @@ import net.adhikary.mrtbuddy.ui.components.CalculatorIcon
 import net.adhikary.mrtbuddy.ui.components.CardIcon
 import net.adhikary.mrtbuddy.ui.components.HistoryIcon
 import net.adhikary.mrtbuddy.ui.components.TransactionHistoryList
+import net.adhikary.mrtbuddy.ui.screens.developer.DeveloperScreen
 import net.adhikary.mrtbuddy.ui.screens.farecalculator.FareCalculatorScreen
 import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreen
 import net.adhikary.mrtbuddy.ui.screens.licenses.OpenSourceLicensesScreen
@@ -59,6 +61,7 @@ enum class Screen(val title: StringResource) {
     TransactionList(title = Res.string.transactions),
     StationMap(title = Res.string.stationMap),
     Licenses(title = Res.string.openSourceLicenses),
+    Developer(title = Res.string.developerSection),
 }
 
 @Composable
@@ -191,6 +194,9 @@ fun MainScreen(
                     onNavigateToLicenses = {
                         navController.navigate(Screen.Licenses.name)
                     },
+                    onNavigateToDeveloper = {
+                        navController.navigate(Screen.Developer.name)
+                    },
                     modifier = Modifier.padding(paddingValues),
                 )
             }
@@ -231,6 +237,15 @@ fun MainScreen(
                         navController.navigateUp()
                     },
                     paddingValues = paddingValues,
+                )
+            }
+
+            composable(route = Screen.Developer.name) {
+                DeveloperScreen(
+                    onBack = {
+                        navController.navigateUp()
+                    },
+                    modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
                 )
             }
         }

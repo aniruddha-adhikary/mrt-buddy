@@ -2,9 +2,7 @@
 
 ## Purpose
 Parses binary data read from Dhaka MRT FeliCa transit cards into structured Transaction objects. This capability handles the low-level binary extraction of timestamps, station codes, balances, and transaction metadata from 16-byte card data blocks.
-
 ## Requirements
-
 ### Requirement: Transaction Response Parsing
 The system SHALL parse raw byte array responses from FeliCa card reads into Transaction lists.
 
@@ -67,7 +65,7 @@ The system SHALL filter out invalid transactions based on timestamp.
 - **THEN** the transaction SHALL be excluded from the result list
 
 ### Requirement: Timestamp Decoding
-The system SHALL decode binary timestamp values into LocalDateTime objects.
+The system SHALL decode binary timestamp values into LocalDateTime objects using an injectable base year that defaults to the current century.
 
 #### Scenario: Decode timestamp bits
 - **GIVEN** a 24-bit timestamp value
@@ -78,7 +76,13 @@ The system SHALL decode binary timestamp values into LocalDateTime objects.
   - Month from bits 13-16 (4 bits)
   - Year offset from bits 17-21 (5 bits)
 - **AND** calculate the full year as base year + year offset
-- **AND** the base year SHALL be the current century (e.g., 2000 for 2000-2099)
+- **AND** the base year SHALL default to the current century (e.g., 2000 for 2000-2099)
+
+#### Scenario: Explicit base year for deterministic decoding
+- **GIVEN** a caller provides an explicit `baseYear` argument
+- **WHEN** `decodeTimestamp()` is called
+- **THEN** the full year SHALL be computed from the provided base year
+- **AND** the result SHALL NOT depend on the system clock
 
 #### Scenario: Invalid month or day values
 - **GIVEN** a timestamp with month outside 1-12 or day outside 1-31
@@ -123,3 +127,4 @@ The system SHALL map numeric station codes to station names during parsing.
 - **GIVEN** a station code that does not exist in the station map
 - **WHEN** `getStationName()` is called
 - **THEN** the system SHALL return "Unknown Station (code)"
+

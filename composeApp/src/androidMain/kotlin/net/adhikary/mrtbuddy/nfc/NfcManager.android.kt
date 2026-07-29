@@ -232,15 +232,22 @@ actual class NFCManager actual constructor() {
         scope.launch {
             try {
                 nfcF.connect()
-                val result = FelicaReader(NfcFTransceiver(nfcF)).readTransactionHistory()
+                NfcDumpRecorder.startSession("android")
+                val result =
+                    FelicaReader(RecordingCardTransceiver(NfcFTransceiver(nfcF)))
+                        .readTransactionHistory()
                 nfcF.close()
 
                 _cardReadResults.emit(result)
-                val latestBalance = result.transactions.firstOrNull()?.balance
-                latestBalance?.let {
-                    _cardState.emit(CardState.Balance(it))
-                } ?: run {
-                    _cardState.emit(CardState.Error("Balance not found. You moved the card too fast."))
+                if (result.transactions.isEmpty()) {
+                    _cardState.emit(CardState.Error("No transactions found on card"))
+                } else {
+                    val latestBalance = result.transactions.firstOrNull()?.balance
+                    latestBalance?.let {
+                        _cardState.emit(CardState.Balance(it))
+                    } ?: run {
+                        _cardState.emit(CardState.Error("Balance not found. You may have moved the card too fast."))
+                    }
                 }
             } catch (e: Exception) {
                 _cardState.emit(CardState.Error(e.message ?: "Unknown error occurred"))

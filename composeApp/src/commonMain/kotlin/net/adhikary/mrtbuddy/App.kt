@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import net.adhikary.mrtbuddy.managers.RescanManager
+import net.adhikary.mrtbuddy.nfc.demo.DemoCardService
 import net.adhikary.mrtbuddy.nfc.getNFCManager
 import net.adhikary.mrtbuddy.settings.model.DarkThemeConfig
 import net.adhikary.mrtbuddy.ui.screens.home.MainScreen
@@ -16,6 +17,7 @@ import net.adhikary.mrtbuddy.ui.screens.home.MainScreenViewModel
 import net.adhikary.mrtbuddy.ui.theme.MRTBuddyTheme
 import net.adhikary.mrtbuddy.utils.observeAsActions
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -23,6 +25,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun App(dynamicColor: Boolean) {
     val mainVm = koinViewModel<MainScreenViewModel>()
     val nfcManager = getNFCManager()
+    val demoCardService = koinInject<DemoCardService>()
 
     mainVm.events.observeAsActions { event ->
         when (event) {
@@ -48,6 +51,23 @@ fun App(dynamicColor: Boolean) {
     LaunchedEffect(nfcManager) {
         nfcManager.cardState.collect {
             mainVm.onAction(MainScreenAction.UpdateCardState(it))
+        }
+    }
+
+    // Demo card feed (debug builds only) — routes through the same MainScreenAction path.
+    if (isDebug) {
+        LaunchedEffect(demoCardService) {
+            demoCardService.cardReadResults.collect { result ->
+                result?.let {
+                    mainVm.onAction(MainScreenAction.UpdateCardReadResult(it))
+                }
+            }
+        }
+
+        LaunchedEffect(demoCardService) {
+            demoCardService.cardState.collect {
+                mainVm.onAction(MainScreenAction.UpdateCardState(it))
+            }
         }
     }
 

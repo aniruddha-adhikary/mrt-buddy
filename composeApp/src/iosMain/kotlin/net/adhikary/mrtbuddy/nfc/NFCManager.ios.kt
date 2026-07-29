@@ -94,19 +94,29 @@ actual class NFCManager : NSObject(), NFCTagReaderSessionDelegateProtocol {
 
         session.connectToTag(tag) { error ->
             if (error != nil) {
-                println("Failed to connect to tag: ${error?.description}")
+                val message = error?.localizedDescription ?: "Failed to connect to tag"
+                scope.launch {
+                    _cardState.emit(CardState.Error(message))
+                    _cardReadResults.emit(CardReadResult("", emptyList()))
+                }
+                session.invalidateSessionWithErrorMessage(message)
                 return@connectToTag
             }
 
             scope.launch {
                 try {
                     _cardState.emit(CardState.Reading)
-                    val result = FelicaReader(FelicaTagTransceiver(tag)).readTransactionHistory()
+                    NfcDumpRecorder.startSession("ios")
+                    val result =
+                        FelicaReader(RecordingCardTransceiver(FelicaTagTransceiver(tag)))
+                            .readTransactionHistory()
+
+                    // Always emit the result (real IDm, possibly empty) so empty reads persist, matching Android.
+                    _cardReadResults.emit(result)
 
                     if (result.transactions.isEmpty()) {
                         _cardState.emit(CardState.Error("No transactions found on card"))
                     } else {
-                        _cardReadResults.emit(result)
                         val latestBalance = result.transactions.firstOrNull()?.balance
                         latestBalance?.let {
                             _cardState.emit(CardState.Balance(it))

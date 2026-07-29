@@ -19,31 +19,33 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file gives guidance to Claude Code (claude.ai/code) for work in this repository.
 
 ## Project Overview
 
-MRT Buddy is a Kotlin Multiplatform (KMP) app built with Jetpack Compose for Android and iOS that allows users to:
-- Check the balance of Dhaka MRT transit cards (FeliCa cards) using NFC
+MRT Buddy is a Kotlin Multiplatform (KMP) app built with Compose Multiplatform for Android and iOS. It lets users:
+- Check the balance of Dhaka MRT transit cards (FeliCa cards) with NFC
 - View transaction history (up to 19 transactions)
 - Calculate fares between stations
-- Store card information locally without requiring internet connectivity
-- Support for multiple languages (English and Bengali)
+- Store card information locally, with no internet connection
+- Use the app in English and Bengali
+
+Domain vocabulary is canonical in `CONTEXT.md` — use its terms. For example: "Transaction", not "journey". The Fixed Header is the type discriminator. The `Transaction.transactionType` field is a misnomer, and a rename is planned.
 
 ## Build System and Project Structure
 
-- Built using Kotlin Multiplatform (KMP) with Gradle (Kotlin DSL)
-- Compose Multiplatform for UI across platforms
-- Uses Koin for dependency injection
-- Uses Room database for local storage
-- NFC functionality for reading transit cards (platform-specific implementations)
+- Kotlin Multiplatform (KMP) with Gradle (Kotlin DSL)
+- Compose Multiplatform for UI on both platforms
+- Koin for dependency injection
+- Room database for local storage
+- NFC card reading with platform-specific adapters
 
 ## Development Environment Setup
 
 To work with this codebase, make sure you have:
 - Android Studio or IntelliJ IDEA with Kotlin Multiplatform support
 - JDK 11+
-- Android SDK with latest build tools 
+- Android SDK with latest build tools
 - Xcode (for iOS development)
 
 ## Common Development Commands
@@ -72,17 +74,17 @@ xcrun devicectl device process launch --device <DEVICE_UDID> net.adhikary.mrtbud
 
 ### Debugging the running app (mobile-mcp + adb/devicectl)
 
-The `mobile` MCP server (mobile-mcp, configured project-locally in `~/.claude.json`, needs the phone paired via wireless debugging) lets Claude drive a connected Android device directly — prefer it over raw adb for interaction:
+The `mobile` MCP server (mobile-mcp) lets Claude drive a connected Android device directly. It is configured project-locally in `~/.claude.json` and needs the phone paired via wireless debugging. Prefer it over raw adb for interaction:
 
-- `mobile_list_available_devices` → get the device id, pass it to every other call
+- `mobile_list_available_devices` → get the device id, then pass the id to every other call
 - `mobile_launch_app` / `mobile_terminate_app` with package `net.adhikary.mrtbuddy`
-- `mobile_list_elements_on_screen` → Compose view hierarchy with tap coordinates; then `mobile_click_on_screen_at_coordinates`
+- `mobile_list_elements_on_screen` → Compose view hierarchy with tap coordinates, then `mobile_click_on_screen_at_coordinates`
 - `mobile_take_screenshot` / `mobile_save_screenshot` to verify UI states visually
 - `mobile_get_crash` / `mobile_list_crashes` after a suspected crash
 
-Fallbacks when mobile-mcp isn't enough:
-- `adb` is NOT on PATH; use `~/Library/Android/sdk/platform-tools/adb`. Live logs: `adb logcat --pid=$(adb shell pidof -s net.adhikary.mrtbuddy) -v time` (run it bare/streaming — never pipe through `tail`). Note: the NFC read success path logs nothing; verify reads via the UI (screenshot), not logcat.
-- Physical iPhone: mobile-mcp doesn't drive it; build + install + launch with the `xcodebuild`/`devicectl` commands above. NFC scanning can't be automated on either platform — a human must tap the card.
+Fallbacks when mobile-mcp is not enough:
+- `adb` is NOT on PATH. Use `~/Library/Android/sdk/platform-tools/adb`. Live logs: `adb logcat --pid=$(adb shell pidof -s net.adhikary.mrtbuddy) -v time`. Run it bare and streaming — never pipe it through `tail`. Note: the NFC read success path logs nothing. Verify reads in the UI (screenshot), not in logcat.
+- Physical iPhone: mobile-mcp does not drive it. Build, install, and launch with the `xcodebuild`/`devicectl` commands above. NFC scanning cannot be automated on either platform — a human must tap the card.
 
 ### Testing
 
@@ -98,7 +100,7 @@ Run tests with:
 ./gradlew :composeApp:assembleRelease
 ```
 
-Note: For signing release builds, you need to set environment variables:
+Note: To sign release builds, set these environment variables:
 - `KEYSTORE_PASSWORD`
 - `KEY_ALIAS`
 - `KEY_PASSWORD`
@@ -136,11 +138,11 @@ Note: For signing release builds, you need to set environment variables:
 ./gradlew :composeApp:testDebugUnitTest --tests "*ArchitectureTest*"
 ```
 
-Baselines are checked in and used to accept legacy violations:
+Baselines are checked in. They accept legacy violations only:
 - `composeApp/config/ktlint/baseline.xml`
 - `composeApp/detekt-baseline.xml`
 
-Regenerate when consciously accepting new violations: `./gradlew ktlintGenerateBaseline detektBaseline`.
+Regenerate a baseline only when you consciously accept new violations: `./gradlew ktlintGenerateBaseline detektBaseline`.
 Detekt config lives in `config/detekt/detekt.yml`. Ktlint rule overrides live in `.editorconfig`.
 
 ### iOS Verification (from Android/CI or headless)
@@ -161,16 +163,16 @@ xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp \
   build CODE_SIGNING_ALLOWED=NO
 ```
 
-Run #1 after any commonMain/iosMain edit. Run #2 before pushing KMP changes. Run #3 before releases.
+Run #1 after any commonMain/iosMain edit. Run #2 before you push KMP changes. Run #3 before releases.
 
 ## Code Structure and Architecture
 
 ### Overall Architecture
 
 The app follows an MVI (Model-View-Intent) pattern for UI state management:
-- **Model**: Represented by state classes (e.g., `MainScreenState`)
-- **View**: Compose UI components (Screens and composables)
-- **Intent**: User actions represented by Action classes (e.g., `MainScreenAction`)
+- **Model**: State classes (for example `MainScreenState`)
+- **View**: Compose UI components (screens and composables)
+- **Intent**: User actions as Action classes (for example `MainScreenAction`)
 
 Each screen typically has:
 - A View (`ScreenName.kt`) - UI components
@@ -181,32 +183,32 @@ Each screen typically has:
 
 ### UI Layer
 
-The UI is implemented using Compose Multiplatform with the following structure:
+The UI uses Compose Multiplatform with this structure:
 
 #### Navigation
 
-- `Screen.kt` - Sealed class defining all screen routes
-- Navigation is managed in `MainScreen.kt` with a `NavHost` and composables
+- `Screen.kt` - Sealed class that defines all screen routes
+- `MainScreen.kt` manages navigation with a `NavHost` and composables
 - Bottom navigation bar with main tabs: Calculator, Balance, History, More
 
 #### Screens
 
-Each screen lives under `composeApp/src/commonMain/kotlin/net/adhikary/mrtbuddy/ui/screens/` and follows the ScreenName / ScreenNameViewModel / State / Action / Event pattern above. Main tabs: Calculator, Balance, History, More. Additional screens include TransactionList and StationMap.
+Each screen lives under `composeApp/src/commonMain/kotlin/net/adhikary/mrtbuddy/ui/screens/` and follows the ScreenName / ScreenNameViewModel / State / Action / Event pattern above. Main tabs: Calculator, Balance, History, More. Additional screens include TransactionList, StationMap, and Developer (debug builds only).
 
 Common UI components (BalanceCard, TransactionHistoryList, Footer, Icons) live under `ui/components/`.
 
 ### Data Layer
 
-Room database with SQLite storage for both platforms. Platform-specific database builders under `androidMain`/`iosMain` use `expect`/`actual`. Entities (`CardEntity`, `ScanEntity`, `TransactionEntity`) and DAOs (`CardDao`, `ScanDao`, `TransactionDao`) live under `data/` in commonMain. Business logic is abstracted through repositories (`TransactionRepository`, `SettingsRepository`).
+Room database with SQLite storage on both platforms. Platform-specific database builders under `androidMain`/`iosMain` use `expect`/`actual`. Entities (`CardEntity`, `ScanEntity`, `TransactionEntity`) and DAOs (`CardDao`, `ScanDao`, `TransactionDao`) live under `data/` in commonMain. Repositories (`TransactionRepository`, `SettingsRepository`) abstract the business logic.
 
 ### NFC Implementation
 
-Platform code handles only session lifecycle and raw block I/O; all orchestration and parsing is shared:
+Platform code handles only session lifecycle and raw block I/O. All orchestration and parsing is shared:
 
 #### Shared (commonMain, `nfc/`)
 
 - `NFCManager.kt` - Expect class with common NFC operations (session lifecycle, state flows)
-- `CardTransceiver.kt` - Seam interface: card IDm + `readBlocks()` returning status flags and raw 16-byte blocks
+- `CardTransceiver.kt` - Seam interface: card IDm + `readBlocks()` that returns status flags and raw 16-byte blocks
 - `FelicaReader.kt` - Shared read orchestration (two 10-block windows, status-flag checks, validity filter, partial results on I/O error)
 - `FelicaFrameDecoder.kt` - Pure decoder for raw FeliCa response frames
 - `NfcCommandGenerator.kt` - Generates FeliCa card commands
@@ -221,15 +223,17 @@ Platform code handles only session lifecycle and raw block I/O; all orchestratio
 - `TransactionParser.kt` - Parses raw card data into transaction objects
 - `ByteParser.kt` - Low-level binary parsing utilities
 - `StationService.kt` - Maps station codes to station names
-- `TimestampService.kt` - Converts binary timestamps to DateTime objects (pass explicit `baseYear` in tests for determinism)
+- `TimestampService.kt` - Converts binary timestamps to DateTime objects (pass an explicit `baseYear` in tests for determinism)
 
 #### Testing FeliCa features without hardware
 
-The whole read-parse pipeline runs on JVM: build card data with `FelicaFixtures` (commonTest, `nfc/`) and drive `FelicaReader` with `FakeCardTransceiver` — this exercises the identical production code path. Run with `./gradlew :composeApp:testDebugUnitTest`. The `felica` skill (`.claude/skills/felica/`) documents the full byte layouts. Never hand-roll fixture byte arrays in tests; extend `FelicaFixtures`.
+The whole read-parse pipeline runs on the JVM. Build card data with `FelicaFixtures` (commonTest, `nfc/`) and drive `FelicaReader` with `FakeCardTransceiver`. This exercises the identical production code path. Run with `./gradlew :composeApp:testDebugUnitTest`. The `felica` skill (`.claude/skills/felica/`) documents the full byte layouts. Never hand-roll fixture byte arrays in tests. Extend `FelicaFixtures` instead.
+
+In-app: debug builds have More → Developer options → "Scan demo card" (fixed IDm `D3 A0 00 00 00 00 00 01`). It drives the production pipeline end-to-end, including Room persistence.
 
 ### Dependency Injection
 
-Uses Koin for dependency injection:
+Koin provides dependency injection:
 
 - `Module.kt` - Main module with common dependencies
 - Platform-specific modules:
@@ -250,16 +254,16 @@ Uses Koin for dependency injection:
 ## Important Patterns
 
 1. **Platform-Specific Implementations**:
-   - Common interfaces with `expect`/`actual` pattern
+   - Common interfaces with the `expect`/`actual` pattern
    - Platform-specific implementations under `androidMain` and `iosMain`
 
 2. **State Management**:
    - Immutable state objects
    - StateFlow for reactive UI updates
-   - Actions for handling user input
+   - Actions for user input
 
 3. **Database Access**:
-   - Repository pattern abstracting data access
+   - Repository pattern that abstracts data access
    - Room DAOs for database operations
 
 4. **Dependency Injection**:
@@ -268,10 +272,13 @@ Uses Koin for dependency injection:
 
 ## Gotchas
 
-- **AGP 9.0+ KMP workaround**: `gradle.properties` sets `android.builtInKotlin=false` and `android.newDsl=false` because AGP 9.0 dropped compatibility between `com.android.application` and the Kotlin Multiplatform plugin. Removing these flags will break the build. Proper fix (not yet done): migrate to `com.android.kotlin.multiplatform.library`, but that's a library plugin and the app module needs a different migration path.
-- **compileSdk 37 warning**: `android.suppressUnsupportedCompileSdk=37` silences the "not tested" warning from AGP for SDK 37. Remove once AGP officially lists 37 as supported.
-- **Version bumps**: When releasing, update BOTH `composeApp/build.gradle.kts` (`versionCode`/`versionName`) AND `iosApp/iosApp/Info.plist` (`CFBundleVersion`/`CFBundleShortVersionString`). They are not linked.
-- **JogAmp repository**: `settings.gradle.kts` declares `https://jogamp.org/deployment/maven` (scoped to `org.jogamp.*`) because `compose-webview-multiplatform` transitively needs JOGL artifacts that are absent from Maven Central; without it `:composeApp:lintDebug` fails to resolve `debugLintChecksClasspath`.
+- **AGP 9.0+ KMP workaround**: `gradle.properties` sets `android.builtInKotlin=false` and `android.newDsl=false` because AGP 9.0 dropped compatibility between `com.android.application` and the Kotlin Multiplatform plugin. If you remove these flags, the build breaks. The proper fix (not yet done) is a migration to `com.android.kotlin.multiplatform.library`. That is a library plugin, so the app module needs a different migration path.
+- **compileSdk 37 warning**: `android.suppressUnsupportedCompileSdk=37` silences the "not tested" warning from AGP for SDK 37. Remove it after AGP officially lists 37 as supported.
+- **Version bumps**: For a release, update BOTH `composeApp/build.gradle.kts` (`versionCode`/`versionName`) AND `iosApp/iosApp/Info.plist` (`CFBundleVersion`/`CFBundleShortVersionString`). They are not linked.
+- **JogAmp repository**: `settings.gradle.kts` declares `https://jogamp.org/deployment/maven` (scoped to `org.jogamp.*`) because `compose-webview-multiplatform` transitively needs JOGL artifacts that Maven Central does not have. Without it, `:composeApp:lintDebug` fails to resolve `debugLintChecksClasspath`.
+- **Wireless adb drops**: MIUI turns Wireless debugging off aggressively. If `adb devices` is empty, ask the user to toggle it on again on the phone (the pairing survives). Rediscover with `adb mdns services`.
+- **KSP version warning**: builds print "ksp-… is too old for kotlin-…" many times. This is known noise until a KSP bump. It is not a failure. Do not chase it mid-task.
+- **OpenSpec sequencing**: archive a shipped change before you draft a new change that MODIFIES the same requirements. Deltas are written against current spec text.
 
 ## Contribution Guidelines
 

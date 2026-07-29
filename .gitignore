@@ -24,3 +24,6 @@ node_modules
 composeApp/src/androidMain/assets/open-source-licenses.html
 composeApp/src/iosMain/resources/open-source-licenses.html
 composeApp/src/commonMain/composeResources/files/open-source-licenses.md
+# Claude Code personal files
+.claude.local.md
+.claude/settings.local.json

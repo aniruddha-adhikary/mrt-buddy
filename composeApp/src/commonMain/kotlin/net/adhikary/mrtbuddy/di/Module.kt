@@ -2,9 +2,11 @@ package net.adhikary.mrtbuddy.di
 
 import com.russhwolf.settings.Settings
 import net.adhikary.mrtbuddy.database.AppDatabase
+import net.adhikary.mrtbuddy.nfc.demo.DemoCardService
 import net.adhikary.mrtbuddy.repository.SettingsRepository
 import net.adhikary.mrtbuddy.repository.TransactionRepository
 import net.adhikary.mrtbuddy.settings.createSettings
+import net.adhikary.mrtbuddy.ui.screens.developer.DeveloperScreenViewModel
 import net.adhikary.mrtbuddy.ui.screens.farecalculator.FareCalculatorViewModel
 import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreenState
 import net.adhikary.mrtbuddy.ui.screens.history.HistoryScreenViewModel
@@ -14,6 +16,8 @@ import net.adhikary.mrtbuddy.ui.screens.home.MainScreenViewModel
 import net.adhikary.mrtbuddy.ui.screens.more.MoreScreenViewModel
 import net.adhikary.mrtbuddy.ui.screens.stationmap.StationMapViewModel
 import net.adhikary.mrtbuddy.ui.screens.transactionlist.TransactionListViewModel
+import net.adhikary.mrtbuddy.utils.CsvNfcDumpSharer
+import net.adhikary.mrtbuddy.utils.NfcDumpSharer
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -23,6 +27,8 @@ val appModule =
     module {
         single<Settings> { createSettings() }
         single { SettingsRepository(get()) }
+        single { DemoCardService() }
+        factory<NfcDumpSharer> { CsvNfcDumpSharer(get()) }
         single { get<AppDatabase>().getCardDao() }
         single { get<AppDatabase>().getScanDao() }
         single { get<AppDatabase>().getTransactionDao() }
@@ -59,6 +65,14 @@ val appModule =
         viewModel {
             MoreScreenViewModel(
                 settingsRepository = get(),
+            )
+        }
+
+        viewModel {
+            DeveloperScreenViewModel(
+                settingsRepository = get(),
+                demoCardService = get(),
+                nfcDumpSharer = get(),
             )
         }
 
