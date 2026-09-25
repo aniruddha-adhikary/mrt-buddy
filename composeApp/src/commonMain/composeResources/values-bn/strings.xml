@@ -109,6 +109,10 @@
 
     <!-- Others screen -->
     <string name="others">অন্যান্য</string>
+    <string name="recharge">রিচার্জ</string>
+    <string name="externalRedirectTitle">MRT Buddy থেকে বের হচ্ছেন</string>
+    <string name="externalRedirectMessage">আপনি একটি তৃতীয় পক্ষের ওয়েবসাইটে (rapidpass.com.bd) পুনঃনির্দেশিত হতে চলেছেন। এই বহিরাগত সাইটের বিষয়বস্তু, গোপনীয়তা নীতি বা কার্যক্রমের উপর MRT Buddy-র কোনো নিয়ন্ত্রণ নেই। আপনার নিজের বিবেচনায় এগিয়ে যান।</string>
+    <string name="continueButton">এগিয়ে যান</string>
     <string name="station">স্টেশন</string>
     <string name="stationMap">মেট্রো স্টেশন ম্যাপ</string>
 

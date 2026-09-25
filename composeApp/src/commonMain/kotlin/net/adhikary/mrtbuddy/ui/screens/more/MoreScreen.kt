@@ -8,15 +8,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,12 +34,16 @@ import mrtbuddy.composeapp.generated.resources.Res
 import mrtbuddy.composeapp.generated.resources.aboutHeader
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetails
 import mrtbuddy.composeapp.generated.resources.autoSaveCardDetailsDescription
+import mrtbuddy.composeapp.generated.resources.cancel
+import mrtbuddy.composeapp.generated.resources.continueButton
 import mrtbuddy.composeapp.generated.resources.contributors
 import mrtbuddy.composeapp.generated.resources.dark_mode
 import mrtbuddy.composeapp.generated.resources.dark_mode_config_dark
 import mrtbuddy.composeapp.generated.resources.dark_mode_config_light
 import mrtbuddy.composeapp.generated.resources.dark_mode_config_system_default
 import mrtbuddy.composeapp.generated.resources.dark_mode_preference
+import mrtbuddy.composeapp.generated.resources.externalRedirectMessage
+import mrtbuddy.composeapp.generated.resources.externalRedirectTitle
 import mrtbuddy.composeapp.generated.resources.help
 import mrtbuddy.composeapp.generated.resources.helpAndSupportButton
 import mrtbuddy.composeapp.generated.resources.language
@@ -42,9 +51,11 @@ import mrtbuddy.composeapp.generated.resources.license
 import mrtbuddy.composeapp.generated.resources.nonAffiliationDisclaimer
 import mrtbuddy.composeapp.generated.resources.openSourceLicenses
 import mrtbuddy.composeapp.generated.resources.others
+import mrtbuddy.composeapp.generated.resources.payments
 import mrtbuddy.composeapp.generated.resources.policy
 import mrtbuddy.composeapp.generated.resources.privacyPolicy
 import mrtbuddy.composeapp.generated.resources.readOnlyDisclaimer
+import mrtbuddy.composeapp.generated.resources.recharge
 import mrtbuddy.composeapp.generated.resources.settings
 import mrtbuddy.composeapp.generated.resources.stationMap
 import mrtbuddy.composeapp.generated.resources.station_map
@@ -66,6 +77,30 @@ fun MoreScreen(
 ) {
     val uriHandler = LocalUriHandler.current
     val uiState by viewModel.state.collectAsState()
+    var showRedirectDialog by remember { mutableStateOf(false) }
+
+    if (showRedirectDialog) {
+        AlertDialog(
+            onDismissRequest = { showRedirectDialog = false },
+            title = { Text(stringResource(Res.string.externalRedirectTitle)) },
+            text = { Text(stringResource(Res.string.externalRedirectMessage)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showRedirectDialog = false
+                        uriHandler.openUri("https://rapidpass.com.bd/en/login")
+                    },
+                ) {
+                    Text(stringResource(Res.string.continueButton))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRedirectDialog = false }) {
+                    Text(stringResource(Res.string.cancel))
+                }
+            },
+        )
+    }
 
     LaunchedEffect(Unit) {
         viewModel.onAction(MoreScreenAction.OnInit)
@@ -157,6 +192,13 @@ fun MoreScreen(
             )
 
             SectionHeader(text = stringResource(Res.string.others))
+            RoundedButton(
+                text = stringResource(Res.string.recharge),
+                painter = painterResource(Res.drawable.payments),
+                onClick = {
+                    showRedirectDialog = true
+                },
+            )
             RoundedButton(
                 text = stringResource(Res.string.stationMap),
                 painter = painterResource(Res.drawable.station_map),

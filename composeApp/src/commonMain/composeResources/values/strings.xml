@@ -109,6 +109,10 @@
 
     <!-- Others screen -->
     <string name="others">Others</string>
+    <string name="recharge">Recharge</string>
+    <string name="externalRedirectTitle">Leaving MRT Buddy</string>
+    <string name="externalRedirectMessage">You are about to be redirected to a third-party website (rapidpass.com.bd). MRT Buddy has no control over the content, privacy policies, or practices of this external site. Proceed at your own discretion.</string>
+    <string name="continueButton">Continue</string>
     <string name="station">Station</string>
     <string name="stationMap">Metro Station Map</string>
 
