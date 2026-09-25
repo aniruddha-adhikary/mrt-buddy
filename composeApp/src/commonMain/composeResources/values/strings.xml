@@ -21,6 +21,7 @@
     <!-- transaction histories -->
     <string name="recentJourneys">Recent Journeys</string>
     <string name="balanceUpdate">Balance Update</string>
+    <string name="recharge">Recharge</string>
     <string name="kamalapur">Kamalapur</string>
     <string name="motijheel">Motijheel</string>
     <string name="bangladeshSecretariat">Bangladesh Secretariat</string>

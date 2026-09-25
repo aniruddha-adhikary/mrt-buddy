@@ -91,7 +91,7 @@ fun MainScreen(
                         selected = currentScreen == Screen.Calculator,
                         onClick = {
                             navController.navigate(Screen.Calculator.name) {
-                                popUpTo(navController.graph.findStartDestination().id) {
+                                popUpTo(navController.graph.findStartDestination().route ?: Screen.Home.name) {
                                     saveState = true
                                     inclusive = false
                                 }
@@ -106,7 +106,7 @@ fun MainScreen(
                         selected = currentScreen == Screen.Home,
                         onClick = {
                             navController.navigate(Screen.Home.name) {
-                                popUpTo(navController.graph.findStartDestination().id) {
+                                popUpTo(navController.graph.findStartDestination().route ?: Screen.Home.name) {
                                     saveState = true
                                     inclusive = false
                                 }
@@ -121,7 +121,7 @@ fun MainScreen(
                         selected = currentScreen == Screen.History || currentScreen == Screen.TransactionList,
                         onClick = {
                             navController.navigate(Screen.History.name) {
-                                popUpTo(navController.graph.findStartDestination().id) {
+                                popUpTo(navController.graph.findStartDestination().route ?: Screen.Home.name) {
                                     saveState = true
                                     inclusive = false
                                 }
@@ -136,7 +136,7 @@ fun MainScreen(
                         selected = currentScreen == Screen.More,
                         onClick = {
                             navController.navigate(Screen.More.name) {
-                                popUpTo(navController.graph.findStartDestination().id) {
+                                popUpTo(navController.graph.findStartDestination().route ?: Screen.Home.name) {
                                     saveState = true
                                     inclusive = false
                                 }

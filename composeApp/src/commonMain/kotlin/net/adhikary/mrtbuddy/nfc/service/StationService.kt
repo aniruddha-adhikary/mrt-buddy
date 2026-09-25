@@ -14,14 +14,18 @@ import mrtbuddy.composeapp.generated.resources.mirpur10
 import mrtbuddy.composeapp.generated.resources.mirpur11
 import mrtbuddy.composeapp.generated.resources.motijheel
 import mrtbuddy.composeapp.generated.resources.pallabi
+import mrtbuddy.composeapp.generated.resources.recharge
 import mrtbuddy.composeapp.generated.resources.shahbagh
 import mrtbuddy.composeapp.generated.resources.shewrapara
 import mrtbuddy.composeapp.generated.resources.uttaraCenter
 import mrtbuddy.composeapp.generated.resources.uttaraNorth
 import mrtbuddy.composeapp.generated.resources.uttaraSouth
+import net.adhikary.mrtbuddy.model.TransactionType
 import org.jetbrains.compose.resources.stringResource
 
 object StationService {
+    const val UNKNOWN_STATION_ZERO = "Unknown (0)"
+
     private val stationMap =
         mapOf(
             10 to "Motijheel",
@@ -77,5 +81,58 @@ object StationService {
             "Uttara North" -> stringResource(Res.string.uttaraNorth)
             else -> stationName
         }
+    }
+
+    fun isRecharge(
+        type: TransactionType,
+        toStation: String,
+        amount: Int?,
+    ): Boolean {
+        if (type is TransactionType.CommuteHatirjheelBusStart ||
+            type is TransactionType.CommuteHatirjheelBusEnd
+        ) {
+            return false
+        }
+        return type is TransactionType.BalanceUpdate ||
+            (amount != null && amount > 0) ||
+            toStation == UNKNOWN_STATION_ZERO
+    }
+
+    fun formatTransactionTitle(
+        type: TransactionType,
+        fromStation: String,
+        toStation: String,
+        amount: Int?,
+        rechargePrefix: String,
+        translatedFrom: String,
+        translatedTo: String,
+    ): String {
+        return if (isRecharge(type, toStation, amount)) {
+            if (fromStation == UNKNOWN_STATION_ZERO || fromStation.isBlank()) {
+                rechargePrefix
+            } else {
+                "$rechargePrefix • $translatedFrom"
+            }
+        } else {
+            "$translatedFrom → $translatedTo"
+        }
+    }
+
+    @Composable
+    fun formatTransactionTitle(
+        type: TransactionType,
+        fromStation: String,
+        toStation: String,
+        amount: Int?,
+    ): String {
+        return formatTransactionTitle(
+            type = type,
+            fromStation = fromStation,
+            toStation = toStation,
+            amount = amount,
+            rechargePrefix = stringResource(Res.string.recharge),
+            translatedFrom = translate(fromStation),
+            translatedTo = translate(toStation),
+        )
     }
 }
