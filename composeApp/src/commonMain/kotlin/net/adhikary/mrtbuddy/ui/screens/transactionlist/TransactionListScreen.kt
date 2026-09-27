@@ -51,7 +51,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toLocalDateTime
 import mrtbuddy.composeapp.generated.resources.Res
-import mrtbuddy.composeapp.generated.resources.balanceUpdate
 import mrtbuddy.composeapp.generated.resources.endOfTransactionHistory
 import mrtbuddy.composeapp.generated.resources.errorLoadingTransactions
 import mrtbuddy.composeapp.generated.resources.exportError
@@ -289,7 +288,9 @@ private fun TransactionList(
             items = state.transactions,
             key = { _, transaction ->
                 // Use all fields including dateTime and order to ensure uniqueness
-                "${transaction.transactionEntity.cardIdm}_${transaction.transactionEntity.scanId}_${transaction.transactionEntity.fromStation}_${transaction.transactionEntity.toStation}_${transaction.transactionEntity.dateTime}_${transaction.transactionEntity.order}"
+                val entity = transaction.transactionEntity
+                "${entity.cardIdm}_${entity.scanId}_${entity.fromStation}_" +
+                    "${entity.toStation}_${entity.dateTime}_${entity.order}"
             },
         ) { index, transaction ->
             TransactionItem(transaction)
@@ -395,12 +396,12 @@ fun TransactionItem(trxEntity: TransactionEntityWithAmount) {
         ) {
             Text(
                 text =
-                    when (transactionType) {
-                        TransactionType.BalanceUpdate -> stringResource(Res.string.balanceUpdate)
-                        else -> "${StationService.translate(transaction.fromStation)} → ${
-                            StationService.translate(transaction.toStation)
-                        }"
-                    },
+                    StationService.formatTransactionTitle(
+                        type = transactionType,
+                        fromStation = transaction.fromStation,
+                        toStation = transaction.toStation,
+                        amount = trxEntity.amount,
+                    ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )

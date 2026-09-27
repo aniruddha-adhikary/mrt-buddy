@@ -23,7 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDateTime
 import mrtbuddy.composeapp.generated.resources.Res
-import mrtbuddy.composeapp.generated.resources.balanceUpdate
 import mrtbuddy.composeapp.generated.resources.recentJourneys
 import net.adhikary.mrtbuddy.model.TransactionType
 import net.adhikary.mrtbuddy.model.TransactionWithAmount
@@ -115,12 +114,12 @@ fun TransactionItem(
         ) {
             Text(
                 text =
-                    when (type) {
-                        TransactionType.BalanceUpdate -> stringResource(Res.string.balanceUpdate)
-                        else -> "${StationService.translate(fromStation)} → ${
-                            StationService.translate(toStation)
-                        }"
-                    },
+                    StationService.formatTransactionTitle(
+                        type = type,
+                        fromStation = fromStation,
+                        toStation = toStation,
+                        amount = amountValue,
+                    ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
