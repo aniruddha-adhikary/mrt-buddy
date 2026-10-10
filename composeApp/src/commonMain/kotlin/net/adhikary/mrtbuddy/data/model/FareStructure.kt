@@ -12,6 +12,7 @@ data class Station(
  * Manages the fare calculation between stations
  */
 object FareCalculator {
+    const val MRT_PASS_DISCOUNT = 0.10f // 10% discount for MRT/Rapid Pass
     private val stations =
         listOf(
             Station("Uttara North", 0),
@@ -111,6 +112,14 @@ object FareCalculator {
         return fareMatrix[Pair(from.id, to.id)]
             ?: fareMatrix[Pair(to.id, from.id)]
             ?: 0
+    }
+
+    fun calculateDiscountedFare(
+        from: Station,
+        to: Station,
+    ): Int {
+        val baseFare = calculateFare(from, to)
+        return (baseFare * (1 - MRT_PASS_DISCOUNT)).toInt()
     }
 
     fun getStation(name: String): Station? = stations.find { it.name == name }

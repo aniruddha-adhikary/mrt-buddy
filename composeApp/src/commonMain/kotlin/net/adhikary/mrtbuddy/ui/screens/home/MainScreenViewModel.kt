@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import net.adhikary.mrtbuddy.changeLang
+import net.adhikary.mrtbuddy.data.model.FareCalculator
 import net.adhikary.mrtbuddy.model.CardReadResult
 import net.adhikary.mrtbuddy.model.Transaction
 import net.adhikary.mrtbuddy.model.TransactionWithAmount
@@ -105,12 +106,19 @@ class MainScreenViewModel(
                 if (index + 1 < transactions.size) {
                     transaction.balance - transactions[index + 1].balance
                 } else {
-                    null
+                    calculateFallbackFare(transaction)
                 }
             TransactionWithAmount(
                 transaction = transaction,
                 amount = amount,
             )
-        }
+        }.filter { it.amount != null }
+    }
+
+    private fun calculateFallbackFare(transaction: Transaction): Int? {
+        val fromStation = FareCalculator.getStation(transaction.fromStation) ?: return null
+        val toStation = FareCalculator.getStation(transaction.toStation) ?: return null
+        val discountedFare = FareCalculator.calculateDiscountedFare(fromStation, toStation)
+        return -discountedFare
     }
 }
