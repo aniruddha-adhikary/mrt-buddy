@@ -12,6 +12,7 @@ actual fun MRTBuddyTheme(
     MaterialTheme(
         colorScheme = if (darkTheme) darkScheme else lightScheme,
         typography = Typography,
+        shapes = AppShapes,
         content = content,
     )
 }

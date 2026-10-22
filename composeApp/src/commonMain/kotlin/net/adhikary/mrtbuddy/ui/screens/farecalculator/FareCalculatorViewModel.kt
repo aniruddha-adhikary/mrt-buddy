@@ -62,6 +62,16 @@ class FareCalculatorViewModel : ViewModel() {
             FareCalculatorAction.DismissDropdowns -> {
                 _state.value = _state.value.copy(fromExpanded = false, toExpanded = false)
             }
+            FareCalculatorAction.SwapStations -> {
+                _state.value =
+                    _state.value.copy(
+                        fromStation = _state.value.toStation,
+                        toStation = _state.value.fromStation,
+                        fromExpanded = false,
+                        toExpanded = false,
+                    )
+                calculateFares()
+            }
         }
     }
 

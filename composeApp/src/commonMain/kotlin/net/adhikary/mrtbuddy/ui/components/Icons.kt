@@ -13,7 +13,7 @@ import org.jetbrains.compose.resources.painterResource
 public fun CalculatorIcon() {
     return Icon(
         painter = painterResource(Res.drawable.calculate),
-        contentDescription = "Calculate",
+        contentDescription = null,
     )
 }
 
@@ -21,7 +21,7 @@ public fun CalculatorIcon() {
 public fun CardIcon() {
     return Icon(
         painter = painterResource(Res.drawable.card),
-        contentDescription = "Calculate",
+        contentDescription = null,
     )
 }
 
@@ -29,7 +29,7 @@ public fun CardIcon() {
 public fun AppsIcon() {
     return Icon(
         painter = painterResource(Res.drawable.apps),
-        contentDescription = "Apps",
+        contentDescription = null,
     )
 }
 
@@ -37,6 +37,6 @@ public fun AppsIcon() {
 public fun HistoryIcon() {
     return Icon(
         painter = painterResource(Res.drawable.history),
-        contentDescription = "Apps",
+        contentDescription = null,
     )
 }
