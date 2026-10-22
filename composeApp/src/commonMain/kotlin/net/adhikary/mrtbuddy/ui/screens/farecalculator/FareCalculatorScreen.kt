@@ -2,20 +2,23 @@ package net.adhikary.mrtbuddy.ui.screens.farecalculator
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.collectLatest
+import mrtbuddy.composeapp.generated.resources.Res
+import mrtbuddy.composeapp.generated.resources.fare
 import net.adhikary.mrtbuddy.model.CardState
+import net.adhikary.mrtbuddy.ui.components.ScreenHeader
 import net.adhikary.mrtbuddy.ui.screens.components.FareDisplayCard
 import net.adhikary.mrtbuddy.ui.screens.components.StationSelectionSection
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -51,13 +54,13 @@ fun FareCalculatorScreen(
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(16.dp)
-                .then(modifier),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+                .then(modifier)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        FareDisplayCard(uiState.value, viewModel)
-        Spacer(modifier = Modifier.height(4.dp))
+        ScreenHeader(title = stringResource(Res.string.fare))
         StationSelectionSection(uiState.value, viewModel)
+        FareDisplayCard(uiState.value)
     }
 }

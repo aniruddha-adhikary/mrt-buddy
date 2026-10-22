@@ -26,6 +26,7 @@ actual fun MRTBuddyTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        shapes = AppShapes,
         content = content,
     )
 }
